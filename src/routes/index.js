@@ -1,8 +1,8 @@
 const express = require('express');
+const userRoutes = require('./userRoutes');
+
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-  res.status(200).json({ message: 'route activated' });
-});
+router.use('/api/users', userRoutes);
 
 module.exports = router;
