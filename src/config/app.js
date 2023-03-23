@@ -14,7 +14,10 @@ const app = express();
 
 app.use(cors({ origin: process.env.FRONTEND_HOST, credentials: true }));
 
-app.use(logger('dev'));
+if (process.env.NODE_ENV !== 'test') {
+  app.use(logger('dev'));
+}
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -29,8 +32,12 @@ app.use(globalErrorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
-  console.log('App running on port ' + PORT);
-});
+let server;
 
-module.exports = server;
+if (process.env.NODE_ENV !== 'test') {
+  server = app.listen(PORT, () => {
+    console.log('App running on port ' + PORT);
+  });
+}
+
+module.exports = { server, app };

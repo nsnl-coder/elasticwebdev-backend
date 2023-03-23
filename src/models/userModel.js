@@ -1,38 +1,86 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
+const bcrypt = require('bcrypt');
 
-const userSchema = mongoose.Schema({
-  email: {
-    type: String,
-    lowercase: true,
-    required: true,
+const userSchema = mongoose.Schema(
+  {
+    email: {
+      type: String,
+      lowercase: true,
+      required: true,
+    },
+    fullname: {
+      type: String,
+      lowercase: true,
+    },
+    shippingAddress: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    profileImage: {
+      type: String,
+      default:
+        'https://soccerpointeclaire.com/wp-content/uploads/2021/06/default-profile-pic-e1513291410505.jpg',
+    },
+    passwordChangedAt: {
+      type: Date,
+    },
+    resetPasswordToken: {
+      type: String,
+    },
   },
-  fullname: {
-    type: String,
-    lowercase: true,
+  {
+    toJSON: {
+      transform(doc, ret) {
+        delete ret.password;
+        delete ret.passwordChangedAt;
+        delete ret.__v;
+      },
+    },
   },
-  shippingAddress: {
-    type: String,
-  },
-  phone: {
-    type: String,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  profileImage: {
-    type: String,
-    default:
-      'https://soccerpointeclaire.com/wp-content/uploads/2021/06/default-profile-pic-e1513291410505.jpg',
-  },
-  passwordChangedAt: {
-    type: Date,
-  },
-  resetPasswordToken: {
-    type: String,
-  },
+);
+
+// check if login password correct
+userSchema.methods.isLoginPasswordCorrect = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// hash password
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return;
+  this.password = await bcrypt.hash(this.password, 10);
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
 });
+
+// exclude __v field
+userSchema.pre(/^find/, function (next) {
+  this.select('-__v -updatedAt');
+  next();
+});
+
+//  create reset password token
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
+};
+
+const userModel = mongoose.model('user', userSchema);
+
+module.exports = userModel;
 
 const User = mongoose.model('user', userSchema);
 

@@ -3,8 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./src/test/setup.js"
+    ]
+  },
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "nodemon src/index.js",
+    "test": "jest --watchAll --no-cache",
+    "testv": "jest --watchAll --no-cache --verbose"
   },
   "repository": {
     "type": "git",
@@ -32,6 +40,9 @@
     "yup": "^1.0.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.21"
+    "jest": "^29.5.0",
+    "mongodb-memory-server": "^8.12.1",
+    "nodemon": "^2.0.21",
+    "supertest": "^6.3.3"
   }
 }

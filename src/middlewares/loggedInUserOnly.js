@@ -4,9 +4,9 @@ const User = require('../models/userModel');
 const createError = require('../utils/createError');
 
 const loggedInUserOnly = async (req, res, next) => {
-  const bearerToken = req.headers.authorization;
+  const jwtToken = req.cookies.jwt;
 
-  if (!bearerToken) {
+  if (!jwtToken) {
     return next(
       createError(
         401,
@@ -15,11 +15,9 @@ const loggedInUserOnly = async (req, res, next) => {
     );
   }
 
-  const jwtToken = bearerToken.split(' ')[1];
-
   const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
 
-  const user = await User.findById(decoded.id).select('+passwordChangedAt');
+  const user = await User.findById(decoded.id);
 
   if (!user) {
     return next(
@@ -28,11 +26,13 @@ const loggedInUserOnly = async (req, res, next) => {
   }
 
   if (user.passwordChangedAt) {
-    const duration = new Date(decoded.iat) - new Date(user.passwordChangedAt);
+    const duration =
+      new Date(decoded.iat * 1000) - new Date(user.passwordChangedAt);
+
     const isTokenExpired = duration < 0;
     if (isTokenExpired)
       return next(
-        createError(404, 'You recently changed password,please login again!'),
+        createError(400, 'You recently changed password,please login again!'),
       );
   }
 

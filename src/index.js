@@ -10,7 +10,7 @@ const {
 onUncaughtException();
 
 // require express app
-const server = require('./config/app');
+const { server } = require('./config/app');
 
 // require db
 const db = require('./config/db');

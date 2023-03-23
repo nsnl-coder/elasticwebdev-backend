@@ -7,9 +7,11 @@ const userSchema = require('../yup/userSchema');
 
 const router = express.Router();
 
+router.post('/sign-out', userController.signOut);
+
 router.post(
   '/sign-up',
-  requiredFields('email', 'password', 'fullname'),
+  requiredFields('email', 'password'),
   validateRequest(userSchema),
   userController.signUp,
 );
@@ -43,6 +45,6 @@ router.put(
   userController.updateUserInfo,
 );
 
-router.put('/delete-user', userController.deleteUser);
+router.get('/current-user', userController.getCurrentUser);
 
 module.exports = router;

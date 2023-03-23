@@ -12,7 +12,11 @@ const validateRequest = (schema) => async (req, res, next) => {
     );
     return next();
   } catch (err) {
-    return res.status(400).json({ status: 'fail', message: err.errors });
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Data validation failed',
+      errors: err.errors,
+    });
   }
 };
 
