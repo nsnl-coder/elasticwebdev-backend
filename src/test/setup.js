@@ -5,6 +5,12 @@ const { app } = require('../config/app');
 
 let mongo;
 
+// mock the email module
+jest.mock('../utils/email.js');
+
+const User = require('../models/userModel');
+const { signJwtToken } = require('../controllers/userController');
+
 // function that run before all of tests
 beforeAll(async () => {
   process.env.JWT_SECRET = 'test_secret';
@@ -39,15 +45,17 @@ global.signup = async () => {
   const password = 'password';
   const fullname = 'Test Name';
 
-  const response = await request(app)
-    .post('/api/users/sign-up')
-    .send({
-      email,
-      password,
-      fullname,
-    })
-    .expect(201);
+  // create an account
+  const user = await User.create({
+    email,
+    password,
+    fullname,
+    isVerified: true,
+  });
 
-  const cookie = response.get('Set-Cookie');
-  return cookie;
+  // verify the account
+
+  const cookie = signJwtToken(user._id);
+
+  return [`jwt=${cookie}; Path=/; HttpOnly`];
 };

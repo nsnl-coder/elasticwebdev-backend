@@ -379,6 +379,7 @@ const userController = {
   updatePassword,
   updateUserInfo,
   getCurrentUser,
+  signJwtToken,
 };
 
 module.exports = userController;

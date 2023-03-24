@@ -1,13 +1,14 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
+const { sendVerifyEmail } = require('../../utils/email');
 
-it('successfully signed up', async () => {
+it('successfully signs up & send verification email', async () => {
   const response = await request(app)
     .post('/api/users/sign-up')
     .send({
       email: 'test@test.com',
       password: 'password',
-      fullname: 'Peter Parker',
+      fullname: 'Test Name',
     })
     .expect(201);
 
@@ -16,16 +17,19 @@ it('successfully signed up', async () => {
 
   // check if it returns new user info
   expect(response.body.data.email).toEqual('test@test.com');
+
+  // check if the email has been sent
+  expect(sendVerifyEmail).toHaveBeenCalled();
 });
 
-it('return 400 if email is already in use', async () => {
+it('returns 400 if email is already in use', async () => {
   // sign up
   await request(app)
     .post('/api/users/sign-up')
     .send({
       email: 'test@test.com',
       password: 'password',
-      fullname: 'Peter Parker',
+      fullname: 'test name',
     })
     .expect(201);
 
@@ -35,7 +39,7 @@ it('return 400 if email is already in use', async () => {
     .send({
       email: 'test@test.com',
       password: 'password',
-      fullname: 'Peter Parker',
+      fullname: 'Test Name',
     })
     .expect(400);
 
@@ -48,7 +52,7 @@ it('returns 400 if email is missing ', async () => {
     .post('/api/users/sign-up')
     .send({
       password: 'password',
-      fullname: 'Peter Parker',
+      fullname: 'Test Name',
     })
     .expect(400);
 
@@ -61,7 +65,7 @@ it('returns 400 if password is missing ', async () => {
     .post('/api/users/sign-up')
     .send({
       email: 'test@test.com',
-      fullname: 'Peter Parker',
+      fullname: 'Test Name',
     })
     .expect(400);
 
@@ -91,7 +95,7 @@ it('return 400 if email is not valid', async () => {
     .send({
       email: 'testtest.com',
       password: 'password',
-      fullname: 'Peter Parker',
+      fullname: 'Test Name',
     })
     .expect(400);
 
@@ -107,7 +111,7 @@ it('return 400 if password is shorter than 8 character', async () => {
     .send({
       email: 'test@test.com',
       password: 'passwo',
-      fullname: 'Peter Parker',
+      fullname: 'Test Name',
     })
     .expect(400);
 
@@ -125,7 +129,7 @@ it('return 400 if fullname is shorter than 6 characters', async () => {
     .send({
       email: 'test@test.com',
       password: 'password',
-      fullname: 'Peter',
+      fullname: 'short',
     })
     .expect(400);
 

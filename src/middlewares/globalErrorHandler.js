@@ -17,9 +17,7 @@ const handleDuplicationField = (error) => {
 
 const globalErrorHandler = (error, req, res, next) => {
   const statusCode = error.status || 400;
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log(error);
+  if (process.env.NODE_ENV === 'development' && !error.isOperationalError) {
     res.status(400).json(error);
     return;
   }
