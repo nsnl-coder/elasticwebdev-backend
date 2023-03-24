@@ -36,6 +36,12 @@ const loggedInUserOnly = async (req, res, next) => {
       );
   }
 
+  if (!user.isVerified) {
+    return next(
+      createError(401, 'Please verified your email to complete this action!'),
+    );
+  }
+
   req.user = user;
   next();
 };

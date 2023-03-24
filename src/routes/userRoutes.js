@@ -11,9 +11,25 @@ router.post('/sign-out', userController.signOut);
 
 router.post(
   '/sign-up',
-  requiredFields('email', 'password'),
+  requiredFields('email', 'password', 'fullname'),
   validateRequest(userSchema),
   userController.signUp,
+);
+
+/**
+ * handle email verification
+ * need to include verifyToken as query
+ */
+router.post('/verify-email', userController.verifyEmail);
+
+/**
+ * request verification email again
+ */
+router.post(
+  '/resend-verify-email',
+  requiredFields('email'),
+  validateRequest(userSchema),
+  userController.resendVerifyEmail,
 );
 
 router.post(

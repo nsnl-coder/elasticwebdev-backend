@@ -19,6 +19,7 @@ const globalErrorHandler = (error, req, res, next) => {
   const statusCode = error.status || 400;
 
   if (process.env.NODE_ENV === 'development') {
+    console.log(error);
     res.status(400).json(error);
     return;
   }

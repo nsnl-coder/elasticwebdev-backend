@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const userSchema = mongoose.Schema(
   {
@@ -11,6 +12,7 @@ const userSchema = mongoose.Schema(
     fullname: {
       type: String,
       lowercase: true,
+      required: true,
     },
     shippingAddress: {
       type: String,
@@ -33,6 +35,21 @@ const userSchema = mongoose.Schema(
     resetPasswordToken: {
       type: String,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verifyToken: {
+      type: String,
+    },
+    verifyTokenExpires: {
+      type: Date,
+    },
+    // make sure that an user can only request 5 verification email resend max in 1 day
+    verifyEmailsSent: {
+      type: Number,
+      default: 1,
+    },
   },
   {
     toJSON: {
@@ -40,6 +57,9 @@ const userSchema = mongoose.Schema(
         delete ret.password;
         delete ret.passwordChangedAt;
         delete ret.__v;
+        delete ret.verifyToken;
+        delete ret.verifyTokenExpires;
+        delete ret.verifyEmailsSent;
       },
     },
   },
@@ -74,7 +94,6 @@ userSchema.methods.createPasswordResetToken = function () {
     .digest('hex');
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-
   return resetToken;
 };
 

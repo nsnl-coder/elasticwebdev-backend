@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 dotenv.config();
+require('./utils/email');
 
 const {
   onUncaughtException,
