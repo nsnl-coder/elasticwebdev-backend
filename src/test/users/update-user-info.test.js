@@ -16,7 +16,7 @@ it('returns 401 if user is not logged in', async () => {
 });
 
 it('returns 400 if user wants to update password', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const { body } = await request(app)
     .put('/api/users/update-user-info')
@@ -33,7 +33,7 @@ it('returns 400 if user wants to update password', async () => {
 });
 
 it('returns 400 if user wants to update email', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const { body } = await request(app)
     .put('/api/users/update-user-info')
@@ -50,7 +50,7 @@ it('returns 400 if user wants to update email', async () => {
 });
 
 it('returns 400 if phone number is not valid', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const { body } = await request(app)
     .put('/api/users/update-user-info')
@@ -65,7 +65,7 @@ it('returns 400 if phone number is not valid', async () => {
 });
 
 it('returns 400 if fullname is not valid', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const { body } = await request(app)
     .put('/api/users/update-user-info')
@@ -82,7 +82,7 @@ it('returns 400 if fullname is not valid', async () => {
 });
 
 it('successfully updates fullname', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const { body } = await request(app)
     .put('/api/users/update-user-info')
@@ -96,7 +96,7 @@ it('successfully updates fullname', async () => {
 });
 
 it('successfully updates shipping address', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const { body } = await request(app)
     .put('/api/users/update-user-info')
@@ -113,7 +113,7 @@ it('successfully updates shipping address', async () => {
 });
 
 it('sucessfully updates phone number', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const { body } = await request(app)
     .put('/api/users/update-user-info')

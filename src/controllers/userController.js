@@ -1,8 +1,11 @@
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const hoursToMilliseconds = require('date-fns/hoursToMilliseconds');
+
+//
 const User = require('../models/userModel');
 const createError = require('../utils/createError');
-const jwt = require('jsonwebtoken');
 const { sendVerifyEmail, sendResetPasswordEmail } = require('../utils/email');
-const crypto = require('crypto');
 
 // ============= COMMON CODE ====================
 
@@ -24,6 +27,24 @@ const createToken = () => {
 
   return { token, hashedToken };
 };
+/**
+ * generate a jwt token and send it back as cookie
+ */
+const resWithCookie = (req, res, user, statusCode, message) => {
+  // send back jwt token as cookie
+  const jwtToken = signJwtToken(user._id);
+
+  res.cookie('jwt', jwtToken, {
+    httpOnly: true,
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+  });
+
+  res.status(statusCode).json({
+    status: 'success',
+    message,
+    data: user,
+  });
+};
 
 /**
  * return hashed version of a given token using crypto library
@@ -37,7 +58,7 @@ const getHashedToken = (token) => {
 // ============= IMPLEMENTATION =============
 
 const signUp = async (req, res, next) => {
-  const { email, fullname, shippingAddress, password } = req.body;
+  const { email, fullname, password } = req.body;
 
   // check if email already exists
   const existedUser = await User.findOne({ email });
@@ -55,10 +76,9 @@ const signUp = async (req, res, next) => {
     email,
     password,
     fullname,
-    shippingAddress,
     verifyToken: hashedToken,
-    verifyTokenExpires: Date.now() + 24 * 60 * 60 * 1000,
-    verifyEmailsSent: 1,
+    verifyTokenExpires:
+      Date.now() + hoursToMilliseconds(process.env.VERIFY_EMAIL_TOKEN_EXPIRES),
   });
 
   // send email verification email to user
@@ -70,20 +90,8 @@ const signUp = async (req, res, next) => {
     },
   });
 
-  // send back jwt token as cookie
-  const jwtToken = signJwtToken(user._id);
-
-  res.cookie('jwt', jwtToken, {
-    httpOnly: true,
-    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-  });
-
-  // return cookie
-  res.status(201).json({
-    status: 'success',
-    message: 'Check your email inbox to verify your email!',
-    data: user,
-  });
+  const message = 'Check your email inbox to verify your email!';
+  resWithCookie(req, res, user, 201, message);
 };
 
 const verifyEmail = async (req, res, next) => {
@@ -117,20 +125,18 @@ const resendVerifyEmail = async (req, res, next) => {
 
   // check if user exists
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       status: 'fail',
-      message: 'An account with provided email does not exist',
+      message: 'An account with provided email does not exist!',
     });
-    return;
   }
 
   // check if user is already verified
   if (user.isVerified) {
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
-      message: 'You account has been verified!',
+      message: 'You account is already verified!',
     });
-    return;
   }
 
   // check if old token is still valid
@@ -156,7 +162,8 @@ const resendVerifyEmail = async (req, res, next) => {
   const { token, hashedToken } = createToken();
 
   user.verifyToken = hashedToken;
-  user.verifyTokenExpires = Date.now() + 24 * 60 * 60 * 1000;
+  user.verifyTokenExpires =
+    Date.now() + hoursToMilliseconds(process.env.VERIFY_EMAIL_TOKEN_EXPIRES);
   user.verifyEmailsSent++;
   await user.save();
 
@@ -195,10 +202,8 @@ const signIn = async (req, res, next) => {
   });
 
   // return account info
-  res.status(200).json({
-    status: 'success',
-    data: user,
-  });
+  const message = 'You have signed in!';
+  resWithCookie(req, res, user, 200, message);
 };
 
 const signOut = (req, res, next) => {
@@ -255,10 +260,8 @@ const updatePassword = async (req, res, next) => {
   user.password = password;
   await user.save();
 
-  res.status(200).json({
-    status: 'succcess',
-    data: user,
-  });
+  const message = 'You successfully changed your password';
+  resWithCookie(req, res, user, 200, message);
 };
 
 const updateUserInfo = async (req, res, next) => {
@@ -303,18 +306,38 @@ const forgotPassword = async (req, res, next) => {
 
   const user = await User.findOne({ email });
 
-  //
+  // returns 404 if can't find user
   if (!user) {
-    return res.status(200).json({
+    return res.status(404).json({
       status: 'success',
       message: 'An user with this email does not exist',
     });
+  }
+  // check for last time user request forgot password email
+  if (user.resetPasswordTokenExpires) {
+    const emailSentAt =
+      new Date(user.resetPasswordTokenExpires) - 15 * 60 * 1000;
+    const duration =
+      Date.now() - new Date(emailSentAt) - hoursToMilliseconds(24);
+    const isSentYesterday = duration < 0;
+
+    if (isSentYesterday && user.resetPasswordEmailsSent === 3) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Too many requests! Please try to request again in 24 hours',
+      });
+    }
+
+    if (!isSentYesterday) {
+      user.resetPasswordEmailsSent = 0;
+    }
   }
 
   // send token to user
   const { token, hashedToken } = createToken();
 
   user.resetPasswordToken = hashedToken;
+  user.resetPasswordEmailsSent++;
   user.resetPasswordTokenExpires = Date.now() + 15 * 60 * 1000; // 15 min only
   await user.save();
 
@@ -329,7 +352,7 @@ const forgotPassword = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    message: 'We sent an email! Please check your inbox!',
+    message: 'We sent you an email! Please check your inbox!',
   });
 };
 
@@ -358,7 +381,6 @@ const resetPassword = async (req, res, next) => {
   user.password = password;
   user.resetPasswordToken = undefined;
   user.resetPasswordTokenExpires = undefined;
-  user.passwordChangedAt = Date.now();
   await user.save();
 
   res.status(200).json({
@@ -379,7 +401,9 @@ const userController = {
   updatePassword,
   updateUserInfo,
   getCurrentUser,
+  // for testing
   signJwtToken,
+  createToken,
 };
 
 module.exports = userController;

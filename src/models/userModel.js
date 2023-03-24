@@ -38,6 +38,10 @@ const userSchema = mongoose.Schema(
     resetPasswordTokenExpires: {
       type: Date,
     },
+    resetPasswordEmailsSent: {
+      type: Number,
+      default: 0,
+    },
     isVerified: {
       type: Boolean,
       default: false,
@@ -51,7 +55,7 @@ const userSchema = mongoose.Schema(
     // make sure that an user can only request 5 verification email resend max in 1 day
     verifyEmailsSent: {
       type: Number,
-      default: 1,
+      default: 0,
     },
   },
   {

@@ -37,10 +37,17 @@ const globalErrorHandler = (error, req, res, next) => {
     formarttedError = handleDuplicationField(error);
   }
 
-  if (error.name === 'JsonWebTokenError')
-    formarttedError = 'Invalid token. Please log in again!';
-  if (error.name === 'TokenExpiredError')
-    formarttedError = 'Your token has expired! Please log in again.';
+  if (
+    error.name === 'JsonWebTokenError' ||
+    error.name === 'TokenExpiredError' ||
+    error.name === 'CastError'
+  ) {
+    formarttedError = error.message;
+  }
+
+  if (message === 'Something wentwrong') {
+    console.log(error);
+  }
 
   res.status(statusCode).json({ status: 'fail', message: formarttedError });
 };

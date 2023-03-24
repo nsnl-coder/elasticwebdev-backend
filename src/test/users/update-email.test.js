@@ -17,7 +17,7 @@ it('returns 401 if user is not logged in', async () => {
 });
 
 it('returns 400 if provided password is incorrect', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const response = await request(app)
     .put('/api/users/update-email')
@@ -33,7 +33,7 @@ it('returns 400 if provided password is incorrect', async () => {
 });
 
 it('return 400 if new email is not a valid email', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const response = await request(app)
     .put('/api/users/update-email')
@@ -51,7 +51,7 @@ it('return 400 if new email is not a valid email', async () => {
 });
 
 it('return 200 if successfully update email', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const response = await request(app)
     .put('/api/users/update-email')

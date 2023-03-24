@@ -14,7 +14,7 @@ it('returns 401 if user is not logged in', async () => {
 });
 
 it('returns 400 if old password is missing or new password is missing', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   // old password is missing
   await request(app)
@@ -32,7 +32,7 @@ it('returns 400 if old password is missing or new password is missing', async ()
 });
 
 it('returns 400 if old password is incorrect', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const response = await request(app)
     .put('/api/users/update-password')
@@ -45,7 +45,7 @@ it('returns 400 if old password is incorrect', async () => {
 });
 
 it('returns 400 if new password is not valid', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   const response = await request(app)
     .put('/api/users/update-password')
@@ -58,7 +58,7 @@ it('returns 400 if new password is not valid', async () => {
 });
 
 it('successfully changes password', async () => {
-  const cookie = await signup();
+  const { cookie } = await signup();
 
   // successfully changes password
   await request(app)
