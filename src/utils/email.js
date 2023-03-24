@@ -67,6 +67,13 @@ const sendVerifyEmail = async ({ to, payload }) => {
   await sendEmail({ to, subject, pugFile, payload });
 };
 
+const sendResetPasswordEmail = async ({ to, payload }) => {
+  const pugFile = 'transactional/resetPassword.pug';
+  const subject = 'Do you forget your password?';
+
+  await sendEmail({ to, subject, pugFile, payload });
+};
+
 // (async () => {
 //   await sendVerifyEmail({
 //     to: 'nsnhatlong@gmail.com',
@@ -77,4 +84,4 @@ const sendVerifyEmail = async ({ to, payload }) => {
 //   });
 // })();
 
-module.exports = { sendVerifyEmail };
+module.exports = { sendVerifyEmail, sendResetPasswordEmail };

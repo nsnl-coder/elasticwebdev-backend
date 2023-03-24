@@ -20,7 +20,7 @@ router.post(
  * handle email verification
  * need to include verifyToken as query
  */
-router.post('/verify-email', userController.verifyEmail);
+router.post('/verify-email/:token', userController.verifyEmail);
 
 /**
  * request verification email again
@@ -30,6 +30,23 @@ router.post(
   requiredFields('email'),
   validateRequest(userSchema),
   userController.resendVerifyEmail,
+);
+
+/**
+ * use to request a reset password email
+ */
+router.post(
+  '/forgot-password',
+  requiredFields('email'),
+  validateRequest(userSchema),
+  userController.forgotPassword,
+);
+
+router.put(
+  '/reset-password/:token',
+  requiredFields('password'),
+  validateRequest(userSchema),
+  userController.resetPassword,
 );
 
 router.post(

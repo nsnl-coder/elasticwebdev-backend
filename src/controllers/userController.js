@@ -1,7 +1,7 @@
 const User = require('../models/userModel');
 const createError = require('../utils/createError');
 const jwt = require('jsonwebtoken');
-const { sendVerifyEmail } = require('../utils/email');
+const { sendVerifyEmail, sendResetPasswordEmail } = require('../utils/email');
 const crypto = require('crypto');
 
 // ============= COMMON CODE ====================
@@ -40,9 +40,9 @@ const signUp = async (req, res, next) => {
   const { email, fullname, shippingAddress, password } = req.body;
 
   // check if email already exists
-  const user = await User.findOne({ email });
+  const existedUser = await User.findOne({ email });
 
-  if (user) {
+  if (existedUser) {
     return next(
       createError(400, 'An account with provided email already exists'),
     );
@@ -51,7 +51,7 @@ const signUp = async (req, res, next) => {
   const { token, hashedToken } = createToken();
 
   // create new account
-  const newUser = await User.create({
+  const user = await User.create({
     email,
     password,
     fullname,
@@ -63,15 +63,15 @@ const signUp = async (req, res, next) => {
 
   // send email verification email to user
   await sendVerifyEmail({
-    to: newUser.email,
+    to: user.email,
     payload: {
-      verifyLink: `${process.env.FRONTEND_HOST}/auth?verifyToken=${token}`,
-      fullname: newUser.fullname,
+      verifyLink: `${process.env.FRONTEND_HOST}/auth/verify-email/${token}`,
+      fullname: user.fullname,
     },
   });
 
   // send back jwt token as cookie
-  const jwtToken = signJwtToken(newUser._id);
+  const jwtToken = signJwtToken(user._id);
 
   res.cookie('jwt', jwtToken, {
     httpOnly: true,
@@ -82,17 +82,12 @@ const signUp = async (req, res, next) => {
   res.status(201).json({
     status: 'success',
     message: 'Check your email inbox to verify your email!',
-    data: newUser,
+    data: user,
   });
 };
 
 const verifyEmail = async (req, res, next) => {
-  const verifyToken = req.query.verifyToken;
-
-  if (!verifyToken) {
-    return next(createError(400, 'Token is invalid or has expired!'));
-  }
-
+  const verifyToken = req.params.token;
   const hashedVerifyToken = getHashedToken(verifyToken);
 
   const user = await User.findOne({
@@ -169,7 +164,7 @@ const resendVerifyEmail = async (req, res, next) => {
   await sendVerifyEmail({
     to: user.email,
     payload: {
-      verifyLink: `https://amazon.com?verifyToken=${token}`,
+      verifyLink: `${process.env.FRONTEND_HOST}/auth/verify-email/${token}`,
       fullname: user.fullname,
     },
   });
@@ -243,6 +238,9 @@ const updateEmail = async (req, res, next) => {
   });
 };
 
+/**
+ * this route is for user still remember their password but want to change it
+ */
 const updatePassword = async (req, res, next) => {
   const { oldPassword, password } = req.body;
 
@@ -296,6 +294,79 @@ const updateUserInfo = async (req, res, next) => {
   });
 };
 
+/**
+ * use this route if user forgot their password
+ * send an email to user with a link. User can change their password from the link.
+ */
+const forgotPassword = async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  //
+  if (!user) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'An user with this email does not exist',
+    });
+  }
+
+  // send token to user
+  const { token, hashedToken } = createToken();
+
+  user.resetPasswordToken = hashedToken;
+  user.resetPasswordTokenExpires = Date.now() + 15 * 60 * 1000; // 15 min only
+  await user.save();
+
+  // send password reset email to user
+  await sendResetPasswordEmail({
+    to: user.email,
+    payload: {
+      resetLink: `${process.env.FRONTEND_HOST}/auth/reset-password/${token}`,
+      fullname: user.fullname,
+    },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'We sent an email! Please check your inbox!',
+  });
+};
+
+/**
+ * user this route to reset password for those who forgot their password
+ */
+const resetPassword = async (req, res, next) => {
+  const token = req.params.token;
+  const { password } = req.body;
+  const hashedToken = getHashedToken(token);
+
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordTokenExpires: {
+      $gt: Date.now(),
+    },
+  });
+
+  if (!user) {
+    return res.status(200).json({
+      status: 'fail',
+      message: 'The token is invalid or expired!',
+    });
+  }
+
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordTokenExpires = undefined;
+  user.passwordChangedAt = Date.now();
+  await user.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'You successfully change your password!',
+  });
+};
+
 const userController = {
   signUp,
   verifyEmail,
@@ -303,6 +374,8 @@ const userController = {
   signIn,
   signOut,
   updateEmail,
+  forgotPassword,
+  resetPassword,
   updatePassword,
   updateUserInfo,
   getCurrentUser,
