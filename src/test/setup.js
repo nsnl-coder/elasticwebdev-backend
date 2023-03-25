@@ -1,7 +1,5 @@
-const request = require('supertest');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
-const { app } = require('../config/app');
 
 let mongo;
 
@@ -16,7 +14,8 @@ beforeAll(async () => {
   process.env.JWT_SECRET = 'test_secret';
   process.env.JWT_EXPIRES_IN = '90d';
   process.env.VERIFY_EMAIL_TOKEN_EXPIRES = 24;
-  process.env.NODE_ENV = 'development';
+  process.env.RESET_PASSWORD_TOKEN_EXPIRES = 15;
+  process.env.NODE_ENV = 'production';
 
   mongo = await MongoMemoryServer.create();
   const mongoUri = mongo.getUri();

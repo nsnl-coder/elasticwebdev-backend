@@ -51,7 +51,7 @@ it('returns 400 if an user with provided email does not exist', async () => {
   expect(sendVerifyEmail).not.toHaveBeenCalled();
 });
 
-it.only('returns 400 if user already requested to resend email 3 times in 24 hours', async () => {
+it('returns 400 if user already requested to resend email 3 times in 24 hours', async () => {
   await signup({ isVerified: false });
   // first 3 times
   await requestResendEmail();

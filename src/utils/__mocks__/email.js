@@ -12,9 +12,23 @@ const sendVerifyEmail = jest.fn(({ to, payload }) => {
     throw new Error('verifyLink is not correct');
   }
 });
-const sendResetPasswordEmail = async ({ to, payload }) => {};
+
+const sendForgotPasswordEmail = jest.fn(async ({ to, payload }) => {
+  if (to !== 'test@test.com') {
+    throw new Error('receiver is not correct!');
+  }
+
+  if (payload.fullname !== 'test name') {
+    throw new Error('fullname is not correct');
+  }
+
+  // check if reset password link is correct
+  if (!payload.resetLink.includes('/auth/reset-password/')) {
+    throw new Error('verifyLink is not correct');
+  }
+});
 
 module.exports = {
   sendVerifyEmail,
-  sendResetPasswordEmail: jest.fn(() => sendResetPasswordEmail),
+  sendForgotPasswordEmail,
 };

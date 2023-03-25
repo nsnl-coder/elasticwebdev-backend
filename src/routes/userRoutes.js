@@ -56,6 +56,7 @@ router.post(
   userController.signIn,
 );
 
+// verified logged in user only
 router.use(loggedInUserOnly);
 
 router.put(

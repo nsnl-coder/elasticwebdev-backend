@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const hoursToMilliseconds = require('date-fns/hoursToMilliseconds');
+const minutesToMilliseconds = require('date-fns/minutesToMilliseconds');
 
 //
 const User = require('../models/userModel');
 const createError = require('../utils/createError');
-const { sendVerifyEmail, sendResetPasswordEmail } = require('../utils/email');
+const { sendVerifyEmail, sendForgotPasswordEmail } = require('../utils/email');
 
 // ============= COMMON CODE ====================
 
@@ -140,11 +141,13 @@ const resendVerifyEmail = async (req, res, next) => {
   }
 
   // check if old token is still valid
-  const duration = new Date(user.verifyTokenExpires) - new Date();
-  const oldTokenIsValid = duration > 0;
+  const emailLastSentAt =
+    new Date(user.verifyTokenExpires) -
+    hoursToMilliseconds(process.env.VERIFY_EMAIL_TOKEN_EXPIRES);
+  const difference = Date.now() - new Date(emailLastSentAt);
+  const isEmailSentYesterDay = difference < hoursToMilliseconds(24);
 
-  // if old token is still valid and 3 emails has been sent today, do not send email gain
-  if (user.verifyEmailsSent === 3 && oldTokenIsValid) {
+  if (user.verifyEmailsSent === 3 && isEmailSentYesterDay) {
     return res.status(400).json({
       status: 'fail',
       message:
@@ -154,7 +157,7 @@ const resendVerifyEmail = async (req, res, next) => {
 
   // if old token is not valid, reset number of email sents
   // this is to avoid user spam resend email route
-  if (!oldTokenIsValid) {
+  if (!isEmailSentYesterDay) {
     user.verifyEmailsSent = 0;
   }
 
@@ -313,13 +316,14 @@ const forgotPassword = async (req, res, next) => {
       message: 'An user with this email does not exist',
     });
   }
-  // check for last time user request forgot password email
+
   if (user.resetPasswordTokenExpires) {
-    const emailSentAt =
-      new Date(user.resetPasswordTokenExpires) - 15 * 60 * 1000;
-    const duration =
-      Date.now() - new Date(emailSentAt) - hoursToMilliseconds(24);
-    const isSentYesterday = duration < 0;
+    const emailLastSentAt =
+      new Date(user.resetPasswordTokenExpires) -
+      minutesToMilliseconds(process.env.RESET_PASSWORD_TOKEN_EXPIRES);
+
+    const difference = Date.now() - new Date(emailLastSentAt);
+    const isSentYesterday = difference < hoursToMilliseconds(24);
 
     if (isSentYesterday && user.resetPasswordEmailsSent === 3) {
       return res.status(400).json({
@@ -338,11 +342,14 @@ const forgotPassword = async (req, res, next) => {
 
   user.resetPasswordToken = hashedToken;
   user.resetPasswordEmailsSent++;
-  user.resetPasswordTokenExpires = Date.now() + 15 * 60 * 1000; // 15 min only
+
+  user.resetPasswordTokenExpires =
+    Date.now() +
+    minutesToMilliseconds(process.env.RESET_PASSWORD_TOKEN_EXPIRES); // 15 min only
   await user.save();
 
   // send password reset email to user
-  await sendResetPasswordEmail({
+  await sendForgotPasswordEmail({
     to: user.email,
     payload: {
       resetLink: `${process.env.FRONTEND_HOST}/auth/reset-password/${token}`,
@@ -372,7 +379,7 @@ const resetPassword = async (req, res, next) => {
   });
 
   if (!user) {
-    return res.status(200).json({
+    return res.status(400).json({
       status: 'fail',
       message: 'The token is invalid or expired!',
     });

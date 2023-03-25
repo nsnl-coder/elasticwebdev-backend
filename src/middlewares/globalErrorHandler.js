@@ -45,7 +45,7 @@ const globalErrorHandler = (error, req, res, next) => {
     formarttedError = error.message;
   }
 
-  if (message === 'Something wentwrong') {
+  if (formarttedError === 'Something wentwrong') {
     console.log(error);
   }
 
