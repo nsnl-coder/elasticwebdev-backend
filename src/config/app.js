@@ -1,6 +1,5 @@
 const express = require('express');
-// error handler for async middleware
-require('express-async-errors');
+const handler = require('express-async-errors'); // error handler for async middleware
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -26,7 +25,9 @@ app.use(express.static(path.join(__dirname, '..', '..', 'public')));
 app.use('/', indexRouter);
 
 app.use('*', (req, res, next) => {
-  res.status(404).json({ message: 'The route is not defined yet' });
+  res
+    .status(404)
+    .json({ message: 'The route is not defined yet', invalidRoute: req.path });
 });
 app.use(globalErrorHandler);
 

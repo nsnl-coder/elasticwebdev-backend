@@ -9,6 +9,14 @@ const userSchema = mongoose.Schema(
       lowercase: true,
       required: true,
     },
+    role: {
+      type: String,
+      enums: ['user', 'admin'],
+      default: 'user',
+    },
+    isPinned: {
+      type: Boolean,
+    },
     fullname: {
       type: String,
       lowercase: true,

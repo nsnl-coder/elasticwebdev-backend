@@ -54,28 +54,20 @@ global.delay = async (ms) => {
 };
 
 global.signup = async (payload) => {
-  const email = 'test@test.com';
-  const password = 'password';
-  const fullname = 'Test Name';
-
   // create verify token
   const { token, hashedToken } = createToken();
+
   // create an account
-
-  let isVerified = true;
-  if (payload?.isVerified === false) {
-    isVerified = false;
-  }
-
   const user = await User.create({
-    email,
-    password,
-    fullname,
-    isVerified,
+    email: 'test@test.com',
+    password: 'password',
+    fullname: 'Test Name',
+    isVerified: true,
     verifyToken: hashedToken,
     verifyTokenExpires:
       Date.now() + process.env.VERIFY_EMAIL_TOKEN_EXPIRES * 60 * 60 * 1000,
     verifyEmailsSent: 0,
+    ...payload,
   });
 
   // verify the account
@@ -83,7 +75,6 @@ global.signup = async (payload) => {
 
   return {
     user,
-    // this token is not hashed
     verifyToken: token,
     cookie: jwt2Cookie(jwt),
   };

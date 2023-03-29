@@ -1,6 +1,6 @@
 const express = require('express');
 const userController = require('../controllers/userController');
-const loggedInUserOnly = require('../middlewares/loggedInUserOnly');
+const requireLogin = require('../middlewares/requireLogin');
 const requiredFields = require('../middlewares/requiredFields');
 const validateRequest = require('../middlewares/validateRequest');
 const userSchema = require('../yup/userSchema');
@@ -57,7 +57,7 @@ router.post(
 );
 
 // verified logged in user only
-router.use(loggedInUserOnly);
+router.use(requireLogin);
 
 router.put(
   '/update-email',
