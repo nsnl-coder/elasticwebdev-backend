@@ -6,7 +6,8 @@ const minutesToMilliseconds = require('date-fns/minutesToMilliseconds');
 //
 const User = require('../models/userModel');
 const createError = require('../utils/createError');
-const { sendVerifyEmail, sendForgotPasswordEmail } = require('../utils/email');
+const { sendForgotPasswordEmail } = require('../utils/email');
+const { eventEmitter, MAIL_EVENTS } = require('../config/eventEmitter');
 
 // ============= COMMON CODE ====================
 
@@ -83,12 +84,10 @@ const signUp = async (req, res, next) => {
   });
 
   // send email verification email to user
-  await sendVerifyEmail({
+  eventEmitter.emit(MAIL_EVENTS.USER_SIGN_UP, {
     to: user.email,
-    payload: {
-      verifyLink: `${process.env.FRONTEND_HOST}/auth/verify-email/${token}`,
-      fullname: user.fullname,
-    },
+    fullname: user.fullname,
+    token,
   });
 
   const message = 'Check your email inbox to verify your email!';
@@ -171,12 +170,10 @@ const resendVerifyEmail = async (req, res, next) => {
   await user.save();
 
   // send email verification email to user
-  await sendVerifyEmail({
+  eventEmitter.emit(MAIL_EVENTS.USER_SIGN_UP, {
     to: user.email,
-    payload: {
-      verifyLink: `${process.env.FRONTEND_HOST}/auth/verify-email/${token}`,
-      fullname: user.fullname,
-    },
+    fullname: user.fullname,
+    token,
   });
 
   res.status(200).json({
@@ -337,7 +334,7 @@ const forgotPassword = async (req, res, next) => {
     }
   }
 
-  // send token to user
+  // save token to db
   const { token, hashedToken } = createToken();
 
   user.resetPasswordToken = hashedToken;
