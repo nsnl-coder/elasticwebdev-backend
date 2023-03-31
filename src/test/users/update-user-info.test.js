@@ -49,8 +49,6 @@ describe('success case', () => {
     // it does not change fullname
     expect(body.data.fullname).toBe('test name');
   });
-
-  it.todo('successfully updates profile image');
 });
 
 describe('auth check', () => {

@@ -8,6 +8,7 @@ jest.mock('../utils/email.js');
 
 const User = require('../models/userModel');
 const { signJwtToken, createToken } = require('../controllers/userController');
+const { findOneAndDelete } = require('../models/userModel');
 
 // function that run before all of tests
 beforeAll(async () => {
@@ -78,4 +79,8 @@ global.signup = async (payload) => {
     verifyToken: token,
     cookie: jwt2Cookie(jwt),
   };
+};
+
+global.deleteUser = async () => {
+  await User.findOneAndDelete({ email: 'test@test.com' });
 };
