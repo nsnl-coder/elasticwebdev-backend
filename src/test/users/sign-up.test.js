@@ -48,60 +48,24 @@ it('returns 400 if email is already in use', async () => {
   expect(body.message).toBe('An account with provided email already exists');
 });
 
-describe('missing required fields', () => {
-  it('returns 400 if email is missing ', async () => {
-    const { body } = await request(app)
-      .post('/api/users/sign-up')
-      .send({
-        password: 'password',
-        fullname: 'Test Name',
-      })
-      .expect(400);
-
-    // also check if it return correct message
-    expect(body.errors.includes('email is required')).toBe(true);
-  });
-
-  it('returns 400 if fullname is missing ', async () => {
+// check for required field
+it.each([['email'], ['password'], ['fullname']])(
+  'return error if %s is missing',
+  async (field) => {
     const { body } = await request(app)
       .post('/api/users/sign-up')
       .send({
         email: 'test@test.com',
         password: 'password',
+        fullname: 'test name',
+        [field]: undefined,
       })
       .expect(400);
 
     // also check if it return correct message
-    expect(body.errors.includes('fullname is required')).toBe(true);
-  });
-
-  it('returns 400 if password is missing ', async () => {
-    const { body } = await request(app)
-      .post('/api/users/sign-up')
-      .send({
-        email: 'test@test.com',
-        fullname: 'Test Name',
-      })
-      .expect(400);
-
-    // also check if it return correct message
-    expect(body.errors.includes('password is required')).toBe(true);
-  });
-
-  it('returns 400 if email, and password are missing ', async () => {
-    const { body } = await request(app)
-      .post('/api/users/sign-up')
-      .send({})
-      .expect(400);
-
-    // also check if it return correct error message
-    const isValidErrors =
-      body.errors.includes('email is required') &&
-      body.errors.includes('password is required');
-
-    expect(isValidErrors).toBe(true);
-  });
-});
+    expect(body.errors.includes(`${field} is required`)).toBe(true);
+  },
+);
 
 describe('data validation', () => {
   it('return 400 if email is not valid', async () => {
