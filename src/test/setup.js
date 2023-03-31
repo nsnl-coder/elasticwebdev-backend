@@ -61,7 +61,7 @@ global.signup = async (payload) => {
   const user = await User.create({
     email: 'test@test.com',
     password: 'password',
-    fullname: 'Test Name',
+    fullname: 'test name',
     isVerified: true,
     verifyToken: hashedToken,
     verifyTokenExpires:

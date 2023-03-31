@@ -1,8 +1,8 @@
 const express = require('express');
+const { requiredFields, validateRequest } = require('yup-schemas');
+//
 const userController = require('../controllers/userController');
 const requireLogin = require('../middlewares/requireLogin');
-const requiredFields = require('../middlewares/requiredFields');
-const validateRequest = require('../middlewares/validateRequest');
 const userSchema = require('../yup/userSchema');
 
 const router = express.Router();

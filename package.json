@@ -44,7 +44,7 @@
     "uuid": "^9.0.0",
     "validator": "^13.9.0",
     "yup": "^1.0.2",
-    "yup-schemas": "^1.0.11"
+    "yup-schemas": "^1.0.19"
   },
   "devDependencies": {
     "express-gg": "^1.0.11",

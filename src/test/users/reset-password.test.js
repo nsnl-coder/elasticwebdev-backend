@@ -3,7 +3,7 @@ const { app } = require('../../config/app');
 const { createToken } = require('../../controllers/userController');
 const User = require('../../models/userModel');
 
-it('returns 200 & successfully changed password with correct token', async () => {
+it('should change password with correct token', async () => {
   await signup();
 
   // send request to get forgot password email
@@ -37,6 +37,7 @@ it('returns 200 & successfully changed password with correct token', async () =>
     .post(`/api/users/sign-in`)
     .send({ email: 'test@test.com', password: 'newpassword' })
     .expect(200);
+
   // login with old password
   await request(app)
     .post(`/api/users/sign-in`)
@@ -53,30 +54,32 @@ it('returns 400 if the password is missing', async () => {
   expect(body.errors).toContain('password is required');
 });
 
-it('returns 400 & fails to change password with invalid token', async () => {
-  const { body } = await request(app)
-    .put(`/api/users/reset-password/some-fake-token`)
-    .send({ password: 'newpassword' })
-    .expect(400);
+describe('invalid token', () => {
+  it('returns 400 & fails to change password with random token', async () => {
+    const { body } = await request(app)
+      .put(`/api/users/reset-password/some-fake-token`)
+      .send({ password: 'newpassword' })
+      .expect(400);
 
-  expect(body.message).toEqual('The token is invalid or expired!');
-});
+    expect(body.message).toEqual('The token is invalid or expired!');
+  });
 
-it('returns 400 & fails to change password with expired token', async () => {
-  await signup();
+  it('returns 400 & fails to change password with expired token', async () => {
+    await signup();
 
-  // because token is not saved to db, need to fake it
-  const { token, hashedToken } = createToken();
-  const user = await User.findOne({ email: 'test@test.com' });
-  user.resetPasswordToken = hashedToken;
-  user.resetPasswordTokenExpires = Date.now() - 15 * 60 * 60;
-  await user.save();
+    // because token is not saved to db, need to fake it
+    const { token, hashedToken } = createToken();
+    const user = await User.findOne({ email: 'test@test.com' });
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordTokenExpires = Date.now() - 15 * 60 * 60;
+    await user.save();
 
-  // can not change password when time is expired
-  const { body } = await request(app)
-    .put(`/api/users/reset-password/${token}`)
-    .send({ password: 'newpassword' })
-    .expect(400);
-  //
-  expect(body.message).toEqual('The token is invalid or expired!');
+    // can not change password when time is expired
+    const { body } = await request(app)
+      .put(`/api/users/reset-password/${token}`)
+      .send({ password: 'newpassword' })
+      .expect(400);
+    //
+    expect(body.message).toEqual('The token is invalid or expired!');
+  });
 });

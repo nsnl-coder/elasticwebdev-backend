@@ -6,7 +6,7 @@ it('successfully signs out', async () => {
 
   const response = await request(app).post('/api/users/sign-out').expect(200);
 
-  // check if error message is correct
+  // check if response message is correct
   const cookie = response.get('Set-Cookie');
   expect(cookie).toEqual(['jwt=; Path=/']);
 });

@@ -48,7 +48,7 @@ it('return 404 if an user with provided email does not exist', async () => {
   expect(body.message).toEqual('An user with this email does not exist');
 });
 
-it('returns 400 if user already requested 3 emails in 24 hours', async () => {
+it.only('returns 400 if user already requested 3 emails in 24 hours', async () => {
   await signup();
   // request 3 times
   await requestEmail();

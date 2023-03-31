@@ -6,61 +6,30 @@ const userSchema = mongoose.Schema(
   {
     email: {
       type: String,
-      lowercase: true,
-      required: true,
+      unique: true,
     },
-    role: {
-      type: String,
-      enums: ['user', 'admin'],
-      default: 'user',
-    },
-    isPinned: {
-      type: Boolean,
-    },
-    fullname: {
-      type: String,
-      lowercase: true,
-      required: true,
-    },
-    shippingAddress: {
-      type: String,
-    },
-    phone: {
-      type: String,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    profileImage: {
-      type: String,
-      default:
-        'https://soccerpointeclaire.com/wp-content/uploads/2021/06/default-profile-pic-e1513291410505.jpg',
-    },
-    passwordChangedAt: {
-      type: Date,
-    },
-    resetPasswordToken: {
-      type: String,
-    },
-    resetPasswordTokenExpires: {
-      type: Date,
-    },
+    role: String,
+    isPinned: Boolean,
+    fullname: String,
+    shippingAddress: String,
+    phone: String,
+    password: String,
+    profileImage: String,
+    //
+    passwordChangedAt: Date,
+    resetPasswordToken: String,
+    resetPasswordTokenExpires: Date,
     resetPasswordEmailsSent: {
       type: Number,
       default: 0,
     },
+    //
     isVerified: {
       type: Boolean,
       default: false,
     },
-    verifyToken: {
-      type: String,
-    },
-    verifyTokenExpires: {
-      type: Date,
-    },
-    // make sure that an user can only request 5 verification email resend max in 1 day
+    verifyToken: String,
+    verifyTokenExpires: Date,
     verifyEmailsSent: {
       type: Number,
       default: 0,
@@ -93,12 +62,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// exclude __v field
-userSchema.pre(/^find/, function (next) {
-  this.select('-__v -updatedAt');
-  next();
-});
-
 //  create reset password token
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
@@ -112,10 +75,5 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-const userModel = mongoose.model('user', userSchema);
-
-module.exports = userModel;
-
 const User = mongoose.model('user', userSchema);
-
 module.exports = User;
