@@ -4,16 +4,13 @@ const { createCollection } = require('./utils');
 
 let cookie;
 
-beforeEach(() => {
-  cookie = '';
+beforeEach(async () => {
+  const { cookie: newCookie } = await signup({ role: 'admin' });
+  cookie = newCookie;
 });
 
 // TODO:
-// 1. if public route => dont need auth check
-// 2. if requireLogin => need first 2
-// 3. if requireRole => need all
-
-describe.skip('auth check', () => {
+describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
     cookie = '';
     const response = await request(app)
@@ -104,7 +101,9 @@ it('should return error if deleteList is non-existent ObjectId', async () => {
     })
     .expect(404);
 
-  expect(response.body.message).toEqual('Can not find collections with provided ids');
+  expect(response.body.message).toEqual(
+    'Can not find collections with provided ids',
+  );
 });
 
 it('should delete collections if deleteList contains at least an existent objectid', async () => {

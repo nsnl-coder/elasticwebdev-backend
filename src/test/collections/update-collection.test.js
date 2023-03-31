@@ -9,7 +9,24 @@ beforeEach(async () => {
   cookie = newCookie;
 });
 
-describe.skip('auth check', () => {
+it('shoud update the collection', async () => {
+  const collection = await createCollection();
+  expect(collection.test_number).toEqual(10);
+
+  const { body } = await request(app)
+    .put(`/api/collections/${collection._id}`)
+    .send({
+      name: 'updated',
+      isPinned: true,
+    })
+    .set('Cookie', cookie)
+    .expect(200);
+
+  expect(body.data.name).toEqual('updated');
+  expect(body.data.isPinned).toEqual(true);
+});
+
+describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
     cookie = '';
     const response = await request(app)
@@ -54,34 +71,17 @@ describe.skip('auth check', () => {
   });
 });
 
-describe.skip('data validation', () => {
-  it('should return error if validation fail', async () => {
-    const { body } = await request(app)
+describe('data validation', () => {
+  it('should return error if pass string to isPinned', async () => {
+    await request(app)
       .put('/api/collections')
-      .send({})
+      .send({ isPinned: 'invalid' })
       .set('Cookie', cookie)
       .expect(400);
   });
 });
 
 // ===========================================
-
-it('shoud update the collection', async () => {
-  const collection = await createCollection();
-  expect(collection.test_number).toEqual(10);
-
-  const { body } = await request(app)
-    .put(`/api/collections/${collection._id}`)
-    .send({
-      test_number: 24,
-      test_string: 'updated',
-    })
-    .set('Cookie', cookie)
-    .expect(200);
-
-  expect(body.data.test_number).toEqual(24);
-  expect(body.data.test_string).toEqual('updated');
-});
 
 it('should return error if objectid is not valid', async () => {
   const { body } = await request(app)

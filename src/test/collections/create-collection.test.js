@@ -8,11 +8,6 @@ beforeEach(async () => {
   cookie = newCookie;
 });
 
-// TODO:
-// 1. if public route => dont need auth check
-// 2. if requireLogin => need first 2
-// 3. if requireRole => need all
-
 it('returns 200 & successfully creates collection', async () => {
   const { body } = await request(app)
     .post('/api/collections')

@@ -10,7 +10,7 @@ beforeEach(() => {
 
 // ===================================================
 
-it.only('returns 200 & successfully receives requested collection', async () => {
+it('returns 200 & successfully receives requested collection', async () => {
   const collection = await createCollection();
   const response = await request(app)
     .get(`/api/collections/${collection._id}`)

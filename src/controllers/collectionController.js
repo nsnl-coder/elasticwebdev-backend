@@ -123,6 +123,13 @@ const updateManyCollections = async (req, res, next) => {
     { name, photo, isPinned },
   );
 
+  if (modifiedCount !== updateList.length) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Something went wrong!',
+    });
+  }
+
   res.status(200).json({
     status: 'success',
     modifiedCount,

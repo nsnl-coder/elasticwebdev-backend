@@ -4,16 +4,12 @@ const { createCollection } = require('./utils');
 
 let cookie;
 
-beforeEach(() => {
-  cookie = '';
+beforeEach(async () => {
+  const { cookie: newCookie } = await signup({ role: 'admin' });
+  cookie = newCookie;
 });
 
-// TODO:
-// 1. if public route => dont need auth check
-// 2. if requireLogin => need first 2
-// 3. if requireRole => need all
-
-describe.skip('auth check', () => {
+describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
     cookie = '';
     const response = await request(app)

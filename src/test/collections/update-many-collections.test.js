@@ -4,11 +4,12 @@ const { createCollection } = require('./utils');
 
 let cookie;
 
-beforeEach(() => {
-  cookie = '';
+beforeEach(async () => {
+  const { cookie: newCookie } = await signup({ role: 'admin' });
+  cookie = newCookie;
 });
 
-describe.skip('auth check', () => {
+describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
     cookie = '';
     const response = await request(app)
@@ -53,11 +54,13 @@ describe.skip('auth check', () => {
   });
 });
 
-describe.skip('data validation', () => {
-  it('should return error if validation fail', async () => {
-    const { body } = await request(app)
+describe('data validation', () => {
+  it('should return error if pass string to isPinned', async () => {
+    await request(app)
       .put('/api/collections')
-      .send({})
+      .send({
+        isPinned: 'bad-data',
+      })
       .set('Cookie', cookie)
       .expect(400);
   });
@@ -66,22 +69,28 @@ describe.skip('data validation', () => {
 // =====================================================
 
 it('returns 200 & successfully update the collections', async () => {
-  let collection1 = await createCollection();
-  let collection2 = await createCollection();
+  const payload = {
+    test_number: undefined,
+    test_string: undefined,
+    test_any: undefined,
+  };
 
-  expect(collection1.test_number).toEqual(10);
-  expect(collection2.test_number).toEqual(10);
+  let collection1 = await createCollection(payload);
+  let collection2 = await createCollection(payload);
 
   // update collection
   const id1 = collection1._id;
   const id2 = collection2._id;
+
+  expect(id1).toBeDefined();
+  expect(id2).toBeDefined();
 
   const response = await request(app)
     .put('/api/collections')
     .set('Cookie', cookie)
     .send({
       updateList: [id1, id2],
-      test_number: 24,
+      isPinned: true,
     })
     .expect(200);
 
@@ -93,13 +102,7 @@ it('returns 200 & successfully update the collections', async () => {
     .set('Cookie', cookie)
     .expect(200);
 
-  collection2 = await request(app)
-    .get(`/api/collections/${id2}`)
-    .set('Cookie', cookie)
-    .expect(200);
-
-  expect(collection1.body.data.test_number).toEqual(24);
-  expect(collection2.body.data.test_number).toEqual(24);
+  expect(collection1.body.data.isPinned).toEqual(true);
 });
 
 it('should return error if updateList contains invalid objectid', async () => {
@@ -126,5 +129,7 @@ it('should return error if updateList contains non-existent objectid', async () 
     .set('Cookie', cookie)
     .expect(404);
 
-  expect(response.body.message).toEqual('Can not find collection with provided ids');
+  expect(response.body.message).toEqual(
+    'Can not find collection with provided ids',
+  );
 });
