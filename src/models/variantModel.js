@@ -8,7 +8,10 @@ const variantSchema = mongoose.Schema(
     },
     options: [
       {
-        optionName: String,
+        optionName: {
+          type: String,
+          default: 'unnamed option',
+        },
         photo: String,
       },
     ],

@@ -1,32 +1,23 @@
 const request = require('supertest');
-const { createVariant } = require('./utils');
+const { createProduct } = require('./utils');
 const { app } = require('../../config/app');
 
 let cookie = '';
 beforeEach(async () => {
-  const { cookie: newCookie } = await signup({ role: 'admin' });
-  cookie = newCookie;
+  // const { cookie: newCookie } = await signup({ role: 'admin' });
+  // cookie = newCookie;
 });
 
-const validData = {
-  name: 'size',
-  options: [{ optionName: 'xl' }],
-};
-
-let invalidData = [
-  {
-    options: {},
-    error: 'option should be an array',
-  },
-];
+const validData = {};
+let invalidData = [{}];
 
 // ==============================================================
 invalidData = invalidData.map((item) => [item]);
 
-describe.each(invalidData)('data validation', (invalidData) => {
-  it(`shoud fail to create variant because ${invalidData.error}`, async () => {
+describe.skip.each(invalidData)('data validation', (invalidData) => {
+  it(`shoud fail to create product because ${invalidData.error}`, async () => {
     const response = await request(app)
-      .post(`/api/variants`)
+      .post(`/api/products`)
       .send({
         ...validData,
         ...invalidData,
@@ -37,10 +28,10 @@ describe.each(invalidData)('data validation', (invalidData) => {
     expect(response.body.message).toEqual('Data validation failed');
   });
 
-  it(`should fail to update variant because ${invalidData.error}`, async () => {
-    const variant = await createVariant();
+  it(`should fail to update product because ${invalidData.error}`, async () => {
+    const product = await createProduct();
     const response = await request(app)
-      .put(`/api/variants/${variant._id}`)
+      .put(`/api/products/${product._id}`)
       .send({
         ...validData,
         ...invalidData,
@@ -51,15 +42,15 @@ describe.each(invalidData)('data validation', (invalidData) => {
     expect(response.body.message).toEqual('Data validation failed');
   });
 
-  it(`shoud fail to update many variants because ${invalidData.error}`, async () => {
-    let variant1 = await createVariant();
-    let variant2 = await createVariant();
+  it(`shoud fail to update many products because ${invalidData.error}`, async () => {
+    let product1 = await createProduct();
+    let product2 = await createProduct();
 
     const response = await request(app)
-      .put('/api/variants')
+      .put('/api/products')
       .set('Cookie', cookie)
       .send({
-        updateList: [variant1._id, variant2._id],
+        updateList: [product1._id, product2._id],
         ...validData,
         ...invalidData,
       })

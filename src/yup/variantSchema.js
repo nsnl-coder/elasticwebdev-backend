@@ -3,7 +3,7 @@ const { object, number, string, array } = require('yup');
 const { reqQuery, reqParams, objectIdArray } = require('yup-schemas');
 
 const optionSchema = object({
-  optionName: string().max(255).required(),
+  optionName: string().max(255),
   photo: string().max(255),
 });
 
