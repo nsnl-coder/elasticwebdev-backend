@@ -48,7 +48,7 @@
     "yup-schemas": "^1.0.19"
   },
   "devDependencies": {
-    "express-gg": "^1.0.23",
+    "express-gg": "^1.0.24",
     "jest": "^29.5.0",
     "mongodb-memory-server": "^8.12.1",
     "nodemon": "^2.0.21",

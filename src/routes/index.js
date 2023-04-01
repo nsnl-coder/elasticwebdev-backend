@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // #insert__routers
+router.use("/api/variants",require("./variantRoutes.js"))
 router.use("/api/collections",require("./collectionRoutes.js"))
 
 router.use('/api/users', require('./userRoutes'));
