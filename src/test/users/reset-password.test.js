@@ -1,7 +1,7 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
 const { createToken } = require('../../controllers/userController');
-const User = require('../../models/userModel');
+const { User } = require('../../models/userModel');
 
 it('should change password with correct token', async () => {
   await signup();

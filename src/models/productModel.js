@@ -18,7 +18,10 @@ const productSchema = mongoose.Schema(
     },
     images: [String],
     previewImages: [String],
-    collections: [String],
+    collections: [{
+	type:mongoose.Schema.Types.ObjectId,
+	ref:"collection"	    
+}],
     variants: [
       {
         name: {

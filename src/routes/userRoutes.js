@@ -1,8 +1,10 @@
 const express = require('express');
 const { requiredFields, validateRequest } = require('yup-schemas');
+const { requireLogin } = require('express-common-middlewares');
+
 //
+const { User } = require('../models/userModel');
 const userController = require('../controllers/userController');
-const requireLogin = require('../middlewares/requireLogin');
 const userSchema = require('../yup/userSchema');
 
 const router = express.Router();
@@ -18,7 +20,6 @@ router.post(
 
 /**
  * handle email verification
- * need to include verifyToken as query
  */
 router.post('/verify-email/:token', userController.verifyEmail);
 
@@ -57,7 +58,7 @@ router.post(
 );
 
 // verified logged in user only
-router.use(requireLogin);
+router.use(requireLogin(User));
 
 router.put(
   '/update-email',

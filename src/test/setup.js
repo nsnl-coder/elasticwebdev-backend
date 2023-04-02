@@ -3,12 +3,11 @@ const mongoose = require('mongoose');
 
 let mongo;
 
+const { User } = require('../models/userModel');
+const { signJwtToken, createToken } = require('../controllers/userController');
+
 // mock the email module
 jest.mock('../utils/email.js');
-
-const User = require('../models/userModel');
-const { signJwtToken, createToken } = require('../controllers/userController');
-const { findOneAndDelete } = require('../models/userModel');
 
 // function that run before all of tests
 beforeAll(async () => {

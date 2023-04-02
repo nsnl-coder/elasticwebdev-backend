@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
-const { createCollection } = require('../../mock/collections/utils');
+const { createCollection } = require('./utils');
 
 let cookie;
 

@@ -1,14 +1,15 @@
 const express = require('express');
 const { validateRequest, requiredFields } = require('yup-schemas');
-const requireLogin = require('../middlewares/requireLogin');
-const requireRole = require('../middlewares/requireRole');
 
+//
+const { User } = require('../models/userModel');
 const variantSchema = require('../yup/variantSchema');
 const variantController = require('../controllers/variantController');
+const { requireLogin, requireRole } = require('express-common-middlewares');
 
 const router = express.Router();
 
-router.use(requireLogin);
+router.use(requireLogin(User));
 router.use(requireRole('admin'));
 
 router.get(

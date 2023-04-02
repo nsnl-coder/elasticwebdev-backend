@@ -4,8 +4,7 @@ const hoursToMilliseconds = require('date-fns/hoursToMilliseconds');
 const minutesToMilliseconds = require('date-fns/minutesToMilliseconds');
 
 //
-const User = require('../models/userModel');
-const createError = require('../utils/createError');
+const { User } = require('../models/userModel');
 const { sendForgotPasswordEmail } = require('../utils/email');
 const { eventEmitter, MAIL_EVENTS } = require('../config/eventEmitter');
 
@@ -66,9 +65,10 @@ const signUp = async (req, res, next) => {
   const existedUser = await User.findOne({ email });
 
   if (existedUser) {
-    return next(
-      createError(400, 'An account with provided email already exists'),
-    );
+    return res.status(400).json({
+      status: 'fail',
+      message: 'An account with provided email already exists',
+    });
   }
 
   const { token, hashedToken } = createToken();
@@ -104,7 +104,10 @@ const verifyEmail = async (req, res, next) => {
   });
 
   if (!user) {
-    return next(createError(400, 'Token is invalid or has expired!'));
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Token is invalid or has expired!',
+    });
   }
 
   user.isVerified = true;
@@ -114,7 +117,6 @@ const verifyEmail = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    // data: user,
     message: 'Your email has been verified!',
   });
 };
@@ -192,7 +194,10 @@ const signIn = async (req, res, next) => {
   const isLoginValid = user && (await user.isLoginPasswordCorrect(password));
 
   if (!isLoginValid) {
-    return next(createError(400, 'Invalid email or password'));
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Invalid email or password',
+    });
   }
 
   // return cookie
@@ -229,7 +234,10 @@ const updateEmail = async (req, res, next) => {
   const isPasswordCorrect = await user.isLoginPasswordCorrect(password);
 
   if (!isPasswordCorrect) {
-    return next(createError(400, 'Password is incorrect'));
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Password is incorrect',
+    });
   }
 
   const updatedUser = await User.findByIdAndUpdate(
@@ -254,9 +262,11 @@ const updatePassword = async (req, res, next) => {
   const isPasswordCorrect = await user.isLoginPasswordCorrect(oldPassword);
 
   if (!isPasswordCorrect) {
-    return next(createError(400, 'Password is incorrect'));
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Password is incorrect',
+    });
   }
-
   user.password = password;
   await user.save();
 

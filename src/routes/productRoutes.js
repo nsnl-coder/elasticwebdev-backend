@@ -1,13 +1,16 @@
 const express = require('express');
 const { validateRequest } = require('yup-schemas');
+const {
+  requireLogin,
+  requireRole,
+  checkIdExistence,
+} = require('express-common-middlewares');
 
 //
-const requireLogin = require('../middlewares/requireLogin');
-const requireRole = require('../middlewares/requireRole');
-const validateIdExistence = require('../middlewares/validateIdExistence');
 const productSchema = require('../yup/productSchema');
 const productController = require('../controllers/productController');
-
+const { User } = require('../models/userModel');
+const { Collection } = require('../models/collectionModel');
 const router = express.Router();
 
 router.get(
@@ -21,14 +24,13 @@ router.get(
   productController.getManyProducts,
 );
 
-router.use(requireLogin);
+router.use(requireLogin(User));
 router.use(requireRole('admin'));
 
 router.post(
   '/',
   validateRequest(productSchema),
-  // i'm stopping here to write new package
-  validateIdExistence(collection),
+  checkIdExistence('collections', Collection),
   productController.createProduct,
 );
 

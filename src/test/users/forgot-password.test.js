@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
-const User = require('../../models/userModel');
+const { User } = require('../../models/userModel');
 const { sendForgotPasswordEmail } = require('../../utils/email');
 
 const requestEmail = async () => {

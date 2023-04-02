@@ -2,8 +2,6 @@ const request = require('supertest');
 const { app } = require('../../config/app');
 const { signJwtToken } = require('../../controllers/userController');
 
-// this route can test functionality of loggedInUserOnly middleware
-
 it('returns user data if user signed in', async () => {
   const { cookie } = await signup();
 
@@ -125,6 +123,6 @@ it('can not get current user using old jwt token if user recently change their p
     .expect(400);
 
   expect(body.message).toEqual(
-    'You recently changed password,please login again!',
+    'You recently changed password, please login again!',
   );
 });

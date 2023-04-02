@@ -1,10 +1,11 @@
 const express = require('express');
 const { validateRequest } = require('yup-schemas');
-const requireLogin = require('../middlewares/requireLogin');
-const requireRole = require('../middlewares/requireRole');
+const { requireLogin, requireRole } = require('express-common-middlewares');
 
+//
 const collectionSchema = require('../yup/collectionSchema');
 const collectionController = require('../controllers/collectionController');
+const { User } = require('../models/userModel');
 
 const router = express.Router();
 
@@ -20,7 +21,7 @@ router.get(
   collectionController.getManyCollections,
 );
 
-router.use(requireLogin);
+router.use(requireLogin(User));
 router.use(requireRole('admin'));
 
 router.post(
