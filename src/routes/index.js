@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // #insert__routers
+router.use("/api/shippings",require("./shippingRoutes.js"))
 router.use('/api/coupons', require('./couponRoutes.js'));
 router.use('/api/orders', require('./orderRoutes.js'));
 router.use('/api/products', require('./productRoutes.js'));
