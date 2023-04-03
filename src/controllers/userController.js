@@ -275,7 +275,15 @@ const updatePassword = async (req, res, next) => {
 };
 
 const updateUserInfo = async (req, res, next) => {
-  const { email, password, fullname, shippingAddress, phone } = req.body;
+  const {
+    email,
+    password,
+    fullname,
+    shippingAddress,
+    phone,
+    isPinned,
+    profileImage,
+  } = req.body;
 
   if (email) {
     return res.status(400).json({
@@ -297,6 +305,8 @@ const updateUserInfo = async (req, res, next) => {
       fullname,
       shippingAddress,
       phone,
+      isPinned,
+      profileImage,
     },
     { new: true },
   );
