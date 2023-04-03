@@ -4,13 +4,13 @@ const { reqQuery, reqParams, objectIdArray, objectId } = require('yup-schemas');
 
 const variantSchema = object({
   name: string().max(255),
-  options: [
-    {
+  options: array().of(
+    object({
       optionName: string().max(255),
       photo: string().max(255),
       price: number().max(99999),
-    },
-  ],
+    }),
+  ),
 });
 
 const productSchema = object({

@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const productSchema = mongoose.Schema(
   {
-    name: String,
+    name: {
+      type: String,
+      default: 'unnamed product',
+    },
     slug: String,
     status: String,
     overview: String,
@@ -18,10 +22,12 @@ const productSchema = mongoose.Schema(
     },
     images: [String],
     previewImages: [String],
-    collections: [{
-	type:mongoose.Schema.Types.ObjectId,
-	ref:"collection"	    
-}],
+    collections: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'collection',
+      },
+    ],
     variants: [
       {
         name: {
@@ -65,6 +71,16 @@ const productSchema = mongoose.Schema(
 
 productSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+productSchema.pre(/(updateMany|findOneAndUpdate)/, function (next) {
+  const payload = this.getUpdate();
+
+  if (payload.name) {
+    payload.slug = slugify(payload.name, { lower: true });
+  }
+
   next();
 });
 
