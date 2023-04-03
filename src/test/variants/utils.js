@@ -1,7 +1,7 @@
 const { Variant } = require('../../models/variantModel');
 
 const validVariantData = {
-  name: 'test variant name',
+  variantName: 'test variant name',
   options: [
     {
       optionName: 'test option1',

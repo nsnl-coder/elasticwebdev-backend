@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const variantSchema = mongoose.Schema(
   {
-    name: {
+    variantName: {
       type: String,
       default: 'default name',
     },

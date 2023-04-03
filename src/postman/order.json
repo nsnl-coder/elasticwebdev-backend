@@ -1,0 +1,189 @@
+{
+  "info": {
+    "_postman_id": "b30c58b4-79c3-4fcb-b979-c1e23434e2ca",
+    "name": "orders",
+    "description": "You can use CRUD to operate order or many orders data.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "22947388"
+  },
+  "item": [
+    {
+      "name": "create order",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/api/orders",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "orders"]
+        },
+        "description": "Create a new order."
+      },
+      "response": []
+    },
+    {
+      "name": "get order",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseurl}}/api/orders/63a8bae46871c1dc16410bc6",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "orders", "63a8bae46871c1dc16410bc6"]
+        },
+        "description": "Send request with order id to get order data."
+      },
+      "response": []
+    },
+    {
+      "name": "get many orders",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/api/orders",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "orders"],
+          "query": [
+            {
+              "key": "sort",
+              "value": "",
+              "description": "using this to sort returned data",
+              "disabled": true
+            },
+            {
+              "key": "itemsPerPage",
+              "value": "",
+              "description": "number of orders a page should contain (by default, itemsPerPage=20)",
+              "disabled": true
+            },
+            {
+              "key": "page",
+              "value": "",
+              "description": "page number (by default page = 1)",
+              "disabled": true
+            },
+            {
+              "key": "fields",
+              "value": "",
+              "description": "this will limit the fields that should contain inside a response",
+              "disabled": true
+            }
+          ]
+        },
+        "description": "Retrieve many orders.\n\nBy default, it will return first 20 orders found.\n\n#### **You can include queries to filter the results wanted:**\n\n- page:\n    - \"?page=4\": only return orders in page number 4\n- itemsPerPage:\n    - \"?itemsPerPage=10\": only return 10 orders maxium\n- fields:\n    - for example, \"?fields=name,status\" only return data with name and status. Other fields will be filtered out\n- sort:\n    - \"?sort=price\": sort by price in ascending order\n    - \"?sort=-price\": sort by price in descending order\n    - \"?sort=price,name\": sort by price then by name in asc order\n    - \"?sort=price,-name\": sort by price in asc order & name in desc order\n\n#### Aside from built-in queries ( page, itemsPerPage, fields, sort ), you can use custom queries with gt, lt, gte, lte operators.\n\n- \"?price=20\" : to get data with price equal 20\n- \"?price=20&status=active\" : price is 20 and status is active\n- \"?price=20,40,10\": price=20 or price=40 or price=10\n- \"?price=20&status=active&price=40\": price is 20 or 40, status is active\n- \"?price\\[gt\\]=4&price\\[lt\\]=40\": price greater than 4 and less then 40.\n    - \\[gt\\]: greater than\n    - \\[lt\\]: less than\n    - \\[gte\\]: greater or equal\n    - \\[lte\\]: less than or equal."
+      },
+      "response": []
+    },
+    {
+      "name": "update order",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/api/orders/63a8bae46871c1dc16410bc6",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "orders", "63a8bae46871c1dc16410bc6"]
+        },
+        "description": "Send updated data in request body and order id in request url to update order.\n\nIt will return error if order with provided id is not found."
+      },
+      "response": []
+    },
+    {
+      "name": "update many orders",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"updateList\":[\"63a8bae46871c1dc16410bc6\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/api/orders",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "orders"]
+        },
+        "description": "Send update data in request body. Additionally, you need to include \"updateList\" in request body. \"updateList\" should be array of order id, which you want to update.\n\nIt will return error if can not find any orders with ids provided in \"updateList\""
+      },
+      "response": []
+    },
+    {
+      "name": "delete order",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseurl}}/api/orders/63a8bae46871c1dc16410bc6",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "orders", "63a8bae46871c1dc16410bc6"]
+        },
+        "description": "Send request with order id in request url to delete order.\n\nIf a order with provided id does not exist, it will return error."
+      },
+      "response": []
+    },
+    {
+      "name": "delete many orders",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"deleteList\":[\"63a8bae46871c1dc16410bc6\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/api/orders",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "orders"]
+        },
+        "description": "Send update data in request body. Additionally, you need to include \"deleteList\" in request body. \"deleteList\" should be array of order id, which you want to update.\n\nIt will return error if can not find any orders with ids provided in \"deleteList\""
+      },
+      "response": []
+    }
+  ]
+}

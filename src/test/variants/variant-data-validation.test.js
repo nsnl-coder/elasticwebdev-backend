@@ -9,7 +9,7 @@ beforeEach(async () => {
 });
 
 let invalidData = [
-  { field: 'name', message: 'name too long', name: 's'.repeat(256) },
+  { field: 'name', message: 'name too long', variantName: 's'.repeat(256) },
   { field: 'options', message: 'options should be an array', options: {} },
   {
     field: 'options',

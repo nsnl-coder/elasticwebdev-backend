@@ -1,14 +1,14 @@
 const { Variant } = require('../models/variantModel');
 
 const createVariant = async (req, res, next) => {
-  let { name, options } = req.body;
+  let { variantName, options } = req.body;
 
   options = options.map((item) => ({
     optionName: item.optionName,
     photo: item.photo,
   }));
 
-  const variant = await Variant.create({ name, options });
+  const variant = await Variant.create({ variantName, options });
   res.status(201).json({ status: 'success', data: variant });
 };
 
@@ -79,7 +79,7 @@ const getManyVariants = async (req, res, next) => {
 
 const updateVariant = async (req, res, next) => {
   // TODO: need to destruct this body
-  let { name, options } = req.body;
+  let { variantName, options } = req.body;
 
   if (options) {
     options = options.map((item) => ({
@@ -90,7 +90,7 @@ const updateVariant = async (req, res, next) => {
 
   const variant = await Variant.findByIdAndUpdate(
     req.params.id,
-    { name, options },
+    { variantName, options },
     {
       new: true,
       runValidators: true,
@@ -128,7 +128,7 @@ const updateManyVariants = async (req, res, next) => {
     });
   }
 
-  let { name, options } = payload;
+  let { variantName, options } = payload;
 
   if (options) {
     options = options.map((item) => ({
@@ -143,7 +143,7 @@ const updateManyVariants = async (req, res, next) => {
         $in: updateList,
       },
     },
-    { name, options },
+    { variantName, options },
   );
 
   if (modifiedCount !== updateList.length) {

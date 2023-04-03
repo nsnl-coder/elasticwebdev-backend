@@ -30,7 +30,7 @@ const productSchema = mongoose.Schema(
     ],
     variants: [
       {
-        name: {
+        variantName: {
           type: String,
           default: 'unnamed variant',
         },

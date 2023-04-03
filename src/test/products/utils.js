@@ -17,7 +17,7 @@ const validProductData = {
   previewImages: ['link', 'link2'],
   variants: [
     {
-      name: 'size',
+      variantName: 'size',
       options: [
         { optionName: 'xl', price: 14, photo: 'photo-link' },
         { optionName: 'xxl', price: 24, photo: 'photo2-link' },
