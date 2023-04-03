@@ -1,18 +1,20 @@
 const { Collection } = require('../../models/collectionModel');
 
-// TODO:
-// 3. Handle data validation in updateCollection, updateManyCollections, createCollection (can copy code)
-// 5. Handle side effect when delete collection, or delete many collections
+const validCollectionData = {
+  name: 'test collection name',
+  photo: 'this-is-photo-link',
+  isPinned: true,
+};
 
 const createCollection = async (data) => {
-  const collection = await Collection.create({
+  const one = await Collection.create({
     test_string: 'testname',
     test_number: 10,
     test_any: 'draft',
     ...data,
   });
 
-  return JSON.parse(JSON.stringify(collection));
+  return JSON.parse(JSON.stringify(one));
 };
 
-module.exports = { createCollection };
+module.exports = { createCollection, validCollectionData };

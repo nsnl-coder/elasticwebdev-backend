@@ -113,10 +113,8 @@ const updateProduct = async (req, res, next) => {
     collections,
   } = req.body;
 
-  const product = await Product.findOneAndUpdate(
-    {
-      _id: req.params.id,
-    },
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
     {
       name,
       status,

@@ -1,5 +1,6 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
+const { validVariantData } = require('./utils');
 
 let cookie = '';
 
@@ -12,14 +13,10 @@ it('returns 200 & successfully creates variant', async () => {
   const { body } = await request(app)
     .post('/api/variants')
     .set('Cookie', cookie)
-    .send({
-      name: 'color',
-      options: [{ optionName: 'red' }],
-    })
+    .send(validVariantData)
     .expect(201);
 
-  expect(body.data.name).toBe('color');
-  expect(body.data.options[0].optionName).toBe('red');
+  expect(body.data).toMatchObject(validVariantData);
 });
 
 it.each([['options']])('return error if %s is missing', async (field) => {

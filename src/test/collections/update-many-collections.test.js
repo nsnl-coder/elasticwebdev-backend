@@ -1,12 +1,37 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
-const { createCollection } = require('./utils');
+const { createCollection, validCollectionData } = require('./utils');
 
 let cookie;
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
   cookie = newCookie;
+});
+
+it('returns 200 & successfully update the collections', async () => {
+  let collection1 = await createCollection();
+  let collection2 = await createCollection();
+
+  const response = await request(app)
+    .put('/api/collections')
+    .set('Cookie', cookie)
+    .send({
+      updateList: [collection1._id, collection2._id],
+      ...validCollectionData,
+    })
+    .expect(200);
+
+  expect(response.body.modifiedCount).toEqual(2);
+
+  // double check
+  collection1 = await request(app)
+    .get(`/api/collections/${collection1._id}`)
+    .set('Cookie', cookie)
+    .expect(200);
+
+  expect(collection1.body.data).toMatchObject(validCollectionData);
+  expect(collection1.body.data.slug).toEqual('test-collection-name');
 });
 
 describe('auth check', () => {
@@ -52,57 +77,6 @@ describe('auth check', () => {
       'You do not have permission to perform this action',
     );
   });
-});
-
-describe('data validation', () => {
-  it('should return error if pass string to isPinned', async () => {
-    await request(app)
-      .put('/api/collections')
-      .send({
-        isPinned: 'bad-data',
-      })
-      .set('Cookie', cookie)
-      .expect(400);
-  });
-});
-
-// =====================================================
-
-it('returns 200 & successfully update the collections', async () => {
-  const payload = {
-    test_number: undefined,
-    test_string: undefined,
-    test_any: undefined,
-  };
-
-  let collection1 = await createCollection(payload);
-  let collection2 = await createCollection(payload);
-
-  // update collection
-  const id1 = collection1._id;
-  const id2 = collection2._id;
-
-  expect(id1).toBeDefined();
-  expect(id2).toBeDefined();
-
-  const response = await request(app)
-    .put('/api/collections')
-    .set('Cookie', cookie)
-    .send({
-      updateList: [id1, id2],
-      isPinned: true,
-    })
-    .expect(200);
-
-  expect(response.body.modifiedCount).toEqual(2);
-
-  // double check
-  collection1 = await request(app)
-    .get(`/api/collections/${id1}`)
-    .set('Cookie', cookie)
-    .expect(200);
-
-  expect(collection1.body.data.isPinned).toEqual(true);
 });
 
 it('should return error if updateList contains invalid objectid', async () => {

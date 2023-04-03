@@ -5,7 +5,7 @@ const collectionSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      default: 'untitled collection',
+      default: 'unnamed collection',
     },
     photo: String,
     isPinned: Boolean,
@@ -26,6 +26,16 @@ const collectionSchema = mongoose.Schema(
 
 collectionSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+collectionSchema.pre(/(updateMany|findOneAndUpdate)/, function (next) {
+  const payload = this.getUpdate();
+
+  if (payload.name) {
+    payload.slug = slugify(payload.name, { lower: true });
+  }
+
   next();
 });
 

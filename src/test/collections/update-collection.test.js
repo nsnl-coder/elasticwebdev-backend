@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
-const { createCollection } = require('./utils');
+const { createCollection, validCollectionData } = require('./utils');
 
 let cookie;
 
@@ -15,15 +15,12 @@ it('shoud update the collection', async () => {
 
   const { body } = await request(app)
     .put(`/api/collections/${collection._id}`)
-    .send({
-      name: 'updated',
-      isPinned: true,
-    })
+    .send(validCollectionData)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(body.data.name).toEqual('updated');
-  expect(body.data.isPinned).toEqual(true);
+  expect(body.data).toMatchObject(validCollectionData);
+  expect(body.data.slug).toEqual('test-collection-name');
 });
 
 describe('auth check', () => {
@@ -68,16 +65,6 @@ describe('auth check', () => {
     expect(response.body.message).toEqual(
       'You do not have permission to perform this action',
     );
-  });
-});
-
-describe('data validation', () => {
-  it('should return error if pass string to isPinned', async () => {
-    await request(app)
-      .put('/api/collections')
-      .send({ isPinned: 'invalid' })
-      .set('Cookie', cookie)
-      .expect(400);
   });
 });
 

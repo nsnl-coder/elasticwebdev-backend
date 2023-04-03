@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
-const { createVariant } = require('./utils');
+const { createVariant, validVariantData } = require('./utils');
 
 let cookie = '';
 
@@ -11,20 +11,14 @@ beforeEach(async () => {
 
 it('shoud update the variant', async () => {
   const variant = await createVariant();
-  expect(variant.test_number).toEqual(10);
 
   const { body } = await request(app)
     .put(`/api/variants/${variant._id}`)
-    .send({
-      name: 'size',
-      options: [{ optionName: 'xl' }],
-      test_string: 'updated',
-    })
+    .send(validVariantData)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(body.data.name).toEqual('size');
-  expect(body.data.options[0].optionName).toEqual('xl');
+  expect(body.data).toMatchObject(validVariantData);
 });
 
 describe('auth check', () => {

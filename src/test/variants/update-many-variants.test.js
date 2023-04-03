@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
-const { createVariant } = require('./utils');
+const { createVariant, validVariantData } = require('./utils');
 
 let cookie = '';
 
@@ -13,19 +13,12 @@ it('returns 200 & successfully update the variants', async () => {
   let variant1 = await createVariant();
   let variant2 = await createVariant();
 
-  // update variant
-  const id1 = variant1._id;
-  const id2 = variant2._id;
-
-  expect(id1).toBeDefined();
-  expect(id2).toBeDefined();
-
   const response = await request(app)
     .put('/api/variants')
     .set('Cookie', cookie)
     .send({
-      updateList: [id1, id2],
-      name: 'new_name',
+      updateList: [variant1._id, variant2._id],
+      ...validVariantData,
     })
     .expect(200);
 
@@ -33,16 +26,16 @@ it('returns 200 & successfully update the variants', async () => {
 
   // double check
   variant1 = await request(app)
-    .get(`/api/variants/${id1}`)
+    .get(`/api/variants/${variant1._id}`)
     .set('Cookie', cookie)
     .expect(200);
-
   variant2 = await request(app)
-    .get(`/api/variants/${id2}`)
+    .get(`/api/variants/${variant2._id}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(variant1.body.data.name).toEqual('new_name');
+  expect(variant1.body.data).toMatchObject(validVariantData);
+  expect(variant2.body.data).toMatchObject(validVariantData);
 });
 
 describe('auth check', () => {

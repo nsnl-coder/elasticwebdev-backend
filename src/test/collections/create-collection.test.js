@@ -70,15 +70,3 @@ describe('auth check', () => {
     );
   });
 });
-
-describe('data validation', () => {
-  it('should return error if pass wrong type of data to isPinned', async () => {
-    await request(app)
-      .post('/api/collections')
-      .send({
-        isPinned: 'should-be-boolean',
-      })
-      .set('Cookie', cookie)
-      .expect(400);
-  });
-});

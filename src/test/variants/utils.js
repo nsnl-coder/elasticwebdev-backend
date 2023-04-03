@@ -1,11 +1,19 @@
 const { Variant } = require('../../models/variantModel');
 
-// TODO:
-// 3. Handle data validation in updateVariant, updateManyVariants, createVariant (can copy code)
-// 4. Handle objectid does not exist in req.body (if has)
-// 5. Handle side effect when delete variant, or delete many variants
+const validVariantData = {
+  name: 'test variant name',
+  options: [
+    {
+      optionName: 'test option1',
+      photo: 'photo-1',
+    },
+    {
+      optionName: 'test option2',
+      photo: 'photo-2',
+    },
+  ],
+};
 
-2512;
 const createVariant = async (data) => {
   const variant = await Variant.create({
     test_string: 'testname',
@@ -17,6 +25,4 @@ const createVariant = async (data) => {
   return JSON.parse(JSON.stringify(variant));
 };
 
-module.exports = { createVariant };
-
-2512;
+module.exports = { createVariant, validVariantData };
