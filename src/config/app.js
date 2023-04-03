@@ -5,9 +5,9 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const cors = require('cors');
+const { globalErrorHandler, routeNotFound } = require('express-common-middlewares');
 //
 const indexRouter = require('../routes/index');
-const globalErrorHandler = require('../middlewares/globalErrorHandler');
 
 const app = express();
 
@@ -24,15 +24,11 @@ app.use(express.static(path.join(__dirname, '..', '..', 'public')));
 
 app.use('/', indexRouter);
 
-app.use('*', (req, res, next) => {
-  res
-    .status(404)
-    .json({ message: 'The route is not defined yet', invalidRoute: req.path });
-});
+app.use(routeNotFound);
 app.use(globalErrorHandler);
 
-const PORT = process.env.PORT || 5000;
 
+const PORT = process.env.PORT || 5000;
 let server;
 
 if (process.env.NODE_ENV !== 'test') {

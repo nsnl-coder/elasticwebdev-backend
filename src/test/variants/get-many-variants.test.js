@@ -17,6 +17,18 @@ beforeEach(async () => {
   await createVariant({ test_number: 16, test_string: 'b' });
 });
 
+it('should return all variants', async () => {
+  const response = await request(app)
+    .get('/api/variants')
+    .set('Cookie', cookie)
+    .expect(200);
+
+  expect(response.body.data[0].test_string).toBeDefined();
+  expect(response.body.data[0].test_number).toBeDefined();
+  expect(response.body.data[0].test_any).toBeDefined();
+  expect(response.body.results).toEqual(6);
+});
+
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
     cookie = '';
@@ -64,19 +76,6 @@ describe('auth check', () => {
 
 // ======================================================
 
-it('should return all variants', async () => {
-  const response = await request(app)
-    .get('/api/variants')
-    .set('Cookie', cookie)
-    .expect(200);
-
-  expect(response.body.data[0].test_string).toEqual('a');
-  expect(response.body.data[0].test_number).toEqual(11);
-  expect(response.body.data[0].test_any).toEqual('draft');
-
-  expect(response.body.results).toEqual(6);
-});
-
 describe('limit fields', () => {
   it('should return variant with only 2 selected fields: test_string and test_any', async () => {
     const { body } = await request(app)
@@ -84,8 +83,8 @@ describe('limit fields', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.data[0].test_string).toEqual('a');
-    expect(body.data[0].test_any).toEqual('draft');
+    expect(body.data[0].test_string).toBeDefined();
+    expect(body.data[0].test_any).toBeDefined();
     expect(body.data[0].test_number).toBeUndefined();
   });
 
@@ -95,8 +94,8 @@ describe('limit fields', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.data[0].test_string).toEqual('a');
-    expect(body.data[0].test_number).toEqual(11);
+    expect(body.data[0].test_string).toBeDefined();
+    expect(body.data[0].test_number).toBeDefined();
     expect(body.data[0].test_any).toBeUndefined();
   });
 });

@@ -21,7 +21,7 @@ const productSchema = object({
     description: string().max(20000),
     isPinned: boolean(),
     price: number().min(0).max(99999),
-    discountPrice: number().when('price', (price, schema) =>
+    discountPrice: number().when('price', ([price], schema) =>
       schema.max(price, 'Discount price must be smaller than current price'),
     ),
     images: array().max(20).of(string().max(255)),

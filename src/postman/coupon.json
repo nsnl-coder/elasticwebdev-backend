@@ -1,0 +1,189 @@
+{
+  "info": {
+    "_postman_id": "b30c58b4-79c3-4fcb-b979-c1e23434e2ca",
+    "name": "coupons",
+    "description": "You can use CRUD to operate coupon or many coupons data.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "22947388"
+  },
+  "item": [
+    {
+      "name": "create coupon",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/api/coupons",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "coupons"]
+        },
+        "description": "Create a new coupon."
+      },
+      "response": []
+    },
+    {
+      "name": "get coupon",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseurl}}/api/coupons/63a8bae46871c1dc16410bc6",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "coupons", "63a8bae46871c1dc16410bc6"]
+        },
+        "description": "Send request with coupon id to get coupon data."
+      },
+      "response": []
+    },
+    {
+      "name": "get many coupons",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/api/coupons",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "coupons"],
+          "query": [
+            {
+              "key": "sort",
+              "value": "",
+              "description": "using this to sort returned data",
+              "disabled": true
+            },
+            {
+              "key": "itemsPerPage",
+              "value": "",
+              "description": "number of coupons a page should contain (by default, itemsPerPage=20)",
+              "disabled": true
+            },
+            {
+              "key": "page",
+              "value": "",
+              "description": "page number (by default page = 1)",
+              "disabled": true
+            },
+            {
+              "key": "fields",
+              "value": "",
+              "description": "this will limit the fields that should contain inside a response",
+              "disabled": true
+            }
+          ]
+        },
+        "description": "Retrieve many coupons.\n\nBy default, it will return first 20 coupons found.\n\n#### **You can include queries to filter the results wanted:**\n\n- page:\n    - \"?page=4\": only return coupons in page number 4\n- itemsPerPage:\n    - \"?itemsPerPage=10\": only return 10 coupons maxium\n- fields:\n    - for example, \"?fields=name,status\" only return data with name and status. Other fields will be filtered out\n- sort:\n    - \"?sort=price\": sort by price in ascending order\n    - \"?sort=-price\": sort by price in descending order\n    - \"?sort=price,name\": sort by price then by name in asc order\n    - \"?sort=price,-name\": sort by price in asc order & name in desc order\n\n#### Aside from built-in queries ( page, itemsPerPage, fields, sort ), you can use custom queries with gt, lt, gte, lte operators.\n\n- \"?price=20\" : to get data with price equal 20\n- \"?price=20&status=active\" : price is 20 and status is active\n- \"?price=20,40,10\": price=20 or price=40 or price=10\n- \"?price=20&status=active&price=40\": price is 20 or 40, status is active\n- \"?price\\[gt\\]=4&price\\[lt\\]=40\": price greater than 4 and less then 40.\n    - \\[gt\\]: greater than\n    - \\[lt\\]: less than\n    - \\[gte\\]: greater or equal\n    - \\[lte\\]: less than or equal."
+      },
+      "response": []
+    },
+    {
+      "name": "update coupon",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/api/coupons/63a8bae46871c1dc16410bc6",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "coupons", "63a8bae46871c1dc16410bc6"]
+        },
+        "description": "Send updated data in request body and coupon id in request url to update coupon.\n\nIt will return error if coupon with provided id is not found."
+      },
+      "response": []
+    },
+    {
+      "name": "update many coupons",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"updateList\":[\"63a8bae46871c1dc16410bc6\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/api/coupons",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "coupons"]
+        },
+        "description": "Send update data in request body. Additionally, you need to include \"updateList\" in request body. \"updateList\" should be array of coupon id, which you want to update.\n\nIt will return error if can not find any coupons with ids provided in \"updateList\""
+      },
+      "response": []
+    },
+    {
+      "name": "delete coupon",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseurl}}/api/coupons/63a8bae46871c1dc16410bc6",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "coupons", "63a8bae46871c1dc16410bc6"]
+        },
+        "description": "Send request with coupon id in request url to delete coupon.\n\nIf a coupon with provided id does not exist, it will return error."
+      },
+      "response": []
+    },
+    {
+      "name": "delete many coupons",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"deleteList\":[\"63a8bae46871c1dc16410bc6\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/api/coupons",
+          "host": ["{{baseurl}}"],
+          "path": ["api", "coupons"]
+        },
+        "description": "Send update data in request body. Additionally, you need to include \"deleteList\" in request body. \"deleteList\" should be array of coupon id, which you want to update.\n\nIt will return error if can not find any coupons with ids provided in \"deleteList\""
+      },
+      "response": []
+    }
+  ]
+}
