@@ -16,6 +16,7 @@ const createRating = async (data) => {
     test_any: 'draft',
     ...data,
     product: product._id,
+    createdBy: '642b8200fc13ae1d48f4cf20',
   });
 
   return JSON.parse(JSON.stringify(rating));
