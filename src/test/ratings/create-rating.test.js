@@ -25,6 +25,32 @@ it('returns 200 & successfully creates rating', async () => {
   expect(body.data).toMatchObject(validRatingData);
 });
 
+it('returns 200 & successfully creates rating', async () => {
+  const product = await createProduct();
+
+  await request(app)
+    .post('/api/ratings')
+    .set('Cookie', cookie)
+    .send({
+      ...validRatingData,
+      product: product._id,
+    })
+    .expect(201);
+
+  const { body } = await request(app)
+    .post('/api/ratings')
+    .set('Cookie', cookie)
+    .send({
+      ...validRatingData,
+      product: product._id,
+    })
+    .expect(400);
+
+  expect(body.message).toEqual(
+    'You already rated this product! You can delete or update your old rating!',
+  );
+});
+
 it('should not create rating if product not exist', async () => {
   await request(app)
     .post('/api/ratings')

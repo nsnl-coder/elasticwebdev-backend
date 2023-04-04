@@ -3,6 +3,20 @@ const { Rating } = require('../models/ratingModel');
 const createRating = async (req, res, next) => {
   const { product, stars, content } = req.body;
 
+  // check if user already rated product
+  const doesExist = await Rating.findOne({
+    product,
+    createdBy: req.user._id,
+  });
+
+  if (doesExist) {
+    return res.status(400).json({
+      status: 'fail',
+      message:
+        'You already rated this product! You can delete or update your old rating!',
+    });
+  }
+
   const rating = await Rating.create({
     createdBy: req.user._id,
     product,
