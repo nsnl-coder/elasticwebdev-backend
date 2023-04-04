@@ -4,12 +4,14 @@ const {
   requireLogin,
   requireRole,
   checkIdExistence,
+  requireOwnership,
 } = require('express-common-middlewares');
 //
 const ratingSchema = require('../yup/ratingSchema');
 const ratingController = require('../controllers/ratingController');
 const { User } = require('../models/userModel');
 const { Product } = require('../models/productModel');
+const { Rating } = require('../models/ratingModel');
 
 const router = express.Router();
 
@@ -26,12 +28,14 @@ router.post(
 router.put(
   '/:id',
   validateRequest(ratingSchema),
+  requireOwnership(Rating),
   ratingController.updateRating,
 );
 
 router.delete(
   '/:id',
   validateRequest(ratingSchema),
+  requireOwnership(Rating),
   ratingController.deleteRating,
 );
 

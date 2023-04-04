@@ -91,6 +91,22 @@ describe('auth check', () => {
   });
 });
 
+it('shoud not update the menu if parent menu does not exist', async () => {
+  const menu = await createMenu();
+
+  const { body } = await request(app)
+    .put(`/api/menus`)
+    .send({
+      updateList: [menu._id],
+      ...validMenuData,
+      parentMenu: '642b8200fc13ae1d48f4cf1d',
+    })
+    .set('Cookie', cookie)
+    .expect(404);
+
+  expect(body.message).toEqual('Can not find parentMenu with provided id');
+});
+
 it('should return error if updateList contains invalid objectid', async () => {
   const response = await request(app)
     .put('/api/menus')

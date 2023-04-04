@@ -9,7 +9,6 @@ const contactSchema = mongoose.Schema(
     content: String,
     isRead: Boolean,
     adminNotes: String,
-    userId: String,
     // testing purpose only
     test_string: String,
     test_number: Number,

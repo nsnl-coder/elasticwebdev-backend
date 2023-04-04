@@ -26,9 +26,26 @@ router.post(
 );
 router.get('/:id', validateRequest(menuSchema), menuController.getMenu);
 
-router.put('/:id', validateRequest(menuSchema), menuController.updateMenu);
-router.put('/', validateRequest(menuSchema), menuController.updateManyMenus);
-router.delete('/:id', validateRequest(menuSchema), menuController.deleteMenu);
+router.put(
+  '/:id',
+  validateRequest(menuSchema),
+  checkIdExistence('parentMenu', Menu),
+  menuController.updateMenu,
+);
+
+router.put(
+  '/',
+  validateRequest(menuSchema),
+  checkIdExistence('parentMenu', Menu),
+  menuController.updateManyMenus,
+);
+
+router.delete(
+  '/:id',
+  validateRequest(menuSchema),
+  checkIdExistence('parentMenu', Menu),
+  menuController.deleteMenu,
+);
 router.delete('/', validateRequest(menuSchema), menuController.deleteManyMenus);
 
 module.exports = router;

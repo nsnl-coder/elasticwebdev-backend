@@ -11,14 +11,33 @@ beforeEach(async () => {
 
 it('shoud update the menu', async () => {
   const menu = await createMenu();
+  const menu2 = await createMenu();
 
   const { body } = await request(app)
     .put(`/api/menus/${menu._id}`)
-    .send(validMenuData)
+    .send({
+      ...validMenuData,
+      parentMenu: menu2._id,
+    })
     .set('Cookie', cookie)
     .expect(200);
 
   expect(body.data).toMatchObject(validMenuData);
+});
+
+it('shoud not update the menu if parent menu does not exist', async () => {
+  const menu = await createMenu();
+
+  const { body } = await request(app)
+    .put(`/api/menus/${menu._id}`)
+    .send({
+      ...validMenuData,
+      parentMenu: '642b8200fc13ae1d48f4cf1d',
+    })
+    .set('Cookie', cookie)
+    .expect(404);
+
+  expect(body.message).toEqual('Can not find parentMenu with provided id');
 });
 
 describe('auth check', () => {

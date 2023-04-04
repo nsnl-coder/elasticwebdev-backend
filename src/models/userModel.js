@@ -8,7 +8,10 @@ const userSchema = mongoose.Schema(
       type: String,
       unique: true,
     },
-    role: String,
+    role: {
+      type: String,
+      enum: ['user', 'customer', 'admin'],
+    },
     isPinned: Boolean,
     fullname: String,
     shippingAddress: String,
