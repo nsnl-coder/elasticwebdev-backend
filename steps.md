@@ -8,13 +8,15 @@
 
 <!-- 4. Make sure to checkIdExistence if req.body contain objectid type -->
 
-5. Make sure to handle side effect when delete one or delete many
+<!-- 5. Make sure to handle side effect when delete one or delete many -->
 
-test file
+<!-- test file -->
 
-5. define valid data with all fields
-6. auth check
-7. data validation
+<!-- 5. define valid data with all fields -->
+<!-- 6. auth check -->
+
+<!-- 7. data validation -->
+
 8. checkIdExistence
 9. check for skipped/failed tests
 10. handle side-effect of delete, create

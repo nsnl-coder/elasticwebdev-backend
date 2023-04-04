@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // #insert__routers
+router.use("/api/menus",require("./menuRoutes.js"))
 router.use("/api/ratings",require("./ratingRoutes.js"))
 router.use("/api/contacts",require("./contactRoutes.js"))
 router.use("/api/shippings",require("./shippingRoutes.js"))
