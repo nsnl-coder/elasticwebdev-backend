@@ -9,7 +9,7 @@ beforeEach(async () => {
   cookie = newCookie;
 });
 
-it.only('shoud update the product', async () => {
+it('shoud update the product', async () => {
   const product = await createProduct();
   expect(product.test_number).toEqual(10);
 
@@ -23,6 +23,23 @@ it.only('shoud update the product', async () => {
 
   expect(body.data).toMatchObject(validProductData);
   expect(body.data.slug).toEqual('test-product-name');
+});
+
+it('shoud not update the product if collections ids do not exist', async () => {
+  const product = await createProduct();
+
+  const payload = {
+    ...validProductData,
+    collections: ['642b8200fc13ae1d48f4cf20', '642b8200fc13ae1d48f4cf21'],
+  };
+
+  const { body } = await request(app)
+    .put(`/api/products/${product._id}`)
+    .send(payload)
+    .set('Cookie', cookie)
+    .expect(404);
+
+  expect(body.message).toEqual('Can not find collections with provided ids');
 });
 
 describe('auth check', () => {

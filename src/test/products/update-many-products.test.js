@@ -9,7 +9,7 @@ beforeEach(async () => {
   cookie = newCookie;
 });
 
-it.only('returns 200 & successfully update the products', async () => {
+it('returns 200 & successfully update the products', async () => {
   let product1 = await createProduct();
   let product2 = await createProduct();
 
@@ -90,6 +90,21 @@ describe('auth check', () => {
       'You do not have permission to perform this action',
     );
   });
+});
+
+it('shoud not update the product if collections ids do not exist', async () => {
+  const payload = {
+    ...validProductData,
+    collections: ['642b8200fc13ae1d48f4cf20', '642b8200fc13ae1d48f4cf21'],
+  };
+
+  const { body } = await request(app)
+    .put(`/api/products`)
+    .send(payload)
+    .set('Cookie', cookie)
+    .expect(404);
+
+  expect(body.message).toEqual('Can not find collections with provided ids');
 });
 
 // =====================================================

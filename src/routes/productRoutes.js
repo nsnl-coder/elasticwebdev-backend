@@ -37,11 +37,13 @@ router.post(
 router.put(
   '/:id',
   validateRequest(productSchema),
+  checkIdExistence('collections', Collection),
   productController.updateProduct,
 );
 router.put(
   '/',
   validateRequest(productSchema),
+  checkIdExistence('collections', Collection),
   productController.updateManyProducts,
 );
 
