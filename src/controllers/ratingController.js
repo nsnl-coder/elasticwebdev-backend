@@ -86,9 +86,13 @@ const getManyRatings = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    totalPages,
-    results: ratings.length,
     data: ratings,
+    pagination: {
+      currentPage: page,
+      results: ratings.length,
+      totalPages,
+      totalResults: matchingResults,
+    },
   });
 };
 

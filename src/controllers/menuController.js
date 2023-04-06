@@ -64,9 +64,16 @@ const getManyMenus = async (req, res, next) => {
   // 5. finally await query
   const menus = await query;
 
-  res
-    .status(200)
-    .json({ status: 'success', totalPages, results: menus.length, data: menus });
+  res.status(200).json({
+    status: 'success',
+    data: menus,
+    pagination: {
+      currentPage: page,
+      results: menus.length,
+      totalPages,
+      totalResults: matchingResults,
+    },
+  });
 };
 
 const updateMenu = async (req, res, next) => {

@@ -71,9 +71,13 @@ const getManyContacts = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    totalPages,
-    results: contacts.length,
     data: contacts,
+    pagination: {
+      currentPage: page,
+      results: contacts.length,
+      totalPages,
+      totalResults: matchingResults,
+    },
   });
 };
 

@@ -66,6 +66,7 @@ const productSchema = mongoose.Schema(
         delete ret.__v;
       },
     },
+    timestamps: true,
   },
 );
 

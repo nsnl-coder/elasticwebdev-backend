@@ -9,6 +9,11 @@ const collectionSchema = mongoose.Schema(
     },
     photo: String,
     isPinned: Boolean,
+    status: {
+      type: String,
+      enum: ['draft', 'active'],
+      default: 'draft',
+    },
     slug: String,
     // testing purpose only
     test_string: String,
@@ -21,6 +26,7 @@ const collectionSchema = mongoose.Schema(
         delete ret.__v;
       },
     },
+    timestamps: true,
   },
 );
 

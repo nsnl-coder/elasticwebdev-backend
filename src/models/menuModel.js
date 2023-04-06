@@ -23,6 +23,7 @@ const menuSchema = mongoose.Schema(
         delete ret.__v;
       },
     },
+    timestamps: true,
   },
 );
 

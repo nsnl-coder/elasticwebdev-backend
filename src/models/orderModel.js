@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const orderSchema = mongoose.Schema(
   {
+    // from client
     items: [
       {
         id: {
@@ -24,27 +25,31 @@ const orderSchema = mongoose.Schema(
         ],
       },
     ],
-    // user info
     fullname: String,
     email: String,
     phone: String,
     shippingAddress: String,
+    shippingOption: String,
+    orderNotes: String,
+    discountCode: String,
+    //
+    shippingStatus: {
+      type: String,
+      default: 'pending',
+    },
+    //
+    paymentStatus: {
+      type: String,
+    },
+    paymentVia: String,
 
-    // order info
+    //
     orderNumber: Number,
     subTotal: Number,
     shippingFees: Number,
-    shippingOption: String,
     grandTotal: Number,
-    orderStatus: String,
-    isPaid: Boolean,
-    paymentVia: String,
-    orderNotes: String,
-    discount: {
-      code: String,
-      amountInPercentage: Number,
-      amountInDollar: Number,
-    },
+    discountPercentage: Number,
+    discountDollar: Number,
 
     // testing purpose only
     test_string: String,
@@ -57,6 +62,7 @@ const orderSchema = mongoose.Schema(
         delete ret.__v;
       },
     },
+    timestamps: true,
   },
 );
 

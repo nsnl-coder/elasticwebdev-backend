@@ -20,6 +20,7 @@ const contactSchema = mongoose.Schema(
         delete ret.__v;
       },
     },
+    timestamps: true,
   },
 );
 

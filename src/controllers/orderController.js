@@ -1,9 +1,14 @@
 const { Order } = require('../models/orderModel');
 
 const createOrder = async (req, res, next) => {
-  // TODO: need to parse body
-  const body = req.body;
+  const { items, fullname, email, shippingOption, orderNotes, discountCode } =
+    req.body;
+
   const order = await Order.create(body);
+
+  // step 1: populate all the products in items
+
+  // step 2:
   res.status(201).json({ status: 'success', data: order });
 };
 
@@ -64,9 +69,16 @@ const getManyOrders = async (req, res, next) => {
   // 5. finally await query
   const orders = await query;
 
-  res
-    .status(200)
-    .json({ status: 'success', totalPages, results: orders.length, data: orders });
+  res.status(200).json({
+    status: 'success',
+    data: orders,
+    pagination: {
+      currentPage: page,
+      results: orders.length,
+      totalPages,
+      totalResults: matchingResults,
+    },
+  });
 };
 
 const updateOrder = async (req, res, next) => {

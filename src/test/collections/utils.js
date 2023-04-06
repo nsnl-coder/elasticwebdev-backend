@@ -4,6 +4,7 @@ const validCollectionData = {
   name: 'test collection name',
   photo: 'this-is-photo-link',
   isPinned: true,
+  status: 'draft',
 };
 
 const createCollection = async (data) => {

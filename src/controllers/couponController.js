@@ -83,9 +83,13 @@ const getManyCoupons = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    totalPages,
-    results: coupons.length,
     data: coupons,
+    pagination: {
+      currentPage: page,
+      results: coupons.length,
+      totalPages,
+      totalResults: matchingResults,
+    },
   });
 };
 

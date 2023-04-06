@@ -15,6 +15,7 @@ const shippingSchema = mongoose.Schema(
         delete ret.__v;
       },
     },
+    timestamps: true,
   },
 );
 

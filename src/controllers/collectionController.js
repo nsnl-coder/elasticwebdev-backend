@@ -65,18 +65,22 @@ const getManyCollections = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    totalPages,
-    results: collections.length,
+    pagination: {
+      currentPage: page,
+      results: collections.length,
+      totalPages,
+      totalResults: matchingResults,
+    },
     data: collections,
   });
 };
 
 const updateCollection = async (req, res, next) => {
-  const { name, photo, isPinned } = req.body;
+  const { name, photo, isPinned, status } = req.body;
 
   const collection = await Collection.findByIdAndUpdate(
     req.params.id,
-    { name, photo, isPinned },
+    { name, photo, isPinned, status },
     {
       new: true,
       runValidators: true,
@@ -98,7 +102,7 @@ const updateCollection = async (req, res, next) => {
 
 const updateManyCollections = async (req, res, next) => {
   const { updateList, ...payload } = req.body;
-  const { name, photo, isPinned } = payload;
+  const { name, photo, isPinned, status } = payload;
 
   // check if ids in updateList all exist
   const matchedDocuments = await Collection.countDocuments({
@@ -120,7 +124,7 @@ const updateManyCollections = async (req, res, next) => {
         $in: updateList,
       },
     },
-    { name, photo, isPinned },
+    { name, photo, isPinned, status },
   );
 
   if (modifiedCount !== updateList.length) {

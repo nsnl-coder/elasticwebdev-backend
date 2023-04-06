@@ -91,9 +91,13 @@ const getManyProducts = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    totalPages,
-    results: products.length,
     data: products,
+    pagination: {
+      currentPage: page,
+      results: products.length,
+      totalPages,
+      totalResults: matchingResults,
+    },
   });
 };
 

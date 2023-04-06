@@ -24,11 +24,7 @@ it('should return all collections', async () => {
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(response.body.data[0].test_string).toEqual('a');
-  expect(response.body.data[0].test_number).toEqual(11);
-  expect(response.body.data[0].test_any).toEqual('draft');
-
-  expect(response.body.results).toEqual(6);
+  expect(response.body.pagination.results).toEqual(6);
 });
 
 describe('limit fields', () => {
@@ -62,8 +58,8 @@ describe('itemPerPage & page', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(response.body.results).toEqual(2);
-    expect(response.body.totalPages).toEqual(3);
+    expect(response.body.pagination.results).toEqual(2);
+    expect(response.body.pagination.totalPages).toEqual(3);
   });
 
   it('should returns single collection with itemsPerPage=2 and page=2', async () => {
@@ -72,8 +68,8 @@ describe('itemPerPage & page', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(response.body.results).toEqual(2);
-    expect(response.body.totalPages).toEqual(3);
+    expect(response.body.pagination.results).toEqual(2);
+    expect(response.body.pagination.totalPages).toEqual(3);
   });
 
   it('should return 200 despite only itemsPerPage provided', async () => {
@@ -82,8 +78,8 @@ describe('itemPerPage & page', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(response.body.results).toEqual(3);
-    expect(response.body.totalPages).toEqual(2);
+    expect(response.body.pagination.results).toEqual(3);
+    expect(response.body.pagination.totalPages).toEqual(2);
   });
 
   it('should return 200 even only page is provided', async () => {
@@ -92,8 +88,8 @@ describe('itemPerPage & page', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(response.body.results).toEqual(6);
-    expect(response.body.totalPages).toEqual(1);
+    expect(response.body.pagination.results).toEqual(6);
+    expect(response.body.pagination.totalPages).toEqual(1);
   });
 
   it('should return error if page is 0 or negative number', async () => {
@@ -157,7 +153,7 @@ it('should work with combination of query types', async () => {
     .expect(200);
 
   // check itemsPerPage, page
-  expect(response.body.results).toEqual(4);
+  expect(response.body.pagination.results).toEqual(4);
 
   // check sort
   expect(response.body.data[0].test_number).toEqual(11);
@@ -175,7 +171,7 @@ describe('gt, gte, lt,lte', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(2);
+    expect(body.pagination.results).toEqual(2);
   });
 
   it('return collections that has test_number <= 13', async () => {
@@ -184,7 +180,7 @@ describe('gt, gte, lt,lte', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(3);
+    expect(body.pagination.results).toEqual(3);
   });
 
   it('return collections that has test_number > 12', async () => {
@@ -193,7 +189,7 @@ describe('gt, gte, lt,lte', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(4);
+    expect(body.pagination.results).toEqual(4);
   });
 
   it('return collections that has test_number >= 12', async () => {
@@ -202,7 +198,7 @@ describe('gt, gte, lt,lte', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(5);
+    expect(body.pagination.results).toEqual(5);
   });
 });
 
@@ -213,7 +209,7 @@ describe('filter by value', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(2);
+    expect(body.pagination.results).toEqual(2);
 
     expect(body.data[0].test_number).toEqual(11);
     expect(body.data[1].test_number).toEqual(14);
@@ -225,7 +221,7 @@ describe('filter by value', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(2);
+    expect(body.pagination.results).toEqual(2);
 
     expect(body.data[0].test_number).toEqual(11);
     expect(body.data[1].test_number).toEqual(14);

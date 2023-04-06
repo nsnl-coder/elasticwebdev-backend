@@ -71,9 +71,13 @@ const getManyVariants = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    totalPages,
-    results: variants.length,
     data: variants,
+    pagination: {
+      currentPage: page,
+      results: variants.length,
+      totalPages,
+      totalResults: matchingResults,
+    },
   });
 };
 

@@ -6,6 +6,7 @@ const collectionSchema = object({
     name: string().max(255),
     photo: string().max(255),
     isPinned: boolean(),
+    status: string().oneOf(['draft', 'active']),
     deleteList: objectIdArray,
     updateList: objectIdArray,
     // for testing only

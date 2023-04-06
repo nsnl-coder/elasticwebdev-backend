@@ -27,6 +27,7 @@ const ratingSchema = mongoose.Schema(
         delete ret.__v;
       },
     },
+    timestamps: true,
   },
 );
 

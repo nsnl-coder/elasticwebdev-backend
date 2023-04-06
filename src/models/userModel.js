@@ -49,6 +49,7 @@ const userSchema = mongoose.Schema(
         delete ret.verifyEmailsSent;
       },
     },
+    timestamps: true,
   },
 );
 

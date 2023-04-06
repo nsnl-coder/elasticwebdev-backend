@@ -16,10 +16,18 @@ const orderSchema = object({
     phone: string()
       .matches(/^[0-9]{9,16}$/, 'Please provide valid phone number')
       .required(),
+    shippingOption: objectId.required(),
     shippingAddress: string().max(255).required(),
-    shippingOptions: objectId.required(),
     orderNotes: string().max(255),
+    discountCode: string().max(255),
     //
+    shippingStatus: string().oneOf([
+      'pending',
+      'processing',
+      'shipped',
+      'arrived',
+    ]),
+
     deleteList: objectIdArray,
     updateList: objectIdArray,
     // for testing only
