@@ -27,7 +27,7 @@ const getManyCollections = async (req, res, next) => {
     fields,
     sort = '-createdAt', // new to old
     page = 1,
-    itemsPerPage = 20,
+    itemsPerPage = 10,
     filter,
   } = req.query;
 
@@ -67,8 +67,9 @@ const getManyCollections = async (req, res, next) => {
     status: 'success',
     pagination: {
       currentPage: page,
-      results: collections.length,
       totalPages,
+      itemsPerPage,
+      results: collections.length,
       totalResults: matchingResults,
     },
     data: collections,

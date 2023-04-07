@@ -28,7 +28,7 @@ const getManyMenus = async (req, res, next) => {
     fields,
     sort = '-createdAt', // new to old
     page = 1,
-    itemsPerPage = 20,
+    itemsPerPage = 10,
     filter,
   } = req.query;
 
@@ -71,6 +71,7 @@ const getManyMenus = async (req, res, next) => {
       currentPage: page,
       results: menus.length,
       totalPages,
+      itemsPerPage,
       totalResults: matchingResults,
     },
   });
