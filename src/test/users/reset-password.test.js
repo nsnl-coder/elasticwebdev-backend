@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
-const { createToken } = require('../../controllers/userController');
+const { createToken } = require('../../controllers/authController');
 const { User } = require('../../models/userModel');
 
 it('should change password with correct token', async () => {
@@ -8,7 +8,7 @@ it('should change password with correct token', async () => {
 
   // send request to get forgot password email
   await request(app)
-    .post('/api/users/forgot-password')
+    .post('/api/auth/forgot-password')
     .send({ email: 'test@test.com' })
     .expect(200);
 
@@ -22,7 +22,7 @@ it('should change password with correct token', async () => {
 
   // test the route
   const { body } = await request(app)
-    .put(`/api/users/reset-password/${token}`)
+    .put(`/api/auth/reset-password/${token}`)
     .send({ password: 'newpassword' })
     .expect(200);
 
@@ -34,20 +34,20 @@ it('should change password with correct token', async () => {
 
   // login with new password
   await request(app)
-    .post(`/api/users/sign-in`)
+    .post(`/api/auth/sign-in`)
     .send({ email: 'test@test.com', password: 'newpassword' })
     .expect(200);
 
   // login with old password
   await request(app)
-    .post(`/api/users/sign-in`)
+    .post(`/api/auth/sign-in`)
     .send({ email: 'test@test.com', password: 'password' })
     .expect(400);
 });
 
 it('returns 400 if the password is missing', async () => {
   const { body } = await request(app)
-    .put(`/api/users/reset-password/some-fake-token`)
+    .put(`/api/auth/reset-password/some-fake-token`)
     .expect(400);
 
   expect(body.message).toEqual('missing required field');
@@ -57,7 +57,7 @@ it('returns 400 if the password is missing', async () => {
 describe('invalid token', () => {
   it('returns 400 & fails to change password with random token', async () => {
     const { body } = await request(app)
-      .put(`/api/users/reset-password/some-fake-token`)
+      .put(`/api/auth/reset-password/some-fake-token`)
       .send({ password: 'newpassword' })
       .expect(400);
 
@@ -76,7 +76,7 @@ describe('invalid token', () => {
 
     // can not change password when time is expired
     const { body } = await request(app)
-      .put(`/api/users/reset-password/${token}`)
+      .put(`/api/auth/reset-password/${token}`)
       .send({ password: 'newpassword' })
       .expect(400);
     //

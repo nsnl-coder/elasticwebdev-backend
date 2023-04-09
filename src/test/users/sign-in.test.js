@@ -5,7 +5,7 @@ it('successfully signs in if email and password are correct', async () => {
   await signup();
 
   const response = await request(app)
-    .post('/api/users/sign-in')
+    .post('/api/auth/sign-in')
     .send({
       email: 'test@test.com',
       password: 'password',
@@ -25,7 +25,7 @@ describe('required fields', () => {
     await signup();
 
     const { body } = await request(app)
-      .post('/api/users/sign-in')
+      .post('/api/auth/sign-in')
       .send({
         password: 'password',
       })
@@ -39,7 +39,7 @@ describe('required fields', () => {
     await signup();
 
     const { body } = await request(app)
-      .post('/api/users/sign-in')
+      .post('/api/auth/sign-in')
       .send({
         email: 'test@test.com',
       })
@@ -53,7 +53,7 @@ describe('required fields', () => {
 describe('data validation failed', () => {
   it('shoudl return error if email is not a valid email', async () => {
     const response = await request(app)
-      .post('/api/users/sign-in')
+      .post('/api/auth/sign-in')
       .send({
         email: 'testtest.com',
         password: 'password',
@@ -65,7 +65,7 @@ describe('data validation failed', () => {
 
   it('returns 400 if password shorter than 8 characters', async () => {
     const response = await request(app)
-      .post('/api/users/sign-in')
+      .post('/api/auth/sign-in')
       .send({
         email: 'test@test.com',
         password: 'ss',
@@ -78,7 +78,7 @@ describe('data validation failed', () => {
 describe('invalid credentials', () => {
   it('returns 400 if an account with provided email is not existed', async () => {
     const { body } = await request(app)
-      .post('/api/users/sign-in')
+      .post('/api/auth/sign-in')
       .send({
         email: 'test@test.com',
         password: 'password',
@@ -93,7 +93,7 @@ describe('invalid credentials', () => {
     await signup();
 
     const { body } = await request(app)
-      .post('/api/users/sign-in')
+      .post('/api/auth/sign-in')
       .send({
         email: 'test@test.com',
         password: 'wrongpassword',

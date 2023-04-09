@@ -6,14 +6,14 @@ it('successfully changes password', async () => {
 
   // successfully changes password
   await request(app)
-    .put('/api/users/update-password')
+    .put('/api/auth/update-password')
     .set('Cookie', cookie)
     .send({ oldPassword: 'password', password: 'newpassword' })
     .expect(200);
 
   // it successfully logs in with newpassword
   await request(app)
-    .post('/api/users/sign-in')
+    .post('/api/auth/sign-in')
     .send({
       email: 'test@test.com',
       password: 'newpassword',
@@ -22,7 +22,7 @@ it('successfully changes password', async () => {
 
   // it fails to log in with old password
   const { body } = await request(app)
-    .post('/api/users/sign-in')
+    .post('/api/auth/sign-in')
     .send({
       email: 'test@test.com',
       password: 'password',
@@ -34,7 +34,7 @@ it('successfully changes password', async () => {
 
 it('returns 401 if user is not logged in', async () => {
   const response = await request(app)
-    .put('/api/users/update-password')
+    .put('/api/auth/update-password')
     .send({ oldPassword: 'password', password: 'newpassword' })
     .expect(401);
 
@@ -50,14 +50,14 @@ describe('data validation', () => {
 
     // old password is missing
     await request(app)
-      .put('/api/users/update-password')
+      .put('/api/auth/update-password')
       .set('Cookie', cookie)
       .send({ password: 'newpassword' })
       .expect(400);
 
     // new password is missing
     await request(app)
-      .put('/api/users/update-password')
+      .put('/api/auth/update-password')
       .set('Cookie', cookie)
       .send({ oldPassword: 'password' })
       .expect(400);
@@ -67,7 +67,7 @@ describe('data validation', () => {
     const { cookie } = await signup();
 
     const response = await request(app)
-      .put('/api/users/update-password')
+      .put('/api/auth/update-password')
       .set('Cookie', cookie)
       .send({ oldPassword: 'password', password: '22' })
       .expect(400);
@@ -81,7 +81,7 @@ it('returns 400 if old password is incorrect', async () => {
   const { cookie } = await signup();
 
   const response = await request(app)
-    .put('/api/users/update-password')
+    .put('/api/auth/update-password')
     .set('Cookie', cookie)
     .send({ oldPassword: 'passwordincorrect', password: 'newpassword' })
     .expect(400);

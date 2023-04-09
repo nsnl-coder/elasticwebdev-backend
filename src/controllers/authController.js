@@ -288,14 +288,14 @@ const updateUserInfo = async (req, res, next) => {
   if (email) {
     return res.status(400).json({
       status: 'fail',
-      message: 'Please use /api/users/update-email route to update email',
+      message: 'Please use /api/auth/update-email route to update email',
     });
   }
 
   if (password) {
     return res.status(400).json({
       status: 'fail',
-      message: 'Please use /api/users/update-password route to update password',
+      message: 'Please use /api/auth/update-password route to update password',
     });
   }
 

@@ -1,13 +1,13 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
-const { verifyEmail } = require('../../controllers/userController');
+const { verifyEmail } = require('../../controllers/authController');
 
 const { sendVerifyEmail } = require('../../utils/email');
 
 // reusable function for successful request only
 async function requestResendEmail() {
   await request(app)
-    .post('/api/users/resend-verify-email')
+    .post('/api/auth/resend-verify-email')
     .send({
       email: 'test@test.com',
     })
@@ -17,7 +17,7 @@ async function requestResendEmail() {
 it('successfully resends verification email', async () => {
   await signup({ isVerified: false });
   const { body } = await request(app)
-    .post('/api/users/resend-verify-email')
+    .post('/api/auth/resend-verify-email')
     .send({
       email: 'test@test.com',
     })
@@ -31,7 +31,7 @@ describe('invalid email', () => {
   it('returns 400 if email is missing', async () => {
     await signup({ isVerified: false });
     const { body } = await request(app)
-      .post('/api/users/resend-verify-email')
+      .post('/api/auth/resend-verify-email')
       .expect(400);
 
     expect(body.message).toEqual('missing required field');
@@ -40,7 +40,7 @@ describe('invalid email', () => {
 
   it('returns 400 if an user with provided email does not exist', async () => {
     const { body } = await request(app)
-      .post('/api/users/resend-verify-email')
+      .post('/api/auth/resend-verify-email')
       .send({
         email: 'test@test.com',
       })
@@ -63,7 +63,7 @@ describe('limit 3 emails per day', () => {
 
     // 4th: expected failure
     const { body } = await request(app)
-      .post('/api/users/resend-verify-email')
+      .post('/api/auth/resend-verify-email')
       .send({
         email: 'test@test.com',
       });
@@ -86,7 +86,7 @@ describe('limit 3 emails per day', () => {
 
     process.env.VERIFY_EMAIL_TOKEN_EXPIRES = 24;
     await request(app)
-      .post('/api/users/resend-verify-email')
+      .post('/api/auth/resend-verify-email')
       .send({
         email: 'test@test.com',
       })
@@ -97,7 +97,7 @@ describe('limit 3 emails per day', () => {
     await requestResendEmail();
     // fails to send email if user send 3 resend email requests in that day
     await request(app)
-      .post('/api/users/resend-verify-email')
+      .post('/api/auth/resend-verify-email')
       .send({
         email: 'test@test.com',
       })
@@ -110,7 +110,7 @@ describe('limit 3 emails per day', () => {
 it('does not resend email if user is already verified', async () => {
   await signup();
   const { body } = await request(app)
-    .post('/api/users/resend-verify-email')
+    .post('/api/auth/resend-verify-email')
     .send({
       email: 'test@test.com',
     })

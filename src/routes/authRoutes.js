@@ -4,7 +4,7 @@ const { requireLogin } = require('express-common-middlewares');
 
 //
 const { User } = require('../models/userModel');
-const userController = require('../controllers/userController');
+const userController = require('../controllers/authController');
 const userSchema = require('../yup/userSchema');
 
 const router = express.Router();

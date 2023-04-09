@@ -1,12 +1,12 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
-const { signJwtToken } = require('../../controllers/userController');
+const { signJwtToken } = require('../../controllers/authController');
 
 it('returns user data if user signed in', async () => {
   const { cookie } = await signup();
 
   const response = await request(app)
-    .get('/api/users/current-user')
+    .get('/api/auth/current-user')
     .set('Cookie', cookie)
     .expect(200);
 
@@ -17,7 +17,7 @@ it('returns user data if user signed in', async () => {
 describe('auth check', () => {
   it('returns 401 if user is not logged in', async () => {
     const response = await request(app)
-      .get('/api/users/current-user')
+      .get('/api/auth/current-user')
       .expect(401);
 
     // expect correct message
@@ -30,7 +30,7 @@ describe('auth check', () => {
     const { cookie } = await signup({ isVerified: false });
 
     const response = await request(app)
-      .get('/api/users/current-user')
+      .get('/api/auth/current-user')
       .set('Cookie', cookie)
       .expect(401);
 
@@ -46,7 +46,7 @@ describe('auth check', () => {
     const { cookie } = await signup();
 
     const { body } = await request(app)
-      .get('/api/users/current-user')
+      .get('/api/auth/current-user')
       .set('Cookie', cookie)
       .expect(400);
 
@@ -60,7 +60,7 @@ describe('auth check', () => {
     const cookie = jwt2Cookie(jwtToken);
 
     const { body } = await request(app)
-      .get('/api/users/current-user')
+      .get('/api/auth/current-user')
       .set('Cookie', cookie)
       .expect(400);
 
@@ -74,7 +74,7 @@ describe('auth check', () => {
     const cookie = jwt2Cookie(jwtToken);
 
     const { body } = await request(app)
-      .get('/api/users/current-user')
+      .get('/api/auth/current-user')
       .set('Cookie', cookie)
       .expect(404);
 
@@ -86,7 +86,7 @@ describe('auth check', () => {
     const cookie = jwt2Cookie('this jwt is not valid');
 
     const { body } = await request(app)
-      .get('/api/users/current-user')
+      .get('/api/auth/current-user')
       .set('Cookie', cookie)
       .expect(400);
 
@@ -99,7 +99,7 @@ it('can not get current user using old jwt token if user recently change their p
 
   // cookie works
   await request(app)
-    .get('/api/users/current-user')
+    .get('/api/auth/current-user')
     .set('Cookie', cookie)
     .expect(200);
 
@@ -108,7 +108,7 @@ it('can not get current user using old jwt token if user recently change their p
 
   // change password
   await request(app)
-    .put('/api/users/update-password')
+    .put('/api/auth/update-password')
     .set('Cookie', cookie)
     .send({
       oldPassword: 'password',
@@ -118,7 +118,7 @@ it('can not get current user using old jwt token if user recently change their p
 
   // jwt no longer work because password recently change
   const { body } = await request(app)
-    .get('/api/users/current-user')
+    .get('/api/auth/current-user')
     .set('Cookie', cookie)
     .expect(400);
 

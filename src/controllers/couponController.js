@@ -83,7 +83,6 @@ const getManyCoupons = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: coupons,
     pagination: {
       currentPage: page,
       results: coupons.length,
@@ -91,6 +90,7 @@ const getManyCoupons = async (req, res, next) => {
       itemsPerPage,
       totalResults: matchingResults,
     },
+    data: coupons,
   });
 };
 

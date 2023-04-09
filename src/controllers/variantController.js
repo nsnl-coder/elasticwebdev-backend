@@ -71,7 +71,6 @@ const getManyVariants = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: variants,
     pagination: {
       currentPage: page,
       results: variants.length,
@@ -79,6 +78,7 @@ const getManyVariants = async (req, res, next) => {
       itemsPerPage,
       totalResults: matchingResults,
     },
+    data: variants,
   });
 };
 

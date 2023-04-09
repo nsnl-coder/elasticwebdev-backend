@@ -92,8 +92,8 @@ const getManyRatings = async (req, res, next) => {
       results: ratings.length,
       totalPages,
       itemsPerPage,
-      totalResults: matchingResults,
     },
+    totalResults: matchingResults,
   });
 };
 

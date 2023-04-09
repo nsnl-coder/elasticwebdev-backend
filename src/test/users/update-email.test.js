@@ -5,7 +5,7 @@ it('return 200 if successfully update email', async () => {
   const { cookie } = await signup();
 
   const response = await request(app)
-    .put('/api/users/update-email')
+    .put('/api/auth/update-email')
     .set('Cookie', cookie)
     .send({
       email: 'test2@test.com',
@@ -18,7 +18,7 @@ it('return 200 if successfully update email', async () => {
 
   // try to log in with new email
   await request(app)
-    .post('/api/users/sign-in')
+    .post('/api/auth/sign-in')
     .send({
       email: 'test2@test.com',
       password: 'password',
@@ -27,7 +27,7 @@ it('return 200 if successfully update email', async () => {
 
   // make sure it failed to log in with old email
   await request(app)
-    .post('/api/users/sign-in')
+    .post('/api/auth/sign-in')
     .send({
       email: 'test@test.com',
       password: 'password',
@@ -37,7 +37,7 @@ it('return 200 if successfully update email', async () => {
 
 it('should return error if user is not logged in', async () => {
   const response = await request(app)
-    .put('/api/users/update-email')
+    .put('/api/auth/update-email')
     .send({
       email: 'test2@test.com',
       password: 'password',
@@ -54,7 +54,7 @@ it('should return error if provided password is incorrect', async () => {
   const { cookie } = await signup();
 
   const response = await request(app)
-    .put('/api/users/update-email')
+    .put('/api/auth/update-email')
     .set('Cookie', cookie)
     .send({
       email: 'test2@test.com',
@@ -70,7 +70,7 @@ it('should return error if new email is not a valid email', async () => {
   const { cookie } = await signup();
 
   const response = await request(app)
-    .put('/api/users/update-email')
+    .put('/api/auth/update-email')
     .set('Cookie', cookie)
     .send({
       email: 'test2test.com',

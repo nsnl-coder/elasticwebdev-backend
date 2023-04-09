@@ -65,7 +65,6 @@ const getManyShippings = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: shippings,
     pagination: {
       currentPage: page,
       results: shippings.length,
@@ -73,6 +72,7 @@ const getManyShippings = async (req, res, next) => {
       itemsPerPage,
       totalResults: matchingResults,
     },
+    data: shippings,
   });
 };
 

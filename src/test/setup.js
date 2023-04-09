@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 let mongo;
 
 const { User } = require('../models/userModel');
-const { signJwtToken, createToken } = require('../controllers/userController');
+const { signJwtToken, createToken } = require('../controllers/authController');
 
 // mock the email module
 jest.mock('../utils/email.js');

@@ -53,7 +53,7 @@ describe.each(invalidData)(
   ({ field, message, ...invalidData }) => {
     it(`shoud fail to create user because ${message}`, async () => {
       const response = await request(app)
-        .post(`/api/users/sign-up`)
+        .post(`/api/auth/sign-up`)
         .send({
           ...validUserData,
           ...invalidData,
@@ -66,7 +66,7 @@ describe.each(invalidData)(
 
     it(`should fail to update user because ${message}`, async () => {
       const response = await request(app)
-        .put('/api/users/update-user-info')
+        .put('/api/auth/update-user-info')
         .send({
           ...validUserData,
           ...invalidData,

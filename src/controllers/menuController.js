@@ -66,7 +66,6 @@ const getManyMenus = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: menus,
     pagination: {
       currentPage: page,
       results: menus.length,
@@ -74,6 +73,7 @@ const getManyMenus = async (req, res, next) => {
       itemsPerPage,
       totalResults: matchingResults,
     },
+    data: menus,
   });
 };
 

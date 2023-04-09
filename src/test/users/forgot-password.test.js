@@ -5,7 +5,7 @@ const { sendForgotPasswordEmail } = require('../../utils/email');
 
 const requestEmail = async () => {
   await request(app)
-    .post('/api/users/forgot-password')
+    .post('/api/auth/forgot-password')
     .send({ email: 'test@test.com' })
     .expect(200);
 };
@@ -14,7 +14,7 @@ it('returns 200 & sends email with token to user', async () => {
   await signup();
 
   const { body } = await request(app)
-    .post('/api/users/forgot-password')
+    .post('/api/auth/forgot-password')
     .send({ email: 'test@test.com' })
     .expect(200);
 
@@ -29,7 +29,7 @@ it('allows unverified user to request forgot password email', async () => {
   await signup({ isVerified: false });
 
   const { body } = await request(app)
-    .post('/api/users/forgot-password')
+    .post('/api/auth/forgot-password')
     .send({ email: 'test@test.com' })
     .expect(200);
 
@@ -41,7 +41,7 @@ it('allows unverified user to request forgot password email', async () => {
 
 it('return 404 if an user with provided email does not exist', async () => {
   const { body } = await request(app)
-    .post('/api/users/forgot-password')
+    .post('/api/auth/forgot-password')
     .send({ email: 'noexistuser@test.com' })
     .expect(404);
 
@@ -57,7 +57,7 @@ it('returns 400 if user already requested 3 emails in 24 hours', async () => {
 
   //
   const { body } = await request(app)
-    .post('/api/users/forgot-password')
+    .post('/api/auth/forgot-password')
     .send({ email: 'test@test.com' })
     .expect(400);
 
@@ -75,7 +75,7 @@ it('returns allow user to request email after 24 hours of blocking', async () =>
 
   // blocking email
   await request(app)
-    .post('/api/users/forgot-password')
+    .post('/api/auth/forgot-password')
     .send({ email: 'test@test.com' })
     .expect(400);
 
@@ -92,7 +92,7 @@ it('returns allow user to request email after 24 hours of blocking', async () =>
 
   // it got blocked again
   await request(app)
-    .post('/api/users/forgot-password')
+    .post('/api/auth/forgot-password')
     .send({ email: 'test@test.com' })
     .expect(400);
 });

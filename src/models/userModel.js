@@ -13,11 +13,15 @@ const userSchema = mongoose.Schema(
       enum: ['user', 'customer', 'admin'],
     },
     isPinned: Boolean,
+    profileImage: String,
     fullname: String,
-    shippingAddress: String,
     phone: String,
     password: String,
-    profileImage: String,
+    //
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
     //
     passwordChangedAt: Date,
     resetPasswordToken: String,
@@ -25,11 +29,6 @@ const userSchema = mongoose.Schema(
     resetPasswordEmailsSent: {
       type: Number,
       default: 0,
-    },
-    //
-    isVerified: {
-      type: Boolean,
-      default: false,
     },
     verifyToken: String,
     verifyTokenExpires: Date,

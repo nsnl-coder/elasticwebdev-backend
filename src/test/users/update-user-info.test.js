@@ -7,7 +7,7 @@ describe('success case', () => {
     const { cookie } = await signup();
 
     const { body } = await request(app)
-      .put('/api/users/update-user-info')
+      .put('/api/auth/update-user-info')
       .set('Cookie', cookie)
       .send(validUserData)
       .expect(200);
@@ -20,7 +20,7 @@ describe('success case', () => {
 describe('auth check', () => {
   it('returns 401 if user is not logged in', async () => {
     const { body } = await request(app)
-      .put('/api/users/update-user-info')
+      .put('/api/auth/update-user-info')
       .send({
         fullname: 'New Fullname',
       })
@@ -38,7 +38,7 @@ describe('bad request', () => {
     const { cookie } = await signup();
 
     const { body } = await request(app)
-      .put('/api/users/update-user-info')
+      .put('/api/auth/update-user-info')
       .set('Cookie', cookie)
       .send({
         role: 'admin',
@@ -53,7 +53,7 @@ describe('bad request', () => {
     const { cookie } = await signup();
 
     const { body } = await request(app)
-      .put('/api/users/update-user-info')
+      .put('/api/auth/update-user-info')
       .set('Cookie', cookie)
       .send({
         password: 'newpassword',
@@ -62,7 +62,7 @@ describe('bad request', () => {
 
     // it returns correct error message
     expect(body.message).toBe(
-      'Please use /api/users/update-password route to update password',
+      'Please use /api/auth/update-password route to update password',
     );
   });
 
@@ -70,7 +70,7 @@ describe('bad request', () => {
     const { cookie } = await signup();
 
     const { body } = await request(app)
-      .put('/api/users/update-user-info')
+      .put('/api/auth/update-user-info')
       .set('Cookie', cookie)
       .send({
         email: 'test2@test.com',
@@ -79,7 +79,7 @@ describe('bad request', () => {
 
     // it returns correct error message
     expect(body.message).toBe(
-      'Please use /api/users/update-email route to update email',
+      'Please use /api/auth/update-email route to update email',
     );
   });
 });

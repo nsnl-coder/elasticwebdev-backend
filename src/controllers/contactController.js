@@ -71,7 +71,6 @@ const getManyContacts = async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: contacts,
     pagination: {
       currentPage: page,
       results: contacts.length,
@@ -79,6 +78,7 @@ const getManyContacts = async (req, res, next) => {
       itemsPerPage,
       totalResults: matchingResults,
     },
+    data: contacts,
   });
 };
 

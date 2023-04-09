@@ -4,7 +4,7 @@ const { sendVerifyEmail } = require('../../utils/email');
 
 it('successfully signs up & send verification email', async () => {
   const response = await request(app)
-    .post('/api/users/sign-up')
+    .post('/api/auth/sign-up')
     .send({
       email: 'test@test.com',
       password: 'password',
@@ -26,7 +26,7 @@ it('successfully signs up & send verification email', async () => {
 it('returns 400 if email is already in use', async () => {
   // sign up
   await request(app)
-    .post('/api/users/sign-up')
+    .post('/api/auth/sign-up')
     .send({
       email: 'test@test.com',
       password: 'password',
@@ -36,7 +36,7 @@ it('returns 400 if email is already in use', async () => {
 
   // sign up again with same email
   const { body } = await request(app)
-    .post('/api/users/sign-up')
+    .post('/api/auth/sign-up')
     .send({
       email: 'test@test.com',
       password: 'password',
@@ -53,7 +53,7 @@ it.each([['email'], ['password'], ['fullname']])(
   'return error if %s is missing',
   async (field) => {
     const { body } = await request(app)
-      .post('/api/users/sign-up')
+      .post('/api/auth/sign-up')
       .send({
         email: 'test@test.com',
         password: 'password',
@@ -72,7 +72,7 @@ describe('data validation', () => {
     const {
       body: { errors },
     } = await request(app)
-      .post('/api/users/sign-up')
+      .post('/api/auth/sign-up')
       .send({
         email: 'testtest.com',
         password: 'password',
@@ -88,7 +88,7 @@ describe('data validation', () => {
     const {
       body: { errors },
     } = await request(app)
-      .post('/api/users/sign-up')
+      .post('/api/auth/sign-up')
       .send({
         email: 'test@test.com',
         password: 'passwo',
@@ -106,7 +106,7 @@ describe('data validation', () => {
     const {
       body: { errors },
     } = await request(app)
-      .post('/api/users/sign-up')
+      .post('/api/auth/sign-up')
       .send({
         email: 'test@test.com',
         password: 'password',

@@ -5,7 +5,6 @@ const userSchema = object({
     email: string().email().max(150).lowercase(),
     isPinned: boolean(),
     fullname: string().min(6).max(255).lowercase(),
-    shippingAddress: string().min(1).max(255),
     phone: string().matches(
       /^[0-9]{9,16}$/,
       'Please provide valid phone number',
