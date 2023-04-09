@@ -4,17 +4,15 @@ const { reqQuery, reqParams, objectIdArray, objectId } = require('yup-schemas');
 
 const contactSchema = object({
   body: object({
-    email: string().email(),
-    fullname: string().max(255),
-    phone: string().matches(
-      /^[0-9]{9,16}$/,
-      'Please provide valid phone number',
-    ),
-    subject: string().max(100),
-    content: string().max(255),
-    userId: objectId,
-    isRead: boolean(),
-    adminNotes: string().max(255),
+    email: string().email().label('email'),
+    fullname: string().max(255).label('fullname'),
+    phone: string()
+      .matches(/^[0-9]{9,16}$/, 'Please provide valid phone number')
+      .label('phone'),
+    subject: string().max(100).label('subject'),
+    content: string().max(255).label('content'),
+    isRead: boolean().label('isRead'),
+    adminNotes: string().max(255).label('Note'),
     //
     deleteList: objectIdArray,
     updateList: objectIdArray,

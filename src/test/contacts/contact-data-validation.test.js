@@ -9,7 +9,32 @@ beforeEach(async () => {
 });
 
 let invalidData = [
-  { field: 'test_number', message: 'wrong data type', test_number: 'sss' },
+  { field: 'email', message: 'email must be a valid email', email: 'sss' },
+  {
+    field: 'fullname',
+    message: 'fullname must be at most 255 characters',
+    fullname: 's'.repeat(256),
+  },
+  {
+    field: 'phone',
+    message: 'Please provide valid phone number',
+    phone: '9595ss9599',
+  },
+  {
+    field: 'subject',
+    message: 'subject must be at most 100 characters',
+    subject: 's'.repeat(101),
+  },
+  {
+    field: 'content',
+    message: 'content must be at most 255 characters',
+    content: 's'.repeat(256),
+  },
+  {
+    field: 'isRead',
+    message: 'isRead must be a `boolean` type, but the final value was: `"s"`.',
+    isRead: 's',
+  },
 ];
 
 // ==============================================================
@@ -27,6 +52,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`should fail to update contact because ${message}`, async () => {
@@ -41,6 +67,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`shoud fail to update many contacts because ${message}`, async () => {
@@ -58,6 +85,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
   },
 );
