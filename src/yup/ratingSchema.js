@@ -5,8 +5,10 @@ const { reqQuery, reqParams, objectIdArray, objectId } = require('yup-schemas');
 const ratingSchema = object({
   body: object({
     product: objectId,
-    stars: number().oneOf([1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]),
-    content: string().max(255),
+    stars: number()
+      .oneOf([1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5])
+      .label('Number of stars'),
+    content: string().max(255).label('Rating content'),
     //
     deleteList: objectIdArray,
     updateList: objectIdArray,

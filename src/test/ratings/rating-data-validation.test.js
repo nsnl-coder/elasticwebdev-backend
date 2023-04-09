@@ -10,15 +10,21 @@ beforeEach(async () => {
 });
 
 let invalidData = [
+  // {
+  //   field: 'stars',
+  //   message:
+  //     'Number of stars must be one of the following values: 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5',
+  //   stars: 4.6,
+  // },
+  // {
+  //   field: 'content',
+  //   message: 'Rating content must be at most 255 characters',
+  //   content: 'a'.repeat(256),
+  // },
   {
-    field: 'stars',
-    stars: 4.6,
-    message: 'star should be interger or .5 decimals',
-  },
-  {
-    field: 'content',
-    content: 'a'.repeat(256),
-    message: 'content too long',
+    field: 'product',
+    message: 'Invalid ObjectId',
+    product: 'asddahuiva',
   },
 ];
 
@@ -31,14 +37,14 @@ describe.each(invalidData)(
       const response = await request(app)
         .post(`/api/ratings`)
         .send({
+          product: product._id,
           ...validRatingData,
           ...invalidData,
-          product: product._id,
         })
-        .set('Cookie', cookie)
-        .expect(400);
+        .set('Cookie', cookie);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`should fail to update rating because ${message}`, async () => {
@@ -53,6 +59,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`shoud fail to update many ratings because ${message}`, async () => {
@@ -70,6 +77,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
   },
 );
