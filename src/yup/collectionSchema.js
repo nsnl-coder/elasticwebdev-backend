@@ -3,10 +3,11 @@ const { reqQuery, reqParams, objectIdArray } = require('yup-schemas');
 
 const collectionSchema = object({
   body: object({
-    name: string().max(255),
-    photo: string().max(255),
-    isPinned: boolean(),
-    status: string().oneOf(['draft', 'active']),
+    name: string().max(255).label('name'),
+    photo: string().max(255).label('photo'),
+    isPinned: boolean().label('isPinned'),
+    status: string().oneOf(['draft', 'active']).label('status'),
+    //
     deleteList: objectIdArray,
     updateList: objectIdArray,
     // for testing only
