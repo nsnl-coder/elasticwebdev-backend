@@ -11,33 +11,36 @@ beforeEach(async () => {
 let invalidData = [
   {
     field: 'name',
-    message: 'name too long',
+    message: 'Product name must be at most 255 characters',
     name: 'a'.repeat(256),
   },
   {
     field: 'status',
-    message: 'status can only be draft or active',
+    message:
+      'Product status must be one of the following values: draft, active',
     status: 'public',
   },
   {
     field: 'isPinned',
-    message: 'wrong data type',
+    message:
+      'isPinned must be a `boolean` type, but the final value was: `"yes"`.',
     isPinned: 'yes',
   },
   {
     field: 'price, discountPrice',
-    message: 'discount price should be less than original price',
+    message: 'Discount price must be smaller than current price',
     price: 50,
     discountPrice: 100,
   },
   {
     field: 'images',
-    message: 'images should be an array',
+    message:
+      'Product images must be a `array` type, but the final value was: `"wrong data type"`.',
     images: 'wrong data type',
   },
   {
     field: 'previewImages',
-    message: 'maximum 2 preview images',
+    message: 'Preview images field must have less than or equal to 2 items',
     previewImages: ['one', 'two', 'three'],
   },
 ];
@@ -57,6 +60,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`should fail to update product because ${message}`, async () => {
@@ -71,6 +75,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`shoud fail to update many products because ${message}`, async () => {
@@ -88,6 +93,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
   },
 );

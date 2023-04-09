@@ -15,19 +15,21 @@ const variantSchema = object({
 
 const productSchema = object({
   body: object({
-    name: string().max(255),
-    status: string().oneOf(['draft', 'active']),
-    overview: string().max(10000),
-    description: string().max(20000),
-    isPinned: boolean(),
-    price: number().min(0).max(99999),
-    discountPrice: number().when('price', ([price], schema) =>
-      schema.max(price, 'Discount price must be smaller than current price'),
-    ),
-    images: array().max(20).of(string().max(255)),
-    previewImages: array().max(2).of(string().max(255)),
-    collections: array().of(objectId).max(100),
-    variants: array().of(variantSchema).max(100),
+    name: string().max(255).label('Product name'),
+    status: string().oneOf(['draft', 'active']).label('Product status'),
+    overview: string().max(10000).label('overview'),
+    description: string().max(20000).label('description'),
+    isPinned: boolean().label('isPinned'),
+    price: number().min(0).max(99999).label('price'),
+    discountPrice: number()
+      .when('price', ([price], schema) =>
+        schema.max(price, 'Discount price must be smaller than current price'),
+      )
+      .label('discountPrice'),
+    images: array().max(20).of(string().max(255)).label('Product images'),
+    previewImages: array().max(2).of(string().max(255)).label('Preview images'),
+    collections: array().of(objectId).max(100).label('collections ids'),
+    variants: array().of(variantSchema).max(100).label('Product variants'),
     //
     deleteList: objectIdArray,
     updateList: objectIdArray,
