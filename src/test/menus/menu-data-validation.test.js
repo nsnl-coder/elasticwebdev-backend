@@ -11,13 +11,24 @@ beforeEach(async () => {
 let invalidData = [
   {
     field: 'ordering',
+    message:
+      'ordering must be a `number` type, but the final value was: `NaN` (cast from the value `"invalid"`).',
     ordering: 'invalid',
-    message: 'wrong data type',
   },
   {
     field: 'ordering',
+    message: 'ordering must be less than or equal to 999',
     ordering: 1000,
-    message: 'ordering has max of 999',
+  },
+  {
+    field: 'name',
+    message: 'name must be at most 255 characters',
+    name: 's'.repeat(256),
+  },
+  {
+    field: 'parentMenu',
+    message: 'Invalid ObjectId',
+    parentMenu: 'das-sda-as-dssscxz',
   },
 ];
 
@@ -36,6 +47,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`should fail to update menu because ${message}`, async () => {
@@ -50,6 +62,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`shoud fail to update many menus because ${message}`, async () => {
@@ -67,6 +80,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
   },
 );

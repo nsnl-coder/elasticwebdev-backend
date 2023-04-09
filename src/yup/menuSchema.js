@@ -4,11 +4,11 @@ const { reqQuery, reqParams, objectIdArray, objectId } = require('yup-schemas');
 
 const menuSchema = object({
   body: object({
-    name: string().max(255),
-    link: string().max(255),
-    photo: string().max(255),
-    parentMenu: objectId,
-    ordering: number().min(0).max(999),
+    name: string().max(255).label('name'),
+    link: string().max(255).label('link'),
+    photo: string().max(255).label('photo'),
+    parentMenu: objectId.label('Parent menu id'),
+    ordering: number().min(0).max(999).label('ordering'),
     //
     deleteList: objectIdArray,
     updateList: objectIdArray,
