@@ -12,43 +12,48 @@ beforeEach(async () => {
 let invalidData = [
   {
     field: 'status',
-    message: 'status can only be draft or active',
+    message: 'Coupon status must be one of the following values: draft, active',
     status: 'invalid',
   },
   {
     field: 'endDate',
-    message: 'endDate is required when startDate is present',
+    message: 'Coupon end date is a required field',
     endDate: undefined,
+    _note: 'end date should present when start date is defined',
   },
   {
     field: 'endDate,startDate',
-    message: 'endDate should be after startDate',
+    message:
+      'Coupon end date field must be later than 2060-07-07T00:00:00.000Z',
     endDate: new Date('2050-06-06'),
     startDate: new Date('2060-07-07'),
+    _note: 'endDate should > startDate',
   },
   {
     field: 'discountUnit',
-    message: 'discountUnit should be $ or %',
+    message: 'discountUnit must be one of the following values: $, %',
     discountUnit: 'xx',
   },
   {
     field: 'discountAmount',
-    message: 'discountAmount should <100 if unit is %',
+    message: 'discountAmount must be less than or equal to 100',
     discountUnit: '%',
     discountAmount: 101,
+    _note: 'when unit is %',
   },
   {
     field: 'discountAmount',
-    message: 'discountAmount should <9999 if unit is $',
+    message: 'discountAmount must be less than or equal to 9999',
     discountUnit: '$',
     discountAmount: 10000,
+    _note: 'when unit is $',
   },
 ];
 
 // ==============================================================
 describe.each(invalidData)(
   'invalid $field',
-  ({ field, message, ...invalidData }) => {
+  ({ field, message, _note, ...invalidData }) => {
     it(`shoud fail to create coupon because ${message}`, async () => {
       const response = await request(app)
         .post(`/api/coupons`)
@@ -61,6 +66,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`should fail to update coupon because ${message}`, async () => {
@@ -76,6 +82,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`shoud fail to update many coupons because ${message}`, async () => {
@@ -93,6 +100,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
   },
 );
