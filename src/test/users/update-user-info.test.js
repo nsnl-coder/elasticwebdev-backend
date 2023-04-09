@@ -3,7 +3,7 @@ const { app } = require('../../config/app');
 const { validUserData } = require('./utils');
 
 describe('success case', () => {
-  it('should update shipping address', async () => {
+  it('should update user', async () => {
     const { cookie } = await signup();
 
     const { body } = await request(app)

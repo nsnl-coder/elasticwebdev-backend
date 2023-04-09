@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { app } = require('../../config/app');
-const { validVariantData } = require('./utils');
+const { validFilesData } = require('./utils');
 
 let cookie = '';
 
@@ -9,22 +9,28 @@ beforeEach(async () => {
   cookie = newCookie;
 });
 
-it('returns 200 & successfully creates variant', async () => {
-  const { body } = await request(app)
-    .post('/api/variants')
+it('should create presign url if payload is valid', async () => {
+  await request(app)
+    .post('/api/files/presigned-url')
+    .send(validFilesData)
     .set('Cookie', cookie)
-    .send(validVariantData)
     .expect(201);
 
-  expect(body.data).toMatchObject(validVariantData);
+  await request(app)
+    .post('/api/files/presigned-url')
+    .send({
+      type: 'video/mp4',
+      size: 49 * 1024 * 1024,
+    })
+    .set('Cookie', cookie)
+    .expect(201);
 });
 
-it.each([['options']])('return error if %s is missing', async (field) => {
+it.each(['type', 'size'])('return error if %s is missing', async (field) => {
   const { body } = await request(app)
-    .post('/api/variants')
+    .post('/api/files/presigned-url')
     .send({
-      name: 'color',
-      options: [{ optionName: 'red' }],
+      validFilesData,
       [field]: undefined,
     })
     .set('Cookie', cookie)
@@ -38,7 +44,8 @@ describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
     cookie = '';
     const response = await request(app)
-      .post('/api/variants')
+      .post('/api/files/presigned-url')
+      .send(validFilesData)
       .set('Cookie', cookie)
       .expect(401);
 
@@ -54,7 +61,8 @@ describe('auth check', () => {
     });
 
     const response = await request(app)
-      .post('/api/variants')
+      .post('/api/files/presigned-url')
+      .send(validFilesData)
       .set('Cookie', cookie)
       .expect(401);
 
@@ -69,7 +77,8 @@ describe('auth check', () => {
     });
 
     const response = await request(app)
-      .post('/api/variants')
+      .post('/api/files/presigned-url')
+      .send(validFilesData)
       .set('Cookie', cookie)
       .expect(403);
 

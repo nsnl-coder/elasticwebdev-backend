@@ -15,7 +15,7 @@ it('successfully signs in if email and password are correct', async () => {
   // check if user info is returned
   expect(response.body.data.email).toBe('test@test.com');
 
-  // check if response includes cookie
+  // check if response contains cookie
   const cookie = response.get('Set-Cookie');
   expect(cookie).toBeDefined();
 });
@@ -32,7 +32,7 @@ describe('required fields', () => {
       .expect(400);
 
     // check if error message is correct
-    expect(body.errors.includes('email is required')).toBe(true);
+    expect(body.errors).toContain(`email is required`);
   });
 
   it('returns 400 if password is missing', async () => {
@@ -46,7 +46,7 @@ describe('required fields', () => {
       .expect(400);
 
     // check if error message is correct
-    expect(body.errors.includes('password is required')).toBe(true);
+    expect(body.errors).toContain('password is required');
   });
 });
 

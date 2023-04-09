@@ -29,6 +29,6 @@ it.each(['email', 'fullname', 'phone', 'subject', 'content'])(
       .expect(400);
 
     // also check if it return correct message
-    expect(body.errors.includes(`${field} is required`)).toBe(true);
+    expect(body.errors).toContain(`${field} is required`);
   },
 );

@@ -79,7 +79,5 @@ it('should return error if new email is not a valid email', async () => {
     .expect(400);
 
   // expect correct message
-  expect(
-    response.body.errors.includes('body.email must be a valid email'),
-  ).toBe(true);
+  expect(response.body.errors).toContain('email must be a valid email');
 });

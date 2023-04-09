@@ -7,4 +7,10 @@ const db = require('./config/db');
 db();
 
 // require express app
-require('./config/app');
+const { app } = require('./config/app');
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log('App running on port ' + PORT);
+});

@@ -9,7 +9,7 @@ beforeEach(async () => {
   cookie = newCookie;
 });
 
-it.only('returns 200 & successfully creates coupon', async () => {
+it('returns 200 & successfully creates coupon', async () => {
   const { body } = await request(app)
     .post('/api/coupons')
     .set('Cookie', cookie)
@@ -73,9 +73,8 @@ it.each(['couponCode', 'discountUnit', 'discountAmount', 'couponQuantity'])(
       })
       .set('Cookie', cookie)
       .expect(400);
-
     // also check if it return correct message
-    expect(body.errors.includes(`${field} is required`)).toBe(true);
+    expect(body.errors).toContain(`${field} is required`);
   },
 );
 

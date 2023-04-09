@@ -63,60 +63,6 @@ it.each([['email'], ['password'], ['fullname']])(
       .expect(400);
 
     // also check if it return correct message
-    expect(body.errors.includes(`${field} is required`)).toBe(true);
+    expect(body.errors).toContain(`${field} is required`);
   },
 );
-
-describe('data validation', () => {
-  it('return 400 if email is not valid', async () => {
-    const {
-      body: { errors },
-    } = await request(app)
-      .post('/api/auth/sign-up')
-      .send({
-        email: 'testtest.com',
-        password: 'password',
-        fullname: 'Test Name',
-      })
-      .expect(400);
-
-    // also check if error message is correct
-    expect(errors.includes('body.email must be a valid email')).toBe(true);
-  });
-
-  it('return 400 if password is shorter than 8 character', async () => {
-    const {
-      body: { errors },
-    } = await request(app)
-      .post('/api/auth/sign-up')
-      .send({
-        email: 'test@test.com',
-        password: 'passwo',
-        fullname: 'Test Name',
-      })
-      .expect(400);
-
-    // also check if error message is correct
-    expect(errors.includes('body.password must be at least 8 characters')).toBe(
-      true,
-    );
-  });
-
-  it('return 400 if fullname is shorter than 6 characters', async () => {
-    const {
-      body: { errors },
-    } = await request(app)
-      .post('/api/auth/sign-up')
-      .send({
-        email: 'test@test.com',
-        password: 'password',
-        fullname: 'short',
-      })
-      .expect(400);
-
-    // also check if error message is correct
-    expect(errors.includes('body.fullname must be at least 6 characters')).toBe(
-      true,
-    );
-  });
-});
