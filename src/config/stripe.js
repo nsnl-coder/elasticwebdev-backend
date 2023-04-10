@@ -1,3 +1,5 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-module.exports = stripe;
+const createCheckoutSession = (items, discount, shippings) => {};
+
+module.exports = { stripe };

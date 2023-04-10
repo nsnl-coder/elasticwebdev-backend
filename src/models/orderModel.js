@@ -5,7 +5,7 @@ const orderSchema = mongoose.Schema(
     // from client
     items: [
       {
-        id: {
+        product: {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'product',
         },

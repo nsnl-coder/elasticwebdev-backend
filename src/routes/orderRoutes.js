@@ -24,14 +24,7 @@ router.get(
 
 router.post(
   '/',
-  requiredFields(
-    'items',
-    'fullname',
-    'email',
-    'phone',
-    'shippingAddress',
-    'shippingOptions',
-  ),
+  requiredFields('items'),
   validateRequest(orderSchema),
   orderController.createOrder,
 );

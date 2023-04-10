@@ -19,8 +19,18 @@ const validProductData = {
     {
       variantName: 'size',
       options: [
+        { optionName: 'xs', price: 36, photo: 'photo-link' },
+        { optionName: 'sm', price: 14, photo: 'photo-link' },
         { optionName: 'xl', price: 14, photo: 'photo-link' },
         { optionName: 'xxl', price: 24, photo: 'photo2-link' },
+      ],
+    },
+    {
+      variantName: 'color',
+      options: [
+        { optionName: 'red', price: 30, photo: 'photo-link' },
+        { optionName: 'green', price: 28, photo: 'photo2-link' },
+        { optionName: 'black', price: 28, photo: 'photo2-link' },
       ],
     },
   ],

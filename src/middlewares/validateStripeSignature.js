@@ -1,4 +1,4 @@
-const stripe = require('../config/stripe');
+const { stripe } = require('../config/stripe');
 
 const validateStripeSignature = (req, res, next) => {
   const endpointSecret = process.env.ENDPOINT_SECRET;

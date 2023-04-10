@@ -3,14 +3,9 @@ const { object, number, string, array } = require('yup');
 const { reqQuery, reqParams, objectIdArray, objectId } = require('yup-schemas');
 
 const itemSchema = object({
-  id: objectId.required(),
-  quantity: number().max(999).default(1),
-  variants: array().of(
-    object({
-      varaintId: objectId,
-      optionId: objectId,
-    }),
-  ),
+  product: objectId.required(),
+  quantity: number().max(999),
+  options: array().of(objectId),
 });
 
 const orderSchema = object({

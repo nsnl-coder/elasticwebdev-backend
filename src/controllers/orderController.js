@@ -1,20 +1,78 @@
 const { Order } = require('../models/orderModel');
 const { Product } = require('../models/productModel');
+const fs = require('fs');
 
 const createOrder = async (req, res, next) => {
   let { items, orderNotes, discountCode } = req.body;
 
-  const order = await Order.create(body);
+  items = await Product.populate(items, {
+    path: 'product',
+    select: 'name price slug variants',
+  });
 
-  // step 1: populate all the products in items
-  const line_items = await Product.aggregate([]);
+  // 1. get the price of all items
+  // 2. return error if product option does not exist
+  // 3. if multiple options have price, choose the highest price
+  //    if none has price, use product price
 
-  // step 2: get product price
+  for (let i = 0; i < items.length; i++) {
+    const allOptions = getAllOptions(items[i]);
+    const selectedOptions = items[i].options.map((id) => allOptions[id]);
 
-  // step 3: transform the data to stripe wanted data
-  res.status(201).json({ status: 'success', data: order });
+    if (selectedOptions.length !== items[i].options.length) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Can not find option belong to product! Try again later!',
+      });
+    }
 
-  // step 4: create a checkout session and return checkout url
+    items[i].options = selectedOptions;
+
+    const highestPrice = getHighestPrice(selectedOptions);
+
+    if (highestPrice > 0) {
+      items[i].product.price = highestPrice;
+    }
+
+    const oldItem = JSON.parse(JSON.stringify(items[i]));
+    items[i] = {
+      ...oldItem.product,
+      options: selectedOptions,
+      variants: undefined,
+    };
+  }
+  // create checkout session
+
+  res.status(200).json('newArray');
+};
+
+const getHighestPrice = (options) => {
+  let highestPrice = 0;
+
+  options.forEach((option) => {
+    if (option.price && option.price > highestPrice) {
+      highestPrice = option.price;
+    }
+  });
+
+  return highestPrice;
+};
+
+const getAllOptions = (item) => {
+  const { product } = item;
+
+  const optionsObj = {};
+
+  product.variants.forEach((variant) => {
+    variant.options.forEach((option) => {
+      optionsObj[option.id] = {
+        ...option.toObject(),
+        variantName: variant.variantName,
+      };
+    });
+  });
+
+  return optionsObj;
 };
 
 const getOrder = async (req, res, next) => {

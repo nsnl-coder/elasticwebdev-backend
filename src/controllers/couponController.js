@@ -1,5 +1,9 @@
 const { Coupon } = require('../models/couponModel');
 
+const isCouponValid = (orderTotal, code) => {};
+
+const getCouponValidity = async (req, res, next) => {};
+
 const createCoupon = async (req, res, next) => {
   const {
     couponCode,
