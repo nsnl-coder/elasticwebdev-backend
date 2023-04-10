@@ -9,17 +9,35 @@ beforeEach(async () => {
 });
 
 let invalidData = [
-  { field: 'name', message: 'name too long', variantName: 's'.repeat(256) },
-  { field: 'options', message: 'options should be an array', options: {} },
   {
-    field: 'options',
-    message: 'options should has max length of 50',
-    options: Array(51).fill({}),
+    field: 'name',
+    message: 'Variant name must be at most 255 characters',
+    variantName: 's'.repeat(256),
   },
   {
     field: 'options',
-    message: 'options should contain object only',
-    options: Array(51).fill(5),
+    message: 'options must be a `array` type, but the final value was: `{}`.',
+    options: {},
+  },
+  {
+    field: 'options',
+    message: 'options field must have less than or equal to 50 items',
+    options: Array(51).fill({}),
+  },
+  {
+    field: 'options[0]',
+    message:
+      'body.options[0] must be a `object` type, but the final value was: `55`.',
+    options: [55],
+  },
+  {
+    field: 'options[0]',
+    message: 'body.options[0].optionName must be at most 255 characters',
+    options: [
+      {
+        optionName: 'n'.repeat(256),
+      },
+    ],
   },
 ];
 
@@ -38,6 +56,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`should fail to update variant because ${message}`, async () => {
@@ -52,6 +71,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`shoud fail to update many variants because ${message}`, async () => {
@@ -69,6 +89,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
   },
 );

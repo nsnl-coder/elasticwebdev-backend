@@ -9,8 +9,8 @@ const optionSchema = object({
 
 const variantSchema = object({
   body: object({
-    variantName: string().min(1).max(255),
-    options: array().of(optionSchema).max(50),
+    variantName: string().min(1).max(255).label('Variant name'),
+    options: array().of(optionSchema).max(50).label('options'),
     //
     deleteList: objectIdArray,
     updateList: objectIdArray,
