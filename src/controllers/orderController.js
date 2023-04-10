@@ -1,16 +1,20 @@
 const { Order } = require('../models/orderModel');
+const { Product } = require('../models/productModel');
 
 const createOrder = async (req, res, next) => {
-  const { items, orderNotes, discountCode } = req.body;
+  let { items, orderNotes, discountCode } = req.body;
 
   const order = await Order.create(body);
 
   // step 1: populate all the products in items
+  const line_items = await Product.aggregate([]);
 
-  // step 2: transform the data to stripe wanted data
+  // step 2: get product price
+
+  // step 3: transform the data to stripe wanted data
   res.status(201).json({ status: 'success', data: order });
 
-  // step 3: create a checkout session and return checkout url
+  // step 4: create a checkout session and return checkout url
 };
 
 const getOrder = async (req, res, next) => {

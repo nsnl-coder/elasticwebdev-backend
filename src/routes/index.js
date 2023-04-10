@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // #insert__routers
-router.use('/api/webhooks', require('./webhookRoutes'));
+router.use('/api/stripe', require('./stripeRoutes'));
 router.use('/api/files', require('./fileRoutes'));
 router.use('/api/menus', require('./menuRoutes.js'));
 router.use('/api/ratings', require('./ratingRoutes.js'));

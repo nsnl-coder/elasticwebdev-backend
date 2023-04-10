@@ -29,7 +29,7 @@ app.use(
   bodyParser.json({
     verify: function (req, res, buf) {
       var url = req.originalUrl;
-      if (url.startsWith('/api/webhooks')) {
+      if (url.startsWith('/api/stripe/webhooks')) {
         req.rawBody = buf.toString();
       }
     },
