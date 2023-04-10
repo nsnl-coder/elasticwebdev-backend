@@ -21,19 +21,19 @@ const fileSchema = object({
       .label('File type'),
     size: number()
       .required()
-      .min(1)
+      .moreThan(0)
       .label('File size')
       .when('type', {
         is: (type) => type.startsWith('image'),
         then: (schema) =>
           schema.max(
             MAX_IMAGE_SIZE * 1024 * 1024,
-            `Image size should less than ${MAX_IMAGE_SIZE}mb`,
+            `Image size should be smaller than ${MAX_IMAGE_SIZE}mb`,
           ),
         otherwise: (schema) =>
           schema.max(
             MAX_VIDEO_SIZE * 1024 * 1024,
-            `Video size should less than ${MAX_VIDEO_SIZE}mb`,
+            `Video size should be smaller than ${MAX_VIDEO_SIZE}mb`,
           ),
       }),
   }),

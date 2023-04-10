@@ -1,7 +1,3 @@
-const bytesToMb = (bytes) => {
-  return bytes / (1024 * 1024);
-};
-
 const createPresignedUrl = async (req, res, next) => {
   // 1. Only allow images or video
   // 2.

@@ -19,8 +19,6 @@ it('shoud update the product', async () => {
     .set('Cookie', cookie)
     .expect(200);
 
-  // console.log(body);
-
   expect(body.data).toMatchObject(validProductData);
   expect(body.data.slug).toEqual('test-product-name');
 });
