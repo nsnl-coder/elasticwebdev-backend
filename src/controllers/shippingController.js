@@ -1,8 +1,24 @@
 const { Shipping } = require('../models/shippingModel');
 
 const createShipping = async (req, res, next) => {
-  const { name, fees } = req.body;
-  const shipping = await Shipping.create({ name, fees });
+  const {
+    display_name,
+    fees,
+    delivery_min,
+    delivery_min_unit,
+    delivery_max,
+    delivery_max_unit,
+  } = req.body;
+
+  const shipping = await Shipping.create({
+    display_name,
+    fees,
+    delivery_min,
+    delivery_min_unit,
+    delivery_max,
+    delivery_max_unit,
+  });
+
   res.status(201).json({ status: 'success', data: shipping });
 };
 
@@ -77,11 +93,25 @@ const getManyShippings = async (req, res, next) => {
 };
 
 const updateShipping = async (req, res, next) => {
-  const { name, fees } = req.body;
+  const {
+    display_name,
+    fees,
+    delivery_min,
+    delivery_min_unit,
+    delivery_max,
+    delivery_max_unit,
+  } = req.body;
 
   const shipping = await Shipping.findByIdAndUpdate(
     { _id: req.params.id },
-    { name, fees },
+    {
+      display_name,
+      fees,
+      delivery_min,
+      delivery_min_unit,
+      delivery_max,
+      delivery_max_unit,
+    },
     {
       new: true,
       runValidators: true,
@@ -118,7 +148,14 @@ const updateManyShippings = async (req, res, next) => {
     });
   }
 
-  const { name, fees } = payload;
+  const {
+    display_name,
+    fees,
+    delivery_min,
+    delivery_min_unit,
+    delivery_max,
+    delivery_max_unit,
+  } = payload;
 
   const { modifiedCount } = await Shipping.updateMany(
     {
@@ -126,7 +163,14 @@ const updateManyShippings = async (req, res, next) => {
         $in: updateList,
       },
     },
-    { name, fees },
+    {
+      display_name,
+      fees,
+      delivery_min,
+      delivery_min_unit,
+      delivery_max,
+      delivery_max_unit,
+    },
     {
       runValidators: true,
     },

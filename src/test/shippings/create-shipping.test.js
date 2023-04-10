@@ -21,23 +21,6 @@ it('returns 200 & successfully creates shipping', async () => {
   expect(body.data).toMatchObject(validShippingData);
 });
 
-it.skip.each(['email', 'password'])(
-  'return error if %s is missing',
-  async (field) => {
-    const { body } = await request(app)
-      .post('/api/shippings')
-      .send({
-        // add payload here
-        [field]: undefined,
-      })
-      .set('Cookie', cookie)
-      .expect(400);
-
-    // also check if it return correct message
-    expect(body.errors).toContain(`${field} is required`);
-  },
-);
-
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
     cookie = '';

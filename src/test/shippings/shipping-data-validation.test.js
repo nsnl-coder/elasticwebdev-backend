@@ -9,15 +9,60 @@ beforeEach(async () => {
 });
 
 let invalidData = [
-  { field: 'name', message: 'name too long', name: 's'.repeat(256) },
-  { field: 'fees', message: 'fees too high', fees: 1000 },
-  { field: 'fees', message: 'wrong datatype', fees: 'wrong' },
+  {
+    field: 'display_name',
+    message: 'name must be at most 255 characters',
+    display_name: 's'.repeat(256),
+  },
+  {
+    field: 'delivery_min',
+    message: 'Delivery min duration must be greater than or equal to 0',
+    delivery_min: -100,
+  },
+  {
+    field: 'delivery_min',
+    message: 'Delivery min duration must be less than or equal to 9999',
+    delivery_min: 10000,
+  },
+  {
+    field: 'delivery_max',
+    message: 'delivery max duration must be greater than or equal to 0',
+    delivery_max: -100,
+  },
+  {
+    field: 'delivery_max',
+    message: 'delivery max duration must be less than or equal to 999',
+    delivery_max: 10000,
+  },
+  {
+    field: 'delivery_min_unit + delivery_max_unit',
+    message:
+      'Delivery max duration unit must be one of the following values: day, business_day, week, month',
+    delivery_min_unit: 'day',
+    delivery_max_unit: 'hour',
+  },
+  {
+    field: 'delivery_min_unit + delivery_max_unit',
+    message:
+      'Delivery max duration unit must be one of the following values: business_day, week, month',
+    delivery_min_unit: 'business_day',
+    delivery_max_unit: 'day',
+    _note: 'max unit should be higher timeframe',
+  },
+  {
+    field: 'delivery_min + delivery_max',
+    message: 'Delivery max time should be longer than delivery min time.',
+    delivery_min_unit: 'business_day',
+    delivery_max_unit: 'business_day',
+    delivery_min: 10,
+    delivery_max: 8,
+  },
 ];
 
 // ==============================================================
 describe.each(invalidData)(
   'invalid $field',
-  ({ field, message, ...invalidData }) => {
+  ({ field, message, _note, ...invalidData }) => {
     it(`shoud fail to create shipping because ${message}`, async () => {
       const response = await request(app)
         .post(`/api/shippings`)
@@ -29,6 +74,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`should fail to update shipping because ${message}`, async () => {
@@ -43,6 +89,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
 
     it(`shoud fail to update many shippings because ${message}`, async () => {
@@ -60,6 +107,7 @@ describe.each(invalidData)(
         .expect(400);
 
       expect(response.body.message).toEqual('Data validation failed');
+      expect(response.body.errors).toContain(message);
     });
   },
 );
