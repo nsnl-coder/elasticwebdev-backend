@@ -49,8 +49,8 @@ const orderSchema = mongoose.Schema(
     subTotal: Number,
     shippingFees: Number,
     grandTotal: Number,
-    discountPercentage: Number,
-    discountDollar: Number,
+    discountInPercentage: Number,
+    discountInDollar: Number,
 
     // testing purpose only
     test_string: String,

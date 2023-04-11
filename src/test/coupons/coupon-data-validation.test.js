@@ -17,17 +17,19 @@ let invalidData = [
   },
   {
     field: 'endDate',
-    message: 'Coupon end date is a required field',
+    message: 'The end date is required when provided start date!',
     endDate: undefined,
-    _note: 'end date should present when start date is defined',
+  },
+  {
+    field: 'startDate',
+    message: 'The discount start date can not be in the past!',
+    startDate: new Date('2019-01-01'),
   },
   {
     field: 'endDate,startDate',
-    message:
-      'Coupon end date field must be later than 2060-07-07T00:00:00.000Z',
+    message: 'The end date of coupon should be after the start date!',
     endDate: new Date('2050-06-06'),
     startDate: new Date('2060-07-07'),
-    _note: 'endDate should > startDate',
   },
   {
     field: 'discountUnit',
@@ -36,17 +38,35 @@ let invalidData = [
   },
   {
     field: 'discountAmount',
-    message: 'discountAmount must be less than or equal to 100',
+    message: 'Discount percentage should be less than 100!',
     discountUnit: '%',
     discountAmount: 101,
-    _note: 'when unit is %',
   },
   {
     field: 'discountAmount',
-    message: 'discountAmount must be less than or equal to 9999',
+    message: 'Discount amount in dollar should be less than 9999',
     discountUnit: '$',
     discountAmount: 10000,
-    _note: 'when unit is $',
+  },
+  {
+    field: 'discountAmount',
+    message: 'Discount percentage should be greater than 1!',
+    discountUnit: '%',
+    discountAmount: -100,
+  },
+  {
+    field: 'minimumOrder',
+    message: 'Maximum order is required when specified minimum order!',
+    discountUnit: '%',
+    minimumOrder: 100,
+    maximumOrder: undefined,
+  },
+  {
+    field: 'minimumOrder',
+    message: 'Maximum order should be greater than minimum order!',
+    discountUnit: '%',
+    minimumOrder: 100,
+    maximumOrder: 99,
   },
 ];
 

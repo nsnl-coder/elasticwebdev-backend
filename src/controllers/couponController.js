@@ -1,8 +1,95 @@
 const { Coupon } = require('../models/couponModel');
 
-const isCouponValid = (orderTotal, code) => {};
+const checkCouponStatus = async (res, couponCode, orderTotal) => {
+  const coupon = await Coupon.findOne({
+    couponCode,
+  });
 
-const getCouponValidity = async (req, res, next) => {};
+  const invalidStatus = {
+    couponStatus: 'invalid',
+    statusCode: 400,
+    message: undefined,
+  };
+
+  if (!coupon) {
+    invalidStatus.message = 'Can not find coupon with provided coupon code!';
+    invalidStatus.statusCode = 404;
+    return invalidStatus;
+  }
+
+  // invalid coupon
+  if (coupon.isExpired) {
+    invalidStatus.message =
+      'Your coupon code is expired. Try again with new coupon!';
+    invalidStatus.statusCode = 400;
+
+    return invalidStatus;
+  }
+
+  if (coupon.zeroCouponsLeft) {
+    invalidStatus.message =
+      'All coupons have been in used! Try again with different coupon!';
+
+    return invalidStatus;
+  }
+
+  if (coupon.minimumOrder && coupon.maximumOrder && orderTotal) {
+    if (orderTotal < coupon.minimumOrder) {
+      invalidStatus.message = `Your coupon is only valid for order over ${coupon.minimumOrder}$!`;
+      return invalidStatus;
+    }
+
+    if (orderTotal > coupon.maximumOrder) {
+      invalidStatus.message = `Your coupon is only valid for order under ${coupon.maximumOrder}$!`;
+      return invalidStatus;
+    }
+  }
+
+  if (coupon.discountUnit === '$' && orderTotal < coupon.discountAmount) {
+    invalidStatus.message = `To get the discount, please add more items until your cart total exceeds ${coupon.discountAmount}$!`;
+    return invalidStatus;
+  }
+
+  // valid coupon
+  const couponStatus = {
+    couponStatus: 'valid',
+    discountInDollar: 0,
+    discountInPercentage: 0,
+    isFreeshipping: coupon.isFreeshipping,
+    discountUnit: coupon.discountUnit,
+  };
+
+  if (coupon.discountUnit === '$') {
+    couponStatus.discountInDollar = coupon.discountAmount;
+    couponStatus.discountInPercentage =
+      Math.round((coupon.discountAmount / orderTotal) * 10000) / 100;
+  }
+
+  if (coupon.discountUnit === '%') {
+    couponStatus.discountInPercentage = coupon.discountAmount;
+    couponStatus.discountInDollar = (coupon.discountAmount * orderTotal) / 100;
+  }
+
+  return couponStatus;
+};
+
+const getCouponValidity = async (req, res, next) => {
+  const { orderTotal, couponCode } = req.body;
+  const couponStatus = await checkCouponStatus(res, couponCode, orderTotal);
+
+  if (couponStatus.couponStatus === 'invalid') {
+    res.status(couponStatus.statusCode).json({
+      status: 'fail',
+      message: couponStatus.message,
+    });
+    return;
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: couponStatus,
+  });
+};
 
 const createCoupon = async (req, res, next) => {
   const {
@@ -10,6 +97,9 @@ const createCoupon = async (req, res, next) => {
     discountUnit,
     discountAmount,
     couponQuantity,
+    isFreeshipping,
+    minimumOrder,
+    maximumOrder,
     startDate,
     endDate,
     status,
@@ -19,6 +109,9 @@ const createCoupon = async (req, res, next) => {
     couponCode,
     discountUnit,
     discountAmount,
+    isFreeshipping,
+    minimumOrder,
+    maximumOrder,
     couponQuantity,
     startDate,
     endDate,
@@ -104,6 +197,9 @@ const updateCoupon = async (req, res, next) => {
     discountUnit,
     discountAmount,
     couponQuantity,
+    isFreeshipping,
+    minimumOrder,
+    maximumOrder,
     startDate,
     endDate,
     status,
@@ -116,6 +212,9 @@ const updateCoupon = async (req, res, next) => {
       discountUnit,
       discountAmount,
       couponQuantity,
+      isFreeshipping,
+      minimumOrder,
+      maximumOrder,
       startDate,
       endDate,
       status,
@@ -160,6 +259,9 @@ const updateManyCoupons = async (req, res, next) => {
     discountUnit,
     discountAmount,
     couponQuantity,
+    isFreeshipping,
+    minimumOrder,
+    maximumOrder,
     startDate,
     endDate,
     status,
@@ -174,6 +276,9 @@ const updateManyCoupons = async (req, res, next) => {
     {
       discountUnit,
       discountAmount,
+      isFreeshipping,
+      minimumOrder,
+      maximumOrder,
       couponQuantity,
       startDate,
       endDate,
@@ -245,4 +350,5 @@ module.exports = {
   updateManyCoupons,
   deleteCoupon,
   deleteManyCoupons,
+  getCouponValidity,
 };

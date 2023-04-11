@@ -11,6 +11,11 @@ const router = express.Router();
 // TODO: apply 2 below middlewares to correct place
 
 router.get('/:id', validateRequest(couponSchema), couponController.getCoupon);
+router.post(
+  '/get-coupon-validity',
+  requiredFields('orderTotal', 'couponCode'),
+  couponController.getCouponValidity,
+);
 
 router.use(requireLogin(User));
 router.use(requireRole('admin'));

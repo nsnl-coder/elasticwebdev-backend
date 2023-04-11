@@ -16,10 +16,14 @@ const couponSchema = mongoose.Schema(
       enum: ['$', '%'],
     },
     discountAmount: Number,
+    isFreeshipping: Boolean,
     minimumOrder: Number,
     maximumOrder: Number,
     couponQuantity: Number,
-    usedCoupons: Number,
+    usedCoupons: {
+      type: Number,
+      default: 0,
+    },
     startDate: {
       type: Date,
       default: Date.now(),
@@ -45,15 +49,19 @@ const couponSchema = mongoose.Schema(
   },
 );
 
-couponSchema.virtual('isValid').get(function () {
-  const isExpired = compareAsc(new Date(this.endDate), new Date()) === -1;
-  let zeroCouponsLeft;
+couponSchema.virtual('zeroCouponsLeft').get(function () {
+  let zeroCouponsLeft = false;
 
-  if (this.couponQuantity === 0) {
+  if (this.couponQuantity === this.usedCoupons) {
     zeroCouponsLeft = true;
   }
 
-  return !isExpired && !zeroCouponsLeft;
+  return zeroCouponsLeft;
+});
+
+couponSchema.virtual('isExpired').get(function () {
+  const isExpired = compareAsc(new Date(this.endDate), new Date()) === -1;
+  return isExpired;
 });
 
 const Coupon = mongoose.model('coupon', couponSchema);

@@ -17,13 +17,17 @@ beforeEach(async () => {
   await createCoupon({ test_number: 16, test_string: 'b' });
 });
 
-it('should return all coupons', async () => {
+it('should return all coupons with computed virtual fields', async () => {
   const response = await request(app)
     .get('/api/coupons')
     .set('Cookie', cookie)
     .expect(200);
 
   expect(response.body.pagination.results).toEqual(6);
+
+  // make sure virtual fields computed
+  expect(response.body.data[0].isExpired).toBeDefined();
+  expect(response.body.data[0].zeroCouponsLeft).toBeDefined();
 });
 
 describe('auth check', () => {

@@ -5,6 +5,9 @@ const validCouponData = {
   discountUnit: '%',
   discountAmount: 25,
   couponQuantity: 999,
+  isFreeshipping: false,
+  minimumOrder: 100,
+  maximumOrder: 1000,
   startDate: new Date('2030-06-06').toISOString(),
   endDate: new Date('2040-06-06').toISOString(),
 };
