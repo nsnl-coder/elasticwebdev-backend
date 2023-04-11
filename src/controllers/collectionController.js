@@ -1,8 +1,13 @@
 const { Collection } = require('../models/collectionModel');
 
 const createCollection = async (req, res, next) => {
-  const { name, photo, isPinned } = req.body;
-  const collection = await Collection.create({ name, photo, isPinned });
+  const { name, photo, isPinned, description } = req.body;
+  const collection = await Collection.create({
+    name,
+    photo,
+    isPinned,
+    description,
+  });
   res.status(201).json({ status: 'success', data: collection });
 };
 
@@ -47,7 +52,7 @@ const getManyCollections = async (req, res, next) => {
   let query = Collection.find(filter);
 
   // 2. sorting
-  query = query.sort(sort);
+  query = query.sort(`-isPinned ${sort}`);
 
   // 3. limit fields
   if (fields) {
@@ -77,11 +82,11 @@ const getManyCollections = async (req, res, next) => {
 };
 
 const updateCollection = async (req, res, next) => {
-  const { name, photo, isPinned, status } = req.body;
+  const { name, photo, isPinned, status, description } = req.body;
 
   const collection = await Collection.findByIdAndUpdate(
     req.params.id,
-    { name, photo, isPinned, status },
+    { name, photo, isPinned, status, description },
     {
       new: true,
       runValidators: true,
@@ -103,7 +108,7 @@ const updateCollection = async (req, res, next) => {
 
 const updateManyCollections = async (req, res, next) => {
   const { updateList, ...payload } = req.body;
-  const { name, photo, isPinned, status } = payload;
+  const { name, photo, isPinned, status, description } = payload;
 
   // check if ids in updateList all exist
   const matchedDocuments = await Collection.countDocuments({
@@ -125,15 +130,8 @@ const updateManyCollections = async (req, res, next) => {
         $in: updateList,
       },
     },
-    { name, photo, isPinned, status },
+    { name, photo, isPinned, status, description },
   );
-
-  if (modifiedCount !== updateList.length) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Something went wrong!',
-    });
-  }
 
   res.status(200).json({
     status: 'success',

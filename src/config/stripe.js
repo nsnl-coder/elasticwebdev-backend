@@ -23,8 +23,6 @@ const createPaymentIntent = async (res, order) => {
     },
   });
 
-  console.log(paymentIntent);
-
   res.status(200).send({
     status: 'success',
     data: {

@@ -6,11 +6,20 @@ const menuSchema = mongoose.Schema(
       type: String,
       default: 'unnamed menu',
     },
+    status: {
+      type: String,
+      enum: ['draft', 'active'],
+    },
     link: String,
     photo: String,
     ordering: Number,
-    parentMenu: {
-      type: mongoose.Schema.Types.ObjectId,
+    position: {
+      type: String,
+      enum: ['header', 'footer'],
+    },
+    childMenus: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'menu',
     },
     // testing purpose only
     test_string: String,

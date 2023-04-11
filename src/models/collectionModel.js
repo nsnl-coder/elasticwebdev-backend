@@ -9,6 +9,7 @@ const collectionSchema = mongoose.Schema(
     },
     photo: String,
     isPinned: Boolean,
+    description: String,
     status: {
       type: String,
       enum: ['draft', 'active'],

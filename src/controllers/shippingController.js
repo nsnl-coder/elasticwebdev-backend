@@ -8,6 +8,7 @@ const createShipping = async (req, res, next) => {
     delivery_min_unit,
     delivery_max,
     delivery_max_unit,
+    status,
   } = req.body;
 
   const shipping = await Shipping.create({
@@ -17,6 +18,7 @@ const createShipping = async (req, res, next) => {
     delivery_min_unit,
     delivery_max,
     delivery_max_unit,
+    status,
   });
 
   res.status(201).json({ status: 'success', data: shipping });
@@ -100,6 +102,7 @@ const updateShipping = async (req, res, next) => {
     delivery_min_unit,
     delivery_max,
     delivery_max_unit,
+    status,
   } = req.body;
 
   const shipping = await Shipping.findByIdAndUpdate(
@@ -111,6 +114,7 @@ const updateShipping = async (req, res, next) => {
       delivery_min_unit,
       delivery_max,
       delivery_max_unit,
+      status,
     },
     {
       new: true,
@@ -155,6 +159,7 @@ const updateManyShippings = async (req, res, next) => {
     delivery_min_unit,
     delivery_max,
     delivery_max_unit,
+    status,
   } = payload;
 
   const { modifiedCount } = await Shipping.updateMany(
@@ -170,6 +175,7 @@ const updateManyShippings = async (req, res, next) => {
       delivery_min_unit,
       delivery_max,
       delivery_max_unit,
+      status,
     },
     {
       runValidators: true,

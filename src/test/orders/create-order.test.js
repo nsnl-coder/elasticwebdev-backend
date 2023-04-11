@@ -41,8 +41,6 @@ it.only('returns 200 & successfully creates order', async () => {
     });
   // .expect(201);
 
-  console.log(body);
-
   // expect(body.data).toMatchObject(validOrderData);
 });
 

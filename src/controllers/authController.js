@@ -38,6 +38,7 @@ const resWithCookie = (req, res, user, statusCode, message) => {
   res.cookie('jwt', jwtToken, {
     httpOnly: true,
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+    expiresIn: 30 * 24 * 60 * 60 * 1000
   });
 
   res.status(statusCode).json({

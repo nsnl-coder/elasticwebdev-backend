@@ -15,8 +15,15 @@ router.post(
   validateRequest(fileSchema),
   filesController.createPresignedUrl,
 );
-router.get('/', filesController.getAllFiles);
-router.delete('/:key', filesController.deleteFile);
-router.delete('/', filesController.deleteManyFiles);
+
+router.get('/', filesController.getManyFiles);
+
+router.delete('/delete-one-file', filesController.deleteFile);
+
+router.delete(
+  '/',
+  validateRequest(fileSchema),
+  filesController.deleteManyFiles,
+);
 
 module.exports = router;

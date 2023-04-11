@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const shippingSchema = mongoose.Schema(
   {
     display_name: String,
-    fees: Number,
+    fees: {
+      type: Number,
+      default: 0,
+    },
     delivery_min: Number,
     delivery_min_unit: {
       type: String,
@@ -15,6 +18,11 @@ const shippingSchema = mongoose.Schema(
       enum: ['hour', 'day', 'business_day', 'week', 'month'],
     },
     freeshipOrderOver: Number,
+    status: {
+      type: String,
+      enum: ['draft', 'active'],
+      default: 'draft',
+    },
     // testing purpose only
     test_string: String,
     test_number: Number,

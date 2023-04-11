@@ -8,7 +8,10 @@ const productSchema = mongoose.Schema(
       type: String,
       default: 'unnamed product',
     },
-    slug: String,
+    slug: {
+      type: String,
+      default: 'unnamed-product',
+    },
     status: String,
     overview: String,
     description: String,

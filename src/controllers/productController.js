@@ -73,7 +73,7 @@ const getManyProducts = async (req, res, next) => {
   let query = Product.find(filter);
 
   // 2. sorting
-  query = query.sort(sort);
+  query = query.sort(`-isPinned ${sort}`);
 
   // 3. limit fields
   if (fields) {

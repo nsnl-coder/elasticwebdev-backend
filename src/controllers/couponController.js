@@ -189,6 +189,7 @@ const getManyCoupons = async (req, res, next) => {
 
 const updateCoupon = async (req, res, next) => {
   const {
+    name,
     couponCode,
     discountUnit,
     discountAmount,
@@ -204,6 +205,7 @@ const updateCoupon = async (req, res, next) => {
   const coupon = await Coupon.findByIdAndUpdate(
     { _id: req.params.id },
     {
+      name,
       couponCode,
       discountUnit,
       discountAmount,
@@ -252,6 +254,7 @@ const updateManyCoupons = async (req, res, next) => {
   }
 
   const {
+    name,
     discountUnit,
     discountAmount,
     couponQuantity,
@@ -270,6 +273,7 @@ const updateManyCoupons = async (req, res, next) => {
       },
     },
     {
+      name,
       discountUnit,
       discountAmount,
       isFreeshipping,

@@ -1,9 +1,11 @@
+const { subDays } = require('date-fns');
 const { object, number, string, date, boolean } = require('yup');
 
 const { reqQuery, reqParams, objectIdArray } = require('yup-schemas');
 
 const couponSchema = object({
   body: object({
+    name: string().max(255),
     couponCode: string().max(255).label('Coupon code'),
     status: string().oneOf(['draft', 'active']).label('Coupon status'),
     discountUnit: string().oneOf(['$', '%']).label('discountUnit'),
@@ -11,14 +13,14 @@ const couponSchema = object({
       .when('discountUnit', ([discountUnit], schema) =>
         discountUnit === '%'
           ? schema
-              .moreThan(1, 'Discount percentage should be greater than 1!')
+              .min(0, 'Discount percentage should be greater than 1!')
               .max(100, 'Discount percentage should be less than 100!')
           : schema
-              .moreThan(0, 'Discount amount in dollar should be greater than 0')
+              .min(0, 'Discount amount in dollar should be greater than 0')
               .max(9999, 'Discount amount in dollar should be less than 9999'),
       )
       .label('discountAmount'),
-    couponQuantity: number().min(1).max(9999).label('couponQuantity'),
+    couponQuantity: number().min(0).max(9999).label('couponQuantity'),
     isFreeshipping: boolean(),
     minimumOrder: number().moreThan(0).lessThan(100000),
     maximumOrder: number()
@@ -37,7 +39,7 @@ const couponSchema = object({
       ),
     startDate: date()
       .min(
-        new Date(Date.now() - 15 * 60 * 1000),
+        subDays(new Date(), 1),
         'The discount start date can not be in the past!',
       )
       .label('Coupon start date'),
@@ -53,6 +55,7 @@ const couponSchema = object({
           : schema,
       )
       .label('Coupon end date'),
+
     orderTotal: number().moreThan(0).max(999999),
     //
     deleteList: objectIdArray,

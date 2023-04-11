@@ -1,8 +1,17 @@
-const { compareAsc } = require('date-fns');
+const {
+  compareAsc,
+  isAfter,
+  formatDistance,
+  formatDistanceStrict,
+} = require('date-fns');
 const mongoose = require('mongoose');
 
 const couponSchema = mongoose.Schema(
   {
+    name: {
+      type: String,
+      default: 'No name coupon',
+    },
     couponCode: {
       type: String,
       unique: true,
@@ -60,8 +69,19 @@ couponSchema.virtual('zeroCouponsLeft').get(function () {
 });
 
 couponSchema.virtual('isExpired').get(function () {
+  if (!this.endDate) return undefined;
   const isExpired = compareAsc(new Date(this.endDate), new Date()) === -1;
   return isExpired;
+});
+
+couponSchema.virtual('expiredIn').get(function () {
+  if (!this.endDate && !this.startDate) return 'never expired';
+
+  if (isAfter(new Date(this.startDate), new Date())) {
+    return 'scheduled';
+  }
+
+  return 'in ' + formatDistanceStrict(new Date(this.endDate), new Date());
 });
 
 const Coupon = mongoose.model('coupon', couponSchema);
