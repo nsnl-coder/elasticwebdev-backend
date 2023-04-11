@@ -23,7 +23,7 @@ describe('coupon valid', () => {
     expect(response.body.data).toMatchObject({
       couponStatus: 'valid',
       discountInDollar: 50,
-      discountInPercentage: 25,
+      discountInPercent: 25,
       isFreeshipping: false,
       discountUnit: '%',
     });
@@ -47,7 +47,7 @@ describe('coupon valid', () => {
     expect(response.body.data).toMatchObject({
       couponStatus: 'valid',
       discountInDollar: 25,
-      discountInPercentage: 12.5,
+      discountInPercent: 12.5,
       isFreeshipping: false,
       discountUnit: '$',
     });
@@ -81,7 +81,7 @@ describe('coupon invalid', () => {
       .expect(404);
 
     expect(response.body.message).toEqual(
-      'Can not find coupon with provided coupon code!',
+      'Cannot find coupon with provided coupon code',
     );
   });
 
@@ -100,9 +100,7 @@ describe('coupon invalid', () => {
       })
       .expect(400);
 
-    expect(response.body.message).toEqual(
-      'Your coupon code is expired. Try again with new coupon!',
-    );
+    expect(response.body.message).toEqual('Your coupon code is expired');
   });
 
   it('should be invalid if all coupons has been used', async () => {
@@ -120,9 +118,7 @@ describe('coupon invalid', () => {
       })
       .expect(400);
 
-    expect(response.body.message).toEqual(
-      'All coupons have been in used! Try again with different coupon!',
-    );
+    expect(response.body.message).toEqual('All coupons have been used');
   });
 
   it('should be invalid if coupon discount amount is greater than total order', async () => {
@@ -142,7 +138,7 @@ describe('coupon invalid', () => {
       .expect(400);
 
     expect(response.body.message).toEqual(
-      'To get the discount, please add more items until your cart total exceeds 100$!',
+      'Add more items to your cart to get a discount of $100',
     );
   });
 
@@ -163,7 +159,7 @@ describe('coupon invalid', () => {
       .expect(400);
 
     expect(response.body.message).toEqual(
-      'Your coupon is only valid for order over 60$!',
+      'Your order must be at least $60 to use this coupon',
     );
   });
 
@@ -184,7 +180,7 @@ describe('coupon invalid', () => {
       .expect(400);
 
     expect(response.body.message).toEqual(
-      'Your coupon is only valid for order under 999$!',
+      'Your order cannot exceed $999 to use this coupon',
     );
   });
 });

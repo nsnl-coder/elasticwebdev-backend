@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const { variantSchema } = require('./variantModel');
 
 const productSchema = mongoose.Schema(
   {
@@ -28,24 +29,7 @@ const productSchema = mongoose.Schema(
         ref: 'collection',
       },
     ],
-    variants: [
-      {
-        variantName: {
-          type: String,
-          default: 'unnamed variant',
-        },
-        options: [
-          {
-            optionName: {
-              type: String,
-              default: 'unnamed option',
-            },
-            photo: String,
-            price: Number,
-          },
-        ],
-      },
-    ],
+    variants: [variantSchema],
     // side effect
     numberOfRatings: {
       type: Number,

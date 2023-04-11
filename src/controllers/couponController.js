@@ -1,72 +1,67 @@
 const { Coupon } = require('../models/couponModel');
 
-const checkCouponStatus = async (res, couponCode, orderTotal) => {
-  const coupon = await Coupon.findOne({
-    couponCode,
-  });
-
+const getCouponStatus = async (couponCode, orderTotal) => {
   const invalidStatus = {
     couponStatus: 'invalid',
     statusCode: 400,
-    message: undefined,
+    discountInDollar: 0,
+    discountInPercent: 0,
   };
 
+  if (!couponCode || !orderTotal) {
+    invalidStatus.message = 'Please provide coupon code and order total';
+    return invalidStatus;
+  }
+  const coupon = await Coupon.findOne({ couponCode });
+
   if (!coupon) {
-    invalidStatus.message = 'Can not find coupon with provided coupon code!';
+    invalidStatus.message = 'Cannot find coupon with provided coupon code';
     invalidStatus.statusCode = 404;
     return invalidStatus;
   }
 
-  // invalid coupon
   if (coupon.isExpired) {
-    invalidStatus.message =
-      'Your coupon code is expired. Try again with new coupon!';
+    invalidStatus.message = 'Your coupon code is expired';
     invalidStatus.statusCode = 400;
-
     return invalidStatus;
   }
 
   if (coupon.zeroCouponsLeft) {
-    invalidStatus.message =
-      'All coupons have been in used! Try again with different coupon!';
-
+    invalidStatus.message = 'All coupons have been used';
     return invalidStatus;
   }
 
-  if (coupon.minimumOrder && coupon.maximumOrder && orderTotal) {
-    if (orderTotal < coupon.minimumOrder) {
-      invalidStatus.message = `Your coupon is only valid for order over ${coupon.minimumOrder}$!`;
-      return invalidStatus;
-    }
+  if (coupon.minimumOrder && orderTotal < coupon.minimumOrder) {
+    invalidStatus.message = `Your order must be at least $${coupon.minimumOrder} to use this coupon`;
+    return invalidStatus;
+  }
 
-    if (orderTotal > coupon.maximumOrder) {
-      invalidStatus.message = `Your coupon is only valid for order under ${coupon.maximumOrder}$!`;
-      return invalidStatus;
-    }
+  if (coupon.maximumOrder && orderTotal > coupon.maximumOrder) {
+    invalidStatus.message = `Your order cannot exceed $${coupon.maximumOrder} to use this coupon`;
+    return invalidStatus;
   }
 
   if (coupon.discountUnit === '$' && orderTotal < coupon.discountAmount) {
-    invalidStatus.message = `To get the discount, please add more items until your cart total exceeds ${coupon.discountAmount}$!`;
+    invalidStatus.message = `Add more items to your cart to get a discount of $${coupon.discountAmount}`;
     return invalidStatus;
   }
 
-  // valid coupon
   const couponStatus = {
     couponStatus: 'valid',
     discountInDollar: 0,
-    discountInPercentage: 0,
+    discountInPercent: 0,
     isFreeshipping: coupon.isFreeshipping,
     discountUnit: coupon.discountUnit,
   };
 
   if (coupon.discountUnit === '$') {
     couponStatus.discountInDollar = coupon.discountAmount;
-    couponStatus.discountInPercentage =
+    couponStatus.discountInPercent =
       Math.round((coupon.discountAmount / orderTotal) * 10000) / 100;
   }
 
   if (coupon.discountUnit === '%') {
-    couponStatus.discountInPercentage = coupon.discountAmount;
+    couponStatus.discountInPercent = coupon.discountAmount;
     couponStatus.discountInDollar = (coupon.discountAmount * orderTotal) / 100;
   }
 
@@ -75,7 +70,8 @@ const checkCouponStatus = async (res, couponCode, orderTotal) => {
 
 const getCouponValidity = async (req, res, next) => {
   const { orderTotal, couponCode } = req.body;
-  const couponStatus = await checkCouponStatus(res, couponCode, orderTotal);
+
+  const couponStatus = await getCouponStatus(couponCode, orderTotal);
 
   if (couponStatus.couponStatus === 'invalid') {
     res.status(couponStatus.statusCode).json({
@@ -351,4 +347,6 @@ module.exports = {
   deleteCoupon,
   deleteManyCoupons,
   getCouponValidity,
+  //
+  getCouponStatus,
 };

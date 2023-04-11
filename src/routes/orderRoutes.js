@@ -4,12 +4,14 @@ const {
   requireLogin,
   requireRole,
   requireOwnership,
+  checkIdExistence,
 } = require('express-common-middlewares');
 //
 const orderSchema = require('../yup/orderSchema');
 const orderController = require('../controllers/orderController');
 const { User } = require('../models/userModel');
 const { Order } = require('../models/orderModel');
+const { Shipping } = require('../models/shippingModel');
 
 const router = express.Router();
 
@@ -24,8 +26,16 @@ router.get(
 
 router.post(
   '/',
-  requiredFields('items'),
+  requiredFields(
+    'items',
+    'phone',
+    'fullname',
+    'shippingAddress',
+    'email',
+    'shippingMethod',
+  ),
   validateRequest(orderSchema),
+  checkIdExistence('shippingOption', Shipping),
   orderController.createOrder,
 );
 

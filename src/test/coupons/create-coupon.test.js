@@ -21,7 +21,7 @@ it('returns 200 & successfully creates coupon', async () => {
 
   expect(body.data).toMatchObject(validCouponData);
   expect(body.data.couponCode).toEqual('test-code');
-  expect(body.data.isValid).toEqual(true);
+  expect(body.data.isExpired).toBeDefined();
   expect(body.data.updatedAt).toBeUndefined();
 });
 

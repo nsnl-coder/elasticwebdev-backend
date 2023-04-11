@@ -16,6 +16,7 @@ const userSchema = mongoose.Schema(
     profileImage: String,
     fullname: String,
     phone: String,
+    shippingAddress: String,
     password: String,
     //
     isVerified: {

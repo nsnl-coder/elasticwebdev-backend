@@ -14,7 +14,7 @@ const shippingSchema = mongoose.Schema(
       type: String,
       enum: ['hour', 'day', 'business_day', 'week', 'month'],
     },
-
+    freeshipOrderOver: Number,
     // testing purpose only
     test_string: String,
     test_number: Number,

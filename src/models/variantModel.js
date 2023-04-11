@@ -13,6 +13,7 @@ const variantSchema = mongoose.Schema(
           default: 'unnamed option',
         },
         photo: String,
+        price: Number,
       },
     ],
     // testing purpose only

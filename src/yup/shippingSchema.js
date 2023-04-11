@@ -54,7 +54,10 @@ const shippingSchema = object({
         },
       )
       .label('delivery max duration'),
-
+    freeshipOrderOver: number()
+      .min(0)
+      .max(9999999)
+      .label('Freeship for order over'),
     deleteList: objectIdArray,
     updateList: objectIdArray,
     // for testing only

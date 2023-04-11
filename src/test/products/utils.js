@@ -19,18 +19,18 @@ const validProductData = {
     {
       variantName: 'size',
       options: [
-        { optionName: 'xs', price: 36, photo: 'photo-link' },
-        { optionName: 'sm', price: 14, photo: 'photo-link' },
-        { optionName: 'xl', price: 14, photo: 'photo-link' },
-        { optionName: 'xxl', price: 24, photo: 'photo2-link' },
+        { optionName: 'xs', price: 36, photo: 'xs size photo' },
+        { optionName: 'sm', price: 14, photo: 'sm size photo' },
+        { optionName: 'xl', price: 14, photo: 'xl size photo' },
+        { optionName: 'xxl', price: 24, photo: 'xxl size photo' },
       ],
     },
     {
       variantName: 'color',
       options: [
-        { optionName: 'red', price: 30, photo: 'photo-link' },
-        { optionName: 'green', price: 28, photo: 'photo2-link' },
-        { optionName: 'black', price: 28, photo: 'photo2-link' },
+        { optionName: 'red', price: 30, photo: 'red color photo' },
+        { optionName: 'green', price: 28, photo: 'green color photo' },
+        { optionName: 'black', price: 28, photo: 'black color photo' },
       ],
     },
   ],
