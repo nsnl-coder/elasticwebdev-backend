@@ -10,6 +10,7 @@
     ]
   },
   "scripts": {
+    "prod": "node src/index.js",
     "start": "nodemon src/index.js",
     "test": "node -r dotenv/config $(which jest) --watch --no-cache",
     "testv": "node -r dotenv/config $(which jest) --watchAll --no-cache --verbose"

@@ -15,9 +15,19 @@ const dotenv = require('dotenv');
 const indexRouter = require('../routes/index');
 const app = express();
 
-app.use(cors({ origin: process.env.FRONTEND_HOST, credentials: true }));
+const whitelist = [process.env.FRONTEND_HOST, process.env.ADMIN_HOST];
 
-if (process.env.NODE_ENV !== 'test') {
+const origin = (origin, callback) => {
+  if (whitelist.indexOf(origin) !== -1) {
+    callback(null, true);
+  } else {
+    callback(new Error('Not allowed by CORS'));
+  }
+};
+
+app.use(cors({ origin, credentials: true }));
+
+if (process.env.NODE_ENV === 'dev') {
   app.use(logger('dev'));
 }
 
