@@ -1,7 +1,6 @@
 const { Menu } = require('../models/menuModel');
 
 const createMenu = async (req, res, next) => {
-  // TODO: need to parse body
   const body = req.body;
   const menu = await Menu.create(body);
   res.status(201).json({ status: 'success', data: menu });
@@ -78,7 +77,6 @@ const getManyMenus = async (req, res, next) => {
 };
 
 const updateMenu = async (req, res, next) => {
-  // TODO: need to destruct this body
   const body = req.body;
 
   const menu = await Menu.findByIdAndUpdate({ _id: req.params.id }, body, {
@@ -100,7 +98,6 @@ const updateMenu = async (req, res, next) => {
 };
 
 const updateManyMenus = async (req, res, next) => {
-  // TODO: need to destruct payload
   const { updateList, ...payload } = req.body;
 
   // check if ids in updateList all exist

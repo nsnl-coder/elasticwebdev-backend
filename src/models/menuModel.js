@@ -13,9 +13,14 @@ const menuSchema = mongoose.Schema(
     link: String,
     photo: String,
     ordering: Number,
+    menuType: {
+      type: String,
+      enum: ['root', 'nested'],
+      default: 'nested',
+    },
     position: {
       type: String,
-      enum: ['header', 'footer'],
+      enum: ['header', 'footer', ''],
     },
     childMenus: {
       type: [mongoose.Schema.Types.ObjectId],
