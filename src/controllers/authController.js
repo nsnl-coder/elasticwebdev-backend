@@ -38,7 +38,7 @@ const resWithCookie = (req, res, user, statusCode, message) => {
   res.cookie('jwt', jwtToken, {
     httpOnly: true,
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-    expiresIn: 30 * 24 * 60 * 60 * 1000
+    expiresIn: 30 * 24 * 60 * 60 * 1000,
   });
 
   res.status(statusCode).json({
@@ -123,8 +123,7 @@ const verifyEmail = async (req, res, next) => {
 };
 
 const resendVerifyEmail = async (req, res, next) => {
-  const { email } = req.body;
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: req.user.email });
 
   // check if user exists
   if (!user) {

@@ -13,7 +13,7 @@ router.post('/sign-out', userController.signOut);
 
 router.post(
   '/sign-up',
-  requiredFields('email', 'password', 'fullname'),
+  requiredFields('email', 'password'),
   validateRequest(userSchema),
   userController.signUp,
 );
@@ -23,19 +23,6 @@ router.post(
  */
 router.post('/verify-email/:token', userController.verifyEmail);
 
-/**
- * request verification email again
- */
-router.post(
-  '/resend-verify-email',
-  requiredFields('email'),
-  validateRequest(userSchema),
-  userController.resendVerifyEmail,
-);
-
-/**
- * use to request a reset password email
- */
 router.post(
   '/forgot-password',
   requiredFields('email'),
@@ -55,6 +42,19 @@ router.post(
   requiredFields('email', 'password'),
   validateRequest(userSchema),
   userController.signIn,
+);
+
+//
+router.get(
+  '/current-user',
+  requireLogin(User, false),
+  userController.getCurrentUser,
+);
+
+router.post(
+  '/resend-verify-email',
+  requireLogin(User, false),
+  userController.resendVerifyEmail,
 );
 
 // verified logged in user only
@@ -79,7 +79,5 @@ router.put(
   validateRequest(userSchema),
   userController.updateUserInfo,
 );
-
-router.get('/current-user', userController.getCurrentUser);
 
 module.exports = router;

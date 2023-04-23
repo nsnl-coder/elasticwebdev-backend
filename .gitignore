@@ -4,3 +4,4 @@ types
 ignore
 .env.prod
 .env.dev
+scripts
