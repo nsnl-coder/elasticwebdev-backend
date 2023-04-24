@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createShipping } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createShipping } from './utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -11,7 +11,7 @@ beforeEach(async () => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .delete('/api/shippings')
       .set('Cookie', cookie)
@@ -100,7 +100,9 @@ it('should return error if deleteList is non-existent ObjectId', async () => {
     })
     .expect(404);
 
-  expect(response.body.message).toEqual('Can not find shippings with provided ids');
+  expect(response.body.message).toEqual(
+    'Can not find shippings with provided ids',
+  );
 });
 
 it('should delete shippings if deleteList contains at least an existent objectid', async () => {

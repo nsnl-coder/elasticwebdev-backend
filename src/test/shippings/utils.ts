@@ -1,15 +1,17 @@
-import { Shipping } from "../../models/shippingModel";;
-
-const validShippingData = {
+import { Shipping } from '../../models/shippingModel';
+import { IShipping } from '../../yup/shippingSchema';
+const validShippingData: IShipping = {
   display_name: 'Express shipping',
+  status: 'active',
   fees: 25,
+  freeshipOrderOver: 999,
   delivery_min: 1,
   delivery_min_unit: 'day',
   delivery_max: 2,
   delivery_max_unit: 'week',
 };
 
-const createShipping = async (data) => {
+const createShipping = async (data?: Partial<IShipping>) => {
   const shipping = await Shipping.create({
     test_string: 'testname',
     test_number: 10,

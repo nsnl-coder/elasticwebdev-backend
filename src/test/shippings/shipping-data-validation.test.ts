@@ -1,8 +1,10 @@
-import request from "supertest";;
-import { createShipping, validShippingData } from "./utils";;
-import { app } from "../../config/app";;
+import request from 'supertest';
+import { createShipping, validShippingData } from './utils';
+import { app } from '../../config/app';
+import { signup } from '../setup';
 
-let cookie = '';
+let cookie: string[] = [];
+
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
   cookie = newCookie;
@@ -36,18 +38,15 @@ let invalidData = [
   },
   {
     field: 'delivery_min_unit + delivery_max_unit',
-    message:
-      'Delivery max duration unit must be one of the following values: day, business_day, week, month',
+    message: 'Delivery max unit should have higher time unit.',
     delivery_min_unit: 'day',
     delivery_max_unit: 'hour',
   },
   {
     field: 'delivery_min_unit + delivery_max_unit',
-    message:
-      'Delivery max duration unit must be one of the following values: business_day, week, month',
+    message: 'Delivery max unit should have higher time unit.',
     delivery_min_unit: 'business_day',
     delivery_max_unit: 'day',
-    _note: 'max unit should be higher timeframe',
   },
   {
     field: 'delivery_min + delivery_max',
@@ -62,7 +61,7 @@ let invalidData = [
 // ==============================================================
 describe.each(invalidData)(
   'invalid $field',
-  ({ field, message, _note, ...invalidData }) => {
+  ({ field, message, ...invalidData }) => {
     it(`shoud fail to create shipping because ${message}`, async () => {
       const response = await request(app)
         .post(`/api/shippings`)

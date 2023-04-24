@@ -1,8 +1,9 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createShipping } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createShipping } from './utils';
+import { signup } from '../setup';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -11,7 +12,7 @@ beforeEach(async () => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .get('/api/shippings/some-id')
       .set('Cookie', cookie)
@@ -81,5 +82,7 @@ it('should return error if objectid is not existed', async () => {
     .set('Cookie', cookie)
     .expect(404);
 
-  expect(response.body.message).toEqual('Can not find shipping with provided id');
+  expect(response.body.message).toEqual(
+    'Can not find shipping with provided id',
+  );
 });

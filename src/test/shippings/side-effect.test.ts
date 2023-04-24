@@ -1,5 +1,8 @@
+import { signup } from '../setup';
+
 // handle side-effect when delete shipping or delete many shippings
-let cookie = '';
+let cookie: string[] = [];
+
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
   cookie = newCookie;
