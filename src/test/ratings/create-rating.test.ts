@@ -1,9 +1,9 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createProduct } from "../products/utils";;
-import { validRatingData } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createProduct } from '../products/utils';
+import { validRatingData } from './utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup();
@@ -25,7 +25,7 @@ it('returns 200 & successfully creates rating', async () => {
   expect(body.data).toMatchObject(validRatingData);
 });
 
-it('returns 200 & successfully creates rating', async () => {
+it('returns 400 if user already rated the product', async () => {
   const product = await createProduct();
 
   await request(app)
@@ -51,7 +51,7 @@ it('returns 200 & successfully creates rating', async () => {
   );
 });
 
-it('should not create rating if product not exist', async () => {
+it('should not create rating if product does not exist', async () => {
   await request(app)
     .post('/api/ratings')
     .set('Cookie', cookie)
@@ -81,7 +81,7 @@ it.each(['stars', 'product', 'content'])(
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .post('/api/ratings')
       .set('Cookie', cookie)

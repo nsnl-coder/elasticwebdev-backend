@@ -1,26 +1,27 @@
-import request from "supertest";;
-import { createRating, validRatingData } from "./utils";;
-import { app } from "../../config/app";;
-import { createProduct } from "../products/utils";;
+import request from 'supertest';
+import { createRating, validRatingData } from './utils';
+import { app } from '../../config/app';
+import { createProduct } from '../products/utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
-let cookie = '';
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
   cookie = newCookie;
 });
 
 let invalidData = [
-  // {
-  //   field: 'stars',
-  //   message:
-  //     'Number of stars must be one of the following values: 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5',
-  //   stars: 4.6,
-  // },
-  // {
-  //   field: 'content',
-  //   message: 'Rating content must be at most 255 characters',
-  //   content: 'a'.repeat(256),
-  // },
+  {
+    field: 'stars',
+    message:
+      'Number of stars must be one of the following values: 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5',
+    stars: 4.6,
+  },
+  {
+    field: 'content',
+    message: 'Rating content must be at most 255 characters',
+    content: 'a'.repeat(256),
+  },
   {
     field: 'product',
     message: 'Invalid ObjectId',
@@ -63,6 +64,7 @@ describe.each(invalidData)(
     });
 
     it(`shoud fail to update many ratings because ${message}`, async () => {
+      const product = await createProduct();
       let rating1 = await createRating();
       let rating2 = await createRating();
 
@@ -71,6 +73,7 @@ describe.each(invalidData)(
         .set('Cookie', cookie)
         .send({
           updateList: [rating1._id, rating2._id],
+          product: product._id,
           ...validRatingData,
           ...invalidData,
         })

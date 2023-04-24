@@ -1,13 +1,13 @@
-import { Rating } from "../../models/ratingModel";;
-
-import { createProduct } from "../products/utils";;
+import { Rating } from '../../models/ratingModel';
+import { IRating } from '../../yup/ratingSchema';
+import { createProduct } from '../products/utils';
 
 const validRatingData = {
   stars: 5,
   content: 'test content',
 };
 
-const createRating = async (data) => {
+const createRating = async (data?: Partial<IRating>) => {
   const product = await createProduct();
 
   const rating = await Rating.create({
