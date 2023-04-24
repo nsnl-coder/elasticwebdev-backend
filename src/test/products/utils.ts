@@ -1,7 +1,7 @@
 import { Product } from '../../models/productModel';
 import { IProduct } from '../../yup/productSchema';
 
-const validProductData = {
+const validProductData: Partial<IProduct> = {
   name: 'test product name',
   status: 'active',
   overview: 'this is test overview',
@@ -32,7 +32,7 @@ const validProductData = {
   ],
 };
 
-const createProduct = async (data?: Partial<IProduct>) => {
+const createProduct = async (data?: Partial<IProduct>): Promise<IProduct> => {
   const product = await Product.create({
     test_string: 'testname',
     test_number: 10,

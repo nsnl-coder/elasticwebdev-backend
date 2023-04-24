@@ -1,8 +1,9 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createOrder } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createOrder } from './utils';
+import { signup } from '../setup';
+import mongoose from 'mongoose';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -11,7 +12,7 @@ beforeEach(async () => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .delete('/api/orders/some-id')
       .set('Cookie', cookie)
@@ -56,7 +57,7 @@ describe('auth check', () => {
 // ===========================================
 
 it('should delete order', async () => {
-  let order = await createOrder();
+  let order = await createOrder({ createdBy: new mongoose.Types.ObjectId() });
   const id = order._id;
   expect(id).toBeDefined();
 

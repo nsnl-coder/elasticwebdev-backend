@@ -70,6 +70,7 @@ const couponSchema = object({
 });
 
 interface ICoupon extends InferType<typeof reqBody> {
+  _id?: string;
   usedCoupons: number;
   isExpired: boolean;
   expiredIn: string;

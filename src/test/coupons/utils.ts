@@ -13,7 +13,7 @@ const validCouponData: Partial<ICoupon> = {
   endDate: new Date('2040-06-06'),
 };
 
-const createCoupon = async (data?: Partial<ICoupon>) => {
+const createCoupon = async (data?: Partial<ICoupon>): Promise<ICoupon> => {
   const couponCode = Math.random().toString(20).substring(2, 10);
 
   const coupon = await Coupon.create({

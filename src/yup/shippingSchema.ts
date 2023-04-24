@@ -88,7 +88,9 @@ const shippingSchema = object({
   query: reqQuery,
 });
 
-interface IShipping extends InferType<typeof reqBody> {}
+interface IShipping extends InferType<typeof reqBody> {
+  _id?: string;
+}
 
 export default shippingSchema;
 export type { IShipping };

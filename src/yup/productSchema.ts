@@ -1,5 +1,4 @@
 import { object, number, string, boolean, array, InferType } from 'yup';
-
 import { reqQuery, reqParams, objectIdArray, objectId } from 'yup-schemas';
 
 const variantSchema = object({
@@ -28,7 +27,10 @@ const reqBody = object({
     )
     .label('discountPrice'),
   images: array().max(20).of(string().max(255)).label('Product images'),
-  previewImages: array().max(2).of(string().max(255)).label('Preview images'),
+  previewImages: array()
+    .max(2)
+    .of(string().min(1).max(255))
+    .label('Preview images'),
   collections: array().of(objectId).max(100).label('collections ids'),
   variants: array().of(variantSchema).max(100).label('Product variants'),
   //
@@ -47,6 +49,7 @@ const productSchema = object({
 });
 
 interface IProduct extends InferType<typeof reqBody> {
+  _id?: string;
   slug: string;
   numberOfRatings: number;
   ratingsAverage: number;

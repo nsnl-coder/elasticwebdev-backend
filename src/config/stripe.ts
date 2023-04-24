@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import type { Response } from 'express';
 import { IOrder } from '../yup/orderSchema';
+import createError from '../utils/createError';
 
 const createStripeClient = () => {
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -21,12 +22,11 @@ const createPaymentIntent = async (res: Response, order: IOrder) => {
   const stripe = createStripeClient();
 
   if (!stripe) {
-    throw new Error('Unexpected error happen');
-    return;
+    throw createError('Unexpected error happen!');
   }
 
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: order.grandTotal * 100,
+    amount: Math.floor(order.grandTotal * 100),
     currency: 'usd',
     payment_method_types: ['card'],
     receipt_email: order.email,
@@ -38,17 +38,12 @@ const createPaymentIntent = async (res: Response, order: IOrder) => {
       phone: order.phone,
     },
     metadata: {
-      orderId: order._id.toString(),
+      orderId: order._id!.toString(),
       orderNumber: order.orderNumber,
     },
   });
 
-  res.status(200).send({
-    status: 'success',
-    data: {
-      client_secret: paymentIntent.client_secret,
-    },
-  });
+  return paymentIntent.client_secret;
 };
 
 export default createStripeClient;

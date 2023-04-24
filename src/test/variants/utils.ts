@@ -1,6 +1,6 @@
 import { Variant } from '../../models/variantModel';
 import { IVariant } from '../../yup/variantSchema';
-const validVariantData = {
+const validVariantData: Partial<IVariant> = {
   variantName: 'test variant name',
   options: [
     {
@@ -14,7 +14,7 @@ const validVariantData = {
   ],
 };
 
-const createVariant = async (data?: Partial<IVariant>) => {
+const createVariant = async (data?: Partial<IVariant>): Promise<IVariant> => {
   const variant = await Variant.create({
     test_string: 'testname',
     test_number: 10,

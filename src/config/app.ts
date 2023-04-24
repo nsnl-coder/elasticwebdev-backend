@@ -5,10 +5,11 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import logger from 'morgan';
 import cors from 'cors';
-import { globalErrorHandler, routeNotFound } from 'express-common-middlewares';
+import { routeNotFound } from 'express-common-middlewares';
 
 import indexRouter from '../routers/index';
 import { StripeRequest } from '../middlewares/validateStripeSignature';
+import globalErrorHandler from '../middlewares/globalErrorHandler';
 
 const app = express();
 
@@ -52,9 +53,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '..', '..', 'public')));
 app.use('/', indexRouter);
 
-// @ts-ignore
+//
 app.use(routeNotFound);
-// @ts-ignore
 app.use(globalErrorHandler);
 
 export { app };

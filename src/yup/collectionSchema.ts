@@ -23,6 +23,7 @@ const collectionSchema = object({
 });
 
 interface ICollection extends InferType<typeof reqBody> {
+  _id?: string;
   slug: string;
 }
 

@@ -10,10 +10,11 @@ import { sendForgotPasswordEmail } from '../utils/email';
 import { eventEmitter, MAIL_EVENTS } from '../config/eventEmitter';
 import { NextFunction, Request, Response } from 'express';
 import { IUser } from '../yup/userSchema';
+import createError from '../utils/createError';
 
 const signJwtToken = (id: string) => {
   if (!process.env.JWT_SECRET) {
-    throw new Error('Unexpected error!');
+    throw createError('Can not read jwt secret!');
   }
 
   return jwt.sign({ id }, process.env.JWT_SECRET, {

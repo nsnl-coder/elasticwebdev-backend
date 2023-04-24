@@ -41,7 +41,9 @@ const fileSchema = object({
   body: reqBody,
 });
 
-interface IFile extends InferType<typeof reqBody> {}
+interface IFile extends InferType<typeof reqBody> {
+  _id?: string;
+}
 
 export default fileSchema;
 export type { IFile };

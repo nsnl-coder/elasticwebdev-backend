@@ -11,7 +11,9 @@ const validShippingData: IShipping = {
   delivery_max_unit: 'week',
 };
 
-const createShipping = async (data?: Partial<IShipping>) => {
+const createShipping = async (
+  data?: Partial<IShipping>,
+): Promise<IShipping> => {
   const shipping = await Shipping.create({
     test_string: 'testname',
     test_number: 10,

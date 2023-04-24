@@ -25,6 +25,7 @@ const ratingSchema = object({
 });
 
 interface IRating extends InferType<typeof reqBody> {
+  _id?: string;
   createdBy: ObjectId;
 }
 

@@ -1,8 +1,9 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createOrder, validOrderData } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createOrder, getValidOrderData } from './utils';
+import { signup } from '../setup';
+import mongoose from 'mongoose';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -10,20 +11,32 @@ beforeEach(async () => {
 });
 
 it('shoud update the order', async () => {
-  const order = await createOrder();
+  const order = await createOrder({
+    createdBy: new mongoose.Types.ObjectId('642b8200fc13ae1d48f4cf21'),
+  });
+
+  const newData = {
+    fullname: 'new name',
+    shippingAddress: 'new address',
+    phone: '123456789',
+    email: 'newemail@gmail.com',
+    shippingStatus: 'processing',
+    paymentStatus: 'paid',
+    notes: 'new note',
+  };
 
   const { body } = await request(app)
     .put(`/api/orders/${order._id}`)
-    .send(validOrderData)
+    .send(newData)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(body.data).toMatchObject(validOrderData);
+  expect(body.data).toMatchObject(newData);
 });
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .put('/api/orders/some-id')
       .set('Cookie', cookie)

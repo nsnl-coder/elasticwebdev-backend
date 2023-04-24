@@ -25,7 +25,9 @@ const variantSchema = object({
   query: reqQuery,
 });
 
-interface IVariant extends InferType<typeof reqBody> {}
+interface IVariant extends InferType<typeof reqBody> {
+  _id?: string;
+}
 
 export default variantSchema;
 export type { IVariant };

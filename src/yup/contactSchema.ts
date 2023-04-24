@@ -27,7 +27,9 @@ const contactSchema = object({
   query: reqQuery,
 });
 
-interface IContact extends InferType<typeof reqBody> {}
+interface IContact extends InferType<typeof reqBody> {
+  _id?: string;
+}
 
 export default contactSchema;
 export type { IContact };

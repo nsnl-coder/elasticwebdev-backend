@@ -1,20 +1,47 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createOrder } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createOrder } from './utils';
+import { signup } from '../setup';
+import mongoose from 'mongoose';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
   cookie = newCookie;
 
   // create 6 orders
-  await createOrder({ test_number: 11, test_string: 'a' });
-  await createOrder({ test_number: 12, test_string: 'd' });
-  await createOrder({ test_number: 13, test_string: 'c' });
-  await createOrder({ test_number: 14, test_string: 'e' });
-  await createOrder({ test_number: 15, test_string: 'f' });
-  await createOrder({ test_number: 16, test_string: 'b' });
+
+  await createOrder({
+    test_number: 11,
+    test_string: 'a',
+    createdBy: new mongoose.Types.ObjectId(),
+  });
+  await createOrder({
+    test_number: 12,
+    test_string: 'd',
+    createdBy: new mongoose.Types.ObjectId(),
+  });
+  await createOrder({
+    test_number: 13,
+    test_string: 'c',
+    createdBy: new mongoose.Types.ObjectId(),
+  });
+  await createOrder({
+    test_number: 14,
+    test_string: 'e',
+    createdBy: new mongoose.Types.ObjectId(),
+  });
+  await createOrder({
+    test_number: 15,
+    test_string: 'f',
+    createdBy: new mongoose.Types.ObjectId(),
+  });
+  await createOrder({
+    test_number: 16,
+    test_string: 'b',
+    createdBy: new mongoose.Types.ObjectId(),
+  });
 });
 
 it('should return all orders', async () => {
@@ -26,12 +53,12 @@ it('should return all orders', async () => {
   expect(response.body.data[0].test_string).toBeDefined();
   expect(response.body.data[0].test_number).toBeDefined();
   expect(response.body.data[0].test_any).toBeDefined();
-  expect(response.body.results).toEqual(6);
+  expect(response.body.pagination.results).toEqual(6);
 });
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .get('/api/orders')
       .set('Cookie', cookie)
@@ -107,8 +134,8 @@ describe('itemPerPage & page', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(response.body.results).toEqual(2);
-    expect(response.body.totalPages).toEqual(3);
+    expect(response.body.pagination.results).toEqual(2);
+    expect(response.body.pagination.totalPages).toEqual(3);
   });
 
   it('should returns single order with itemsPerPage=2 and page=2', async () => {
@@ -117,8 +144,8 @@ describe('itemPerPage & page', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(response.body.results).toEqual(2);
-    expect(response.body.totalPages).toEqual(3);
+    expect(response.body.pagination.results).toEqual(2);
+    expect(response.body.pagination.totalPages).toEqual(3);
   });
 
   it('should return 200 despite only itemsPerPage provided', async () => {
@@ -127,8 +154,8 @@ describe('itemPerPage & page', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(response.body.results).toEqual(3);
-    expect(response.body.totalPages).toEqual(2);
+    expect(response.body.pagination.results).toEqual(3);
+    expect(response.body.pagination.totalPages).toEqual(2);
   });
 
   it('should return 200 even only page is provided', async () => {
@@ -137,8 +164,8 @@ describe('itemPerPage & page', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(response.body.results).toEqual(6);
-    expect(response.body.totalPages).toEqual(1);
+    expect(response.body.pagination.results).toEqual(6);
+    expect(response.body.pagination.totalPages).toEqual(1);
   });
 
   it('should return error if page is 0 or negative number', async () => {
@@ -208,7 +235,7 @@ it('should work with combination of query types', async () => {
     .expect(200);
 
   // check itemsPerPage, page
-  expect(response.body.results).toEqual(4);
+  expect(response.body.pagination.results).toEqual(4);
 
   // check sort
   expect(response.body.data[0].test_number).toEqual(11);
@@ -226,7 +253,7 @@ describe('gt, gte, lt,lte', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(2);
+    expect(body.pagination.results).toEqual(2);
   });
 
   it('return orders that has test_number <= 13', async () => {
@@ -235,7 +262,7 @@ describe('gt, gte, lt,lte', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(3);
+    expect(body.pagination.results).toEqual(3);
   });
 
   it('return orders that has test_number > 12', async () => {
@@ -244,7 +271,7 @@ describe('gt, gte, lt,lte', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(4);
+    expect(body.pagination.results).toEqual(4);
   });
 
   it('return orders that has test_number >= 12', async () => {
@@ -253,7 +280,7 @@ describe('gt, gte, lt,lte', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(5);
+    expect(body.pagination.results).toEqual(5);
   });
 });
 
@@ -264,7 +291,7 @@ describe('filter by value', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(2);
+    expect(body.pagination.results).toEqual(2);
 
     expect(body.data[0].test_number).toEqual(11);
     expect(body.data[1].test_number).toEqual(14);
@@ -276,7 +303,7 @@ describe('filter by value', () => {
       .set('Cookie', cookie)
       .expect(200);
 
-    expect(body.results).toEqual(2);
+    expect(body.pagination.results).toEqual(2);
 
     expect(body.data[0].test_number).toEqual(11);
     expect(body.data[1].test_number).toEqual(14);

@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 import getS3Client from '../config/s3';
 import { NextFunction, Request, Response } from 'express';
 import { ReqQuery } from '../types/express';
+import createError from '../utils/createError';
 
 const createPresignedUrl = async (
   req: Request,
@@ -32,7 +33,7 @@ const generateUrl = async (
   const s3 = getS3Client();
 
   if (!s3) {
-    throw Error('Something went wrong!');
+    throw createError('Unexpected error occured!');
   }
 
   const command = new PutObjectCommand({
@@ -58,7 +59,7 @@ const getManyFiles = async (
   const s3 = getS3Client();
 
   if (!s3) {
-    throw Error('Something went wrong!');
+    throw createError('Unexpected error occured!');
   }
 
   const command = new ListObjectsV2Command({
@@ -91,7 +92,7 @@ const deleteFile = async (req: Request, res: Response, next: NextFunction) => {
   const s3 = getS3Client();
 
   if (!s3) {
-    throw Error('Something went wrong!');
+    throw createError('Can not create s3 client!');
   }
 
   if (!key) {
@@ -122,7 +123,7 @@ const deleteManyFiles = async (
   const s3 = getS3Client();
 
   if (!s3) {
-    throw Error('Something went wrong!');
+    throw createError('Can not create s3 client!');
   }
 
   const command = new DeleteObjectsCommand({

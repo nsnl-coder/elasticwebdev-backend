@@ -2,12 +2,12 @@ import { Rating } from '../../models/ratingModel';
 import { IRating } from '../../yup/ratingSchema';
 import { createProduct } from '../products/utils';
 
-const validRatingData = {
+const validRatingData: Partial<IRating> = {
   stars: 5,
   content: 'test content',
 };
 
-const createRating = async (data?: Partial<IRating>) => {
+const createRating = async (data?: Partial<IRating>): Promise<IRating> => {
   const product = await createProduct();
 
   const rating = await Rating.create({

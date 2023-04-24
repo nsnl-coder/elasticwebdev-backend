@@ -2,6 +2,7 @@ import { createTransport } from 'nodemailer';
 import pug from 'pug';
 import { htmlToText } from 'html-to-text';
 import { Transporter } from 'nodemailer';
+import createError from './createError';
 
 const createMailTransport = (): Transporter | null => {
   let transporter: Transporter;
@@ -68,7 +69,9 @@ const sendEmail = async ({
 
   const transporter = createMailTransport();
 
-  if (!transporter) throw new Error('Unexpected error!');
+  if (!transporter) {
+    throw createError('Error occured when trying to send mail!');
+  }
 
   transporter.sendMail(
     {

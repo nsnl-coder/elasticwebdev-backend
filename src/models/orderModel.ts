@@ -1,25 +1,29 @@
 import { Schema, model } from 'mongoose';
-import { productSchema } from './productModel';
-import { shippingSchema } from './shippingModel';
 import { IOrder } from '../yup/orderSchema';
+
 const orderSchema = new Schema<IOrder>(
   {
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'user',
+    },
     orderNumber: Number,
     subTotal: Number,
     grandTotal: Number,
     items: [
       {
-        product: productSchema,
+        productName: String,
+        price: Number,
         quantity: {
           type: Number,
           default: 1,
         },
-        image: String,
+        photos: [String],
         variants: [
           {
             variantName: String,
             optionName: String,
-            photo: String,
           },
         ],
       },
@@ -27,7 +31,10 @@ const orderSchema = new Schema<IOrder>(
     fullname: String,
     email: String,
     phone: String,
-    shippingMethod: shippingSchema,
+    shipping: {
+      name: String,
+      fees: Number,
+    },
     discount: {
       inDollar: Number,
       inPercent: Number,
@@ -38,9 +45,12 @@ const orderSchema = new Schema<IOrder>(
       default: 'pending',
       enum: ['pending', 'processing', 'shipped', 'arrived'],
     },
+    shippingAddress: String,
+    notes: String,
     paymentStatus: {
       type: String,
-      enum: ['fail', 'paid', 'refunded'],
+      enum: ['fail', 'paid', 'refunded', 'processing'],
+      default: 'processing',
     },
     // testing purpose only
     test_string: String,

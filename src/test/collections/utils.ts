@@ -1,13 +1,16 @@
 import { Collection } from '../../models/collectionModel';
 import { ICollection } from '../../yup/collectionSchema';
-const validCollectionData = {
+
+const validCollectionData: Partial<ICollection> = {
   name: 'test collection name',
   photo: 'this-is-photo-link',
   isPinned: true,
   status: 'draft',
 };
 
-const createCollection = async (data?: Partial<ICollection>) => {
+const createCollection = async (
+  data?: Partial<ICollection>,
+): Promise<ICollection> => {
   const one = await Collection.create({
     test_string: 'testname',
     test_number: 10,

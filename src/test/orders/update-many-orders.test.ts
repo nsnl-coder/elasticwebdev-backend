@@ -1,8 +1,10 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createOrder, validOrderData } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createOrder } from './utils';
+import { signup } from '../setup';
+import mongoose from 'mongoose';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -10,8 +12,12 @@ beforeEach(async () => {
 });
 
 it('returns 200 & successfully update the orders', async () => {
-  let order1 = await createOrder();
-  let order2 = await createOrder();
+  let order1 = await createOrder({
+    createdBy: new mongoose.Types.ObjectId('642b8200fc13ae1d48f4cf21'),
+  });
+  let order2 = await createOrder({
+    createdBy: new mongoose.Types.ObjectId('642b8200fc13ae1d48f4cf21'),
+  });
 
   // update order
   const id1 = order1._id;
@@ -20,6 +26,15 @@ it('returns 200 & successfully update the orders', async () => {
   expect(id1).toBeDefined();
   expect(id2).toBeDefined();
 
+  const validOrderData = {
+    fullname: 'new name',
+    shippingAddress: 'new address',
+    phone: '123456789',
+    email: 'newemail@gmail.com',
+    shippingStatus: 'processing',
+    paymentStatus: 'paid',
+    notes: 'new note',
+  };
   const response = await request(app)
     .put('/api/orders')
     .set('Cookie', cookie)
@@ -32,23 +47,23 @@ it('returns 200 & successfully update the orders', async () => {
   expect(response.body.modifiedCount).toEqual(2);
 
   // double check
-  order1 = await request(app)
+  const updatedOrder1 = await request(app)
     .get(`/api/orders/${id1}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  order2 = await request(app)
+  let updatedOrder2 = await request(app)
     .get(`/api/orders/${id2}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(order1.body.data).toMatchObject(validOrderData);
-  expect(order2.body.data).toMatchObject(validOrderData);
+  expect(updatedOrder1.body.data).toMatchObject(validOrderData);
+  expect(updatedOrder2.body.data).toMatchObject(validOrderData);
 });
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .put('/api/orders')
       .set('Cookie', cookie)

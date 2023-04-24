@@ -1,6 +1,6 @@
 import { Contact } from '../../models/contactModel';
 import { IContact } from '../../yup/contactSchema';
-const validContactData = {
+const validContactData: Partial<IContact> = {
   email: 'test@test.com',
   fullname: 'test name',
   phone: '012345678',
@@ -8,7 +8,7 @@ const validContactData = {
   content: 'test content',
 };
 
-const createContact = async (data?: Partial<IContact>) => {
+const createContact = async (data?: Partial<IContact>): Promise<IContact> => {
   const contact = await Contact.create({
     test_string: 'testname',
     test_number: 10,

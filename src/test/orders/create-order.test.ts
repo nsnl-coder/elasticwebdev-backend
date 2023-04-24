@@ -1,47 +1,52 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createProduct, validProductData } from "../products/utils";;
-import { createShipping, validShippingData } from "../shippings/utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { signup } from '../setup';
+import { getValidOrderData } from './utils';
+import { IOrder } from '../../yup/orderSchema';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'user' });
   cookie = newCookie;
 });
 
-it.only('returns 200 & successfully creates order', async () => {
-  const product = await createProduct(validProductData);
-  const shipping = await createShipping(validShippingData);
+it('returns 200 & successfully creates order', async () => {
+  const validOrderData = await getValidOrderData();
 
   const { body } = await request(app)
     .post('/api/orders')
     .set('Cookie', cookie)
     .send({
-      items: [
-        {
-          product: product._id,
-          options: [
-            product.variants[0].options[0]._id,
-            product.variants[1].options[0]._id,
-          ],
-          quantity: 3,
-        },
-        {
-          product: product._id,
-          options: [product.variants[0].options[0]._id],
-          quantity: 2,
-        },
-      ],
-      shippingMethod: shipping._id,
-      phone: '5959562588',
-      fullname: 'test fullname',
-      shippingAddress: '28 rosegarden',
-      email: 'test@test.com',
-    });
-  // .expect(201);
+      ...validOrderData,
+    })
+    .expect(201);
 
-  // expect(body.data).toMatchObject(validOrderData);
+  const order: IOrder = body.data.order;
+
+  expect(order.subTotal).toEqual(164);
+  expect(order.grandTotal).toEqual(169);
+
+  // check varaints first item
+  expect(order.items![0].variants![0].variantName).toEqual('size');
+  expect(order.items![0].variants![0].optionName).toEqual('xs');
+  expect(order.items![0].variants![1].variantName).toEqual('color');
+  expect(order.items![0].variants![1].optionName).toEqual('red');
+
+  // check variant second items
+  expect(order.items![1].variants![0].variantName).toEqual('size');
+  expect(order.items![1].variants![0].optionName).toEqual('sm');
+  expect(order.items![1].variants![1].variantName).toEqual('color');
+  expect(order.items![1].variants![1].optionName).toEqual('green');
+
+  // check shippings
+  expect(order.shipping.fees).toEqual(25);
+  expect(order.shipping.name).toEqual('Express shipping');
+
+  // check discounts
+  expect(order.discount.couponCode).toEqual('TEST_COUPON');
+  expect(order.discount.inDollar).toEqual(20);
+  expect(order.discount.inPercent).toEqual(12.2);
 });
 
 it.each(['items', 'fullname', 'shippingAddress', 'email', 'phone'])(
@@ -63,7 +68,7 @@ it.each(['items', 'fullname', 'shippingAddress', 'email', 'phone'])(
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .post('/api/orders')
       .set('Cookie', cookie)

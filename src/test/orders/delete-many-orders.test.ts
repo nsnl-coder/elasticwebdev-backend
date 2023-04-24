@@ -1,8 +1,10 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createOrder } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createOrder } from './utils';
+import { signup } from '../setup';
+import mongoose from 'mongoose';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -11,7 +13,7 @@ beforeEach(async () => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .delete('/api/orders')
       .set('Cookie', cookie)
@@ -58,8 +60,12 @@ describe('auth check', () => {
 
 it('should delete many orders', async () => {
   // create 2 orders
-  const order1 = await createOrder();
-  const order2 = await createOrder();
+  const order1 = await createOrder({
+    createdBy: new mongoose.Types.ObjectId(),
+  });
+  const order2 = await createOrder({
+    createdBy: new mongoose.Types.ObjectId(),
+  });
 
   const id1 = order1._id;
   const id2 = order2._id;
@@ -100,11 +106,13 @@ it('should return error if deleteList is non-existent ObjectId', async () => {
     })
     .expect(404);
 
-  expect(response.body.message).toEqual('Can not find orders with provided ids');
+  expect(response.body.message).toEqual(
+    'Can not find orders with provided ids',
+  );
 });
 
 it('should delete orders if deleteList contains at least an existent objectid', async () => {
-  const order = await createOrder();
+  const order = await createOrder({ createdBy: new mongoose.Types.ObjectId() });
   const id = order._id;
   expect(id).toBeDefined();
 

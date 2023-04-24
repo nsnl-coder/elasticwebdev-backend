@@ -1,6 +1,7 @@
 import { object, number, string, array, InferType } from 'yup';
 import { reqQuery, reqParams, objectIdArray, objectId } from 'yup-schemas';
 import { IProduct } from './productSchema';
+import mongoose, { ObjectId } from 'mongoose';
 
 const itemSchema = object({
   product: objectId.required(),
@@ -20,7 +21,7 @@ const reqBody = object({
   phone: string()
     .matches(/^[0-9]{9,16}$/, 'Please provide valid phone number')
     .label('Phone number'),
-  shippingAddress: string().max(255).label('Shipping address'),
+  shippingAddress: string().min(6).max(255).label('Shipping address'),
   shippingMethod: objectId,
   //
   deleteList: objectIdArray,
@@ -42,12 +43,17 @@ interface IOrderItem {
     IProduct,
     'name' | 'price' | 'slug' | 'variants' | 'discountPrice' | 'previewImages'
   >;
-  quantity?: number;
+  productName: string;
+  price: number;
+  quantity: number;
   selectedOptions?: string[];
+  photos: string[];
+  variants?: { variantName?: string; optionName?: string }[];
 }
 
-interface IOrder extends InferType<typeof reqBody> {
-  _id: string;
+interface IOrder extends Omit<InferType<typeof reqBody>, 'items'> {
+  _id?: string;
+  createdBy: mongoose.Types.ObjectId;
   orderNumber: number;
   subTotal: number;
   grandTotal: number;
@@ -57,9 +63,19 @@ interface IOrder extends InferType<typeof reqBody> {
     couponCode: string;
   };
 
+  shipping: {
+    name: string;
+    fees: number;
+  };
   shippingStatus: 'pending' | 'processing' | 'shipped' | 'arrived';
-  paymentStatus: 'fail' | 'paid' | 'refuned';
+  paymentStatus: 'fail' | 'paid' | 'refuned' | 'processing';
+  items: Pick<
+    IOrderItem,
+    'productName' | 'quantity' | 'price' | 'photos' | 'variants'
+  >[];
 }
 
+interface IOrderRequestPayload extends InferType<typeof reqBody> {}
+
 export default orderSchema;
-export type { IOrder, IOrderItem };
+export type { IOrder, IOrderItem, IOrderRequestPayload };

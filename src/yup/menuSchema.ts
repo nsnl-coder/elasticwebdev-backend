@@ -26,7 +26,9 @@ const menuSchema = object({
   query: reqQuery,
 });
 
-interface IMenu extends InferType<typeof reqBody> {}
+interface IMenu extends InferType<typeof reqBody> {
+  _id?: string;
+}
 
 export default menuSchema;
 export type { IMenu };

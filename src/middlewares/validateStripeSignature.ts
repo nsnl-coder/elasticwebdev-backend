@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import createStripeClient from '../config/stripe';
 import Stripe from 'stripe';
+import createError from '../utils/createError';
 
 export interface StripeRequest extends Request {
   event?: Stripe.Event;
@@ -15,14 +16,14 @@ const validateStripeSignature = (
   const stripe = createStripeClient();
 
   if (!stripe || !req.rawBody) {
-    throw new Error('Unexpected error happen');
+    throw createError('Unexpected error with stripe!');
   }
 
   const endpointSecret = process.env.ENDPOINT_SECRET;
   const signature = req.headers['stripe-signature'];
 
   if (!signature || !endpointSecret) {
-    throw Error('Unexpected error');
+    throw createError('Unexpected error with stripe!');
   }
 
   try {

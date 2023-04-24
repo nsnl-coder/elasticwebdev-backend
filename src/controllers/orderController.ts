@@ -4,11 +4,11 @@ import { Order } from '../models/orderModel';
 import { Product } from '../models/productModel';
 import { Shipping } from '../models/shippingModel';
 import { getCouponStatus } from './couponController';
-import { IOrder, IOrderItem } from '../yup/orderSchema';
+import { IOrder, IOrderItem, IOrderRequestPayload } from '../yup/orderSchema';
+import createError from '../utils/createError';
 
 const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   let order: IOrder = req.body;
-
   let { items, ...payload } = order;
 
   const populatedItems: IOrderItem[] = (await Product.populate(items, {
@@ -16,77 +16,101 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
     select: 'name price slug variants',
   })) as any;
 
-  const updatedItems: IOrderItem[] = getItemsPrice(populatedItems);
+  const updatedItems: IOrderItem[] = getUpdatedItems(populatedItems);
 
   const { notes, phone, email, fullname, shippingAddress, couponCode } =
     payload;
 
   const orderInfo = await getOrderInfo(updatedItems, payload);
 
-  const orderDetail = {
+  const orderDetail: IOrder = {
+    items,
+    createdBy: req.user._id,
+    fullname,
+    email,
+    phone,
+    shippingAddress,
+    notes,
+    //
     orderNumber: randomOrderNumber(100000, 999999),
     subTotal: orderInfo.subTotal,
     grandTotal: orderInfo.grandTotal,
-    items,
-    shippingInfo: {
-      fullname,
-      email,
-      phone,
-      address: {
-        line1: shippingAddress,
-      },
-      notes,
-    },
-    shippingMethod: orderInfo.shipping,
+    shipping: orderInfo.shipping,
     discount: {
       inDollar: orderInfo.discountInDollar,
       inPercent: orderInfo.discountInPercent,
-      couponCode,
+      couponCode: couponCode || '',
     },
+    //
+    shippingStatus: 'processing',
+    paymentStatus: 'processing',
   };
 
   order = await Order.create(orderDetail);
 
-  await createPaymentIntent(res, order);
+  const client_secret = await createPaymentIntent(res, order);
+
+  res.status(201).json({
+    message: 'You successfully created an order',
+    data: {
+      client_secret,
+      order,
+    },
+  });
 };
 
 const getOrderInfo = async (
-  items: IOrderItem[],
+  updatedItems: IOrderItem[],
   payload: Omit<IOrder, 'items'>,
 ) => {
   const { couponCode, shippingMethod } = payload;
 
-  const subTotal = items.reduce((total, item) => {
-    const quantity = item.quantity || 1;
-    const itemTotal = item.product.price! * quantity;
-    return total + itemTotal;
-  }, 0);
-
-  const { discountInPercent, discountInDollar } = await getCouponStatus(
-    couponCode,
-    subTotal,
+  const subTotal = updatedItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0,
   );
 
+  let coupon = {
+    discountInPercent: 0,
+    discountInDollar: 0,
+  };
+
+  if (couponCode) {
+    const { discountInPercent, discountInDollar } = await getCouponStatus(
+      couponCode,
+      subTotal,
+    );
+
+    if (discountInDollar === 0 && discountInPercent === 0) {
+      throw createError('The discount code is not valid!');
+    }
+    coupon.discountInDollar = discountInDollar;
+    coupon.discountInPercent = discountInPercent;
+  }
+
   const shipping = await Shipping.findById(shippingMethod).select(
-    '_id dislay_name delivery_min delivery_max delivery_min_unit delivery_max_unit fees',
+    '_id display_name delivery_min delivery_max delivery_min_unit delivery_max_unit fees',
   );
 
   if (!shipping) {
-    throw Error('Can not find shipping method!');
+    throw createError('Provided shipping method does not exist!');
   }
 
   if (shipping.freeshipOrderOver && subTotal > shipping.freeshipOrderOver) {
     shipping.fees = 0;
   }
 
-  const grandTotal = subTotal - discountInDollar + shipping.fees!;
+  const grandTotal = subTotal - coupon.discountInDollar + shipping.fees!;
 
   return {
     subTotal,
     grandTotal,
-    shipping,
-    discountInPercent,
-    discountInDollar,
+    shipping: {
+      name: shipping.display_name || 'Standard shipping',
+      fees: shipping.fees || 0,
+    },
+    discountInPercent: coupon.discountInPercent,
+    discountInDollar: coupon.discountInDollar,
     couponCode,
   };
 };
@@ -95,11 +119,16 @@ const randomOrderNumber = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-// get price for item based on their selected variants & options
-const getItemsPrice = (items: IOrderItem[]): IOrderItem[] => {
+// updatedItems: items with final price after check discount price, variant price
+
+const getUpdatedItems = (items: IOrderItem[]): IOrderItem[] => {
   const updatedItems: IOrderItem[] = [];
 
   items.forEach((item, i) => {
+    if (item.product.discountPrice) {
+      item.product.price = item.product.discountPrice;
+    }
+
     // product has no variants
     if (!item.product.variants || !item.product.variants?.length) {
       updatedItems.push(item);
@@ -109,53 +138,69 @@ const getItemsPrice = (items: IOrderItem[]): IOrderItem[] => {
     // product has variants
     // did not select options
     if (!item.selectedOptions || !item.selectedOptions.length) {
-      throw new Error('You must select all the variants!');
+      throw createError('You must select one option for each variant');
     }
 
     if (item.selectedOptions.length !== item.product.variants.length) {
-      throw new Error('You must select all the variants!');
+      throw createError('You must select one option for each variant');
     }
 
     // get selected option
     const allOptions = getAllOptions(items[i].product);
+
     const selectedOptions = item.selectedOptions.map((option) => {
       if (allOptions[option]) {
         return allOptions[option];
       }
-      throw Error('Can not find selected option!');
+      throw createError('Provied production option does not exist.');
     });
 
-    //
-    const { highestPrice, optionImage } =
-      getOptionImageAndPrice(selectedOptions);
+    // get item data
+    const { highestPrice, photos } = getOptionImageAndPrice(selectedOptions);
 
     if (highestPrice > item.product.price!) {
-      item.product.price = highestPrice;
+      item.price = highestPrice;
+    } else {
+      item.price = item.product.price!;
     }
 
-    if (optionImage) {
-      if (!item.product.previewImages) item.product.previewImages = [];
-      item.product.previewImages[0] = optionImage;
+    if (photos.length) {
+      item.photos = photos;
+    } else {
+      item.photos = (item.product.previewImages as string[]) || [];
     }
+
+    if (!item.quantity) {
+      item.quantity = 1;
+    }
+
+    item.productName = item.product.name!;
+    item.variants =
+      selectedOptions.map((o) => ({
+        variantName: o.variantName,
+        optionName: o.optionName,
+      })) || [];
+
+    updatedItems.push(item);
   });
 
   return updatedItems;
 };
 
 const getOptionImageAndPrice = (
-  options: TransformedOption[],
-): { highestPrice: number; optionImage: null | string } => {
+  selectedOptions: TransformedOption[],
+): { highestPrice: number; photos: string[] } => {
   let highestPrice = 0;
-  let optionImage = null;
+  let photos: string[] = [];
 
-  options.forEach((option) => {
+  selectedOptions.forEach((option) => {
     if (option.price && option.price > highestPrice) {
       highestPrice = option.price;
-      optionImage = option.photo;
+      if (option.photo) photos.push(option.photo);
     }
   });
 
-  return { highestPrice, optionImage };
+  return { highestPrice, photos };
 };
 
 interface TransformedOption {
@@ -177,7 +222,7 @@ const getAllOptions = (product: IOrderItem['product']): OptionsObj => {
     variant.options?.forEach((option) => {
       if (option._id && typeof option === 'object') {
         optionsObj[option._id] = {
-          ...new Object(option),
+          ...JSON.parse(JSON.stringify(option)),
           variantName: variant.variantName,
         };
       }
@@ -187,7 +232,8 @@ const getAllOptions = (product: IOrderItem['product']): OptionsObj => {
   return optionsObj;
 };
 
-// ===========================
+// =========================================================
+// =========================================================
 
 const getOrder = async (req: Request, res: Response, next: NextFunction) => {
   const order = await Order.findById(req.params.id);
@@ -264,12 +310,32 @@ const getManyOrders = async (
 };
 
 const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
-  const body = req.body;
+  const {
+    fullname,
+    email,
+    phone,
+    shippingAddress,
+    shippingStatus,
+    paymentStatus,
+    notes,
+  } = req.body;
 
-  const order = await Order.findByIdAndUpdate({ _id: req.params.id }, body, {
-    new: true,
-    runValidators: true,
-  });
+  const order = await Order.findByIdAndUpdate(
+    { _id: req.params.id },
+    {
+      fullname,
+      email,
+      phone,
+      shippingAddress,
+      shippingStatus,
+      paymentStatus,
+      notes,
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
 
   if (!order) {
     return res.status(404).json({
@@ -289,7 +355,6 @@ const updateManyOrders = async (
   res: Response,
   next: NextFunction,
 ) => {
-  // TODO: need to destruct payload
   const { updateList, ...payload } = req.body;
 
   // check if ids in updateList all exist
@@ -306,13 +371,31 @@ const updateManyOrders = async (
     });
   }
 
+  const {
+    fullname,
+    email,
+    phone,
+    shippingAddress,
+    shippingStatus,
+    paymentStatus,
+    notes,
+  } = payload;
+
   const { modifiedCount } = await Order.updateMany(
     {
       _id: {
         $in: updateList,
       },
     },
-    payload,
+    {
+      fullname,
+      email,
+      phone,
+      shippingAddress,
+      shippingStatus,
+      paymentStatus,
+      notes,
+    },
     {
       runValidators: true,
     },
