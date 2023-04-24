@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createProduct, validProductData } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createProduct, validProductData } from './utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -42,7 +42,7 @@ it('shoud not update the product if collections ids do not exist', async () => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .put('/api/products/some-id')
       .set('Cookie', cookie)

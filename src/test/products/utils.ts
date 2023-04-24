@@ -1,9 +1,5 @@
-import { Product } from "../../models/productModel";;
-
-// TODO:
-// 3. Handle data validation in updateProduct, updateManyProducts, createProduct (can copy code)
-// 4. Handle objectid does not exist in req.body (if has)
-// 5. Handle side effect when delete product, or delete many products
+import { Product } from '../../models/productModel';
+import { IProduct } from '../../yup/productSchema';
 
 const validProductData = {
   name: 'test product name',
@@ -36,7 +32,7 @@ const validProductData = {
   ],
 };
 
-const createProduct = async (data) => {
+const createProduct = async (data?: Partial<IProduct>) => {
   const product = await Product.create({
     test_string: 'testname',
     test_number: 10,

@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createProduct } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createProduct } from './utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -11,7 +11,7 @@ beforeEach(async () => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .delete('/api/products')
       .set('Cookie', cookie)

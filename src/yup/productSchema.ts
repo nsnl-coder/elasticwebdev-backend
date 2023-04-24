@@ -5,16 +5,14 @@ import { reqQuery, reqParams, objectIdArray, objectId } from 'yup-schemas';
 const variantSchema = object({
   variantName: string().max(255),
   _id: string().transform((value) => undefined),
-  options: array()
-    .of(
-      object({
-        optionName: string().max(255),
-        photo: string().max(255),
-        price: number().max(99999),
-        _id: string().transform((value) => undefined),
-      }),
-    )
-    .transform((value) => value.map((value: any) => ({}))),
+  options: array().of(
+    object({
+      optionName: string().max(255),
+      photo: string().max(255),
+      price: number().max(99999),
+      _id: string().transform((value) => undefined),
+    }),
+  ),
 });
 
 const reqBody = object({

@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createProduct } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createProduct } from './utils';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   // create 6 products
