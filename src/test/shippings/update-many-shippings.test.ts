@@ -30,21 +30,21 @@ it('returns 200 & successfully update the shippings', async () => {
     })
     .expect(200);
 
-  expect(response.body.modifiedCount).toEqual(2);
+  expect(response.body.data.modifiedCount).toEqual(2);
 
   // double check
-  shipping1 = await request(app)
+  const updatedShipping1 = await request(app)
     .get(`/api/shippings/${id1}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  shipping2 = await request(app)
+  const updatedShipping2 = await request(app)
     .get(`/api/shippings/${id2}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(shipping1.body.data).toMatchObject(validShippingData);
-  expect(shipping2.body.data).toMatchObject(validShippingData);
+  expect(updatedShipping1.body.data).toMatchObject(validShippingData);
+  expect(updatedShipping2.body.data).toMatchObject(validShippingData);
 });
 
 describe('auth check', () => {

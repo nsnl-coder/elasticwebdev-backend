@@ -76,7 +76,7 @@ it('should delete many coupons', async () => {
     })
     .expect(200);
 
-  expect(response.body.deletedCount).toEqual(2);
+  expect(response.body.data.deletedCount).toEqual(2);
 });
 
 it('should return error if deleteList only contains invalid ObjectId', async () => {
@@ -119,5 +119,5 @@ it('should delete coupons if deleteList contains at least an existent objectid',
     })
     .expect(200);
 
-  expect(response.body.deletedCount).toEqual(1);
+  expect(response.body.data.deletedCount).toEqual(1);
 });

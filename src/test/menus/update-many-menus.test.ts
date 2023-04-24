@@ -29,21 +29,21 @@ it('returns 200 & successfully update the menus', async () => {
     })
     .expect(200);
 
-  expect(response.body.modifiedCount).toEqual(2);
+  expect(response.body.data.modifiedCount).toEqual(2);
 
   // double check
-  menu1 = await request(app)
+  const updatedMenu1 = await request(app)
     .get(`/api/menus/${id1}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  menu2 = await request(app)
+  const updatedMenu2 = await request(app)
     .get(`/api/menus/${id2}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(menu1.body.data).toMatchObject(validMenuData);
-  expect(menu2.body.data).toMatchObject(validMenuData);
+  expect(updatedMenu1.body.data).toMatchObject(validMenuData);
+  expect(updatedMenu2.body.data).toMatchObject(validMenuData);
 });
 
 describe('auth check', () => {

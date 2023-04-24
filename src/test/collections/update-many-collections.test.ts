@@ -23,16 +23,16 @@ it('returns 200 & successfully update the collections', async () => {
     })
     .expect(200);
 
-  expect(response.body.modifiedCount).toEqual(2);
+  expect(response.body.data.modifiedCount).toEqual(2);
 
   // double check
-  collection1 = await request(app)
+  let updatedCollection1 = await request(app)
     .get(`/api/collections/${collection1._id}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(collection1.body.data).toMatchObject(validCollectionData);
-  expect(collection1.body.data.slug).toEqual('test-collection-name');
+  expect(updatedCollection1.body.data).toMatchObject(validCollectionData);
+  expect(updatedCollection1.body.data.slug).toEqual('test-collection-name');
 });
 
 describe('auth check', () => {

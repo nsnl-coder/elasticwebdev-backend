@@ -76,7 +76,7 @@ it('should delete many menus', async () => {
     })
     .expect(200);
 
-  expect(response.body.deletedCount).toEqual(2);
+  expect(response.body.data.deletedCount).toEqual(2);
 });
 
 it('should return error if deleteList only contains invalid ObjectId', async () => {
@@ -117,5 +117,5 @@ it('should delete menus if deleteList contains at least an existent objectid', a
     })
     .expect(200);
 
-  expect(response.body.deletedCount).toEqual(1);
+  expect(response.body.data.deletedCount).toEqual(1);
 });

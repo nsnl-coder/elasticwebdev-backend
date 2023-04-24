@@ -29,26 +29,30 @@ it('returns 200 & successfully update the coupons', async () => {
     })
     .expect(200);
 
-  expect(response.body.modifiedCount).toEqual(2);
+  expect(response.body.data.modifiedCount).toEqual(2);
 
   // double check
-  coupon1 = await request(app)
+  const updatedCoupon1 = await request(app)
     .get(`/api/coupons/${id1}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  coupon2 = await request(app)
+  const updatedCoupon2 = await request(app)
     .get(`/api/coupons/${id2}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  coupon1.body.data.startDate = new Date(coupon1.body.data.startDate);
-  coupon1.body.data.endDate = new Date(coupon1.body.data.endDate);
-  coupon2.body.data.startDate = new Date(coupon2.body.data.startDate);
-  coupon2.body.data.endDate = new Date(coupon2.body.data.endDate);
+  updatedCoupon1.body.data.startDate = new Date(
+    updatedCoupon1.body.data.startDate,
+  );
+  updatedCoupon1.body.data.endDate = new Date(updatedCoupon1.body.data.endDate);
+  updatedCoupon2.body.data.startDate = new Date(
+    updatedCoupon2.body.data.startDate,
+  );
+  updatedCoupon2.body.data.endDate = new Date(updatedCoupon2.body.data.endDate);
 
-  expect(coupon1.body.data).toMatchObject(validCouponData);
-  expect(coupon2.body.data).toMatchObject(validCouponData);
+  expect(updatedCoupon1.body.data).toMatchObject(validCouponData);
+  expect(updatedCoupon2.body.data).toMatchObject(validCouponData);
 });
 
 describe('auth check', () => {

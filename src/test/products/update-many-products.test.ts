@@ -29,22 +29,22 @@ it('returns 200 & successfully update the products', async () => {
     })
     .expect(200);
 
-  expect(response.body.modifiedCount).toEqual(2);
+  expect(response.body.data.modifiedCount).toEqual(2);
 
   // double check
-  product1 = await request(app)
+  const updatedProduct1 = await request(app)
     .get(`/api/products/${id1}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  product2 = await request(app)
+  const updatedProduct2 = await request(app)
     .get(`/api/products/${id2}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(product1.body.data).toMatchObject(validProductData);
-  expect(product2.body.data).toMatchObject(validProductData);
-  expect(product2.body.data.slug).toEqual('test-product-name');
+  expect(updatedProduct1.body.data).toMatchObject(validProductData);
+  expect(updatedProduct2.body.data).toMatchObject(validProductData);
+  expect(updatedProduct2.body.data.slug).toEqual('test-product-name');
 });
 
 describe('auth check', () => {

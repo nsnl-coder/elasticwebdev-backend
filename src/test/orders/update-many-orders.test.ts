@@ -44,7 +44,7 @@ it('returns 200 & successfully update the orders', async () => {
     })
     .expect(200);
 
-  expect(response.body.modifiedCount).toEqual(2);
+  expect(response.body.data.modifiedCount).toEqual(2);
 
   // double check
   const updatedOrder1 = await request(app)

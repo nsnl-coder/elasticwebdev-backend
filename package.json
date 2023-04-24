@@ -13,7 +13,7 @@
   "scripts": {
     "prod": "node src/index.js",
     "start": "ts-node src/index.ts --watch",
-    "test": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watch ",
+    "test": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watchAll ",
     "testv": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watchAll --verbose"
   },
   "repository": {

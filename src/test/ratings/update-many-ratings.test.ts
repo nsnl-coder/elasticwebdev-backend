@@ -29,21 +29,21 @@ it('returns 200 & successfully update the ratings', async () => {
     })
     .expect(200);
 
-  expect(response.body.modifiedCount).toEqual(2);
+  expect(response.body.data.modifiedCount).toEqual(2);
 
   // double check
-  rating1 = await request(app)
+  const updatedRating1 = await request(app)
     .get(`/api/ratings/${id1}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  rating2 = await request(app)
+  const updatedRating2 = await request(app)
     .get(`/api/ratings/${id2}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(rating1.body.data).toMatchObject(validRatingData);
-  expect(rating2.body.data).toMatchObject(validRatingData);
+  expect(updatedRating1.body.data).toMatchObject(validRatingData);
+  expect(updatedRating2.body.data).toMatchObject(validRatingData);
 });
 
 describe('auth check', () => {

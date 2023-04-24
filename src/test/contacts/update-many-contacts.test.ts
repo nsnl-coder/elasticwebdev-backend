@@ -35,21 +35,21 @@ it('returns 200 & successfully update the contacts', async () => {
     })
     .expect(200);
 
-  expect(response.body.modifiedCount).toEqual(2);
+  expect(response.body.data.modifiedCount).toEqual(2);
 
   // double check
-  contact1 = await request(app)
+  const updatedContact1 = await request(app)
     .get(`/api/contacts/${id1}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  contact2 = await request(app)
+  const updatedContact2 = await request(app)
     .get(`/api/contacts/${id2}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(contact1.body.data).toMatchObject(payload);
-  expect(contact2.body.data).toMatchObject(payload);
+  expect(updatedContact1.body.data).toMatchObject(payload);
+  expect(updatedContact2.body.data).toMatchObject(payload);
 });
 
 describe('auth check', () => {

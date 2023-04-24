@@ -22,20 +22,20 @@ it('returns 200 & successfully update the variants', async () => {
     })
     .expect(200);
 
-  expect(response.body.modifiedCount).toEqual(2);
+  expect(response.body.data.modifiedCount).toEqual(2);
 
   // double check
-  variant1 = await request(app)
+  const updatedVariant1 = await request(app)
     .get(`/api/variants/${variant1._id}`)
     .set('Cookie', cookie)
     .expect(200);
-  variant2 = await request(app)
+  const updatedVariant2 = await request(app)
     .get(`/api/variants/${variant2._id}`)
     .set('Cookie', cookie)
     .expect(200);
 
-  expect(variant1.body.data).toMatchObject(validVariantData);
-  expect(variant2.body.data).toMatchObject(validVariantData);
+  expect(updatedVariant1.body.data).toMatchObject(validVariantData);
+  expect(updatedVariant2.body.data).toMatchObject(validVariantData);
 });
 
 describe('auth check', () => {
