@@ -28,7 +28,4 @@ const sendForgotPasswordEmail = jest.fn(async ({ to, payload }) => {
   }
 });
 
-export {
-  sendVerifyEmail,
-  sendForgotPasswordEmail,
-};
+export { sendVerifyEmail, sendForgotPasswordEmail };

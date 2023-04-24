@@ -1,8 +1,10 @@
-import request from "supertest";;
-import { validUserData } from "./utils";;
-import { app } from "../../config/app";;
+import request from 'supertest';
+import { validUserData } from './utils';
+import { app } from '../../config/app';
+import { signup } from '../setup';
 
-let cookie = '';
+let cookie: string[] = [];
+
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({
     role: 'admin',

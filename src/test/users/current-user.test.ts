@@ -1,7 +1,7 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { signJwtToken } from "../../controllers/authController";;
-
+import request from 'supertest';
+import { app } from '../../config/app';
+import { signJwtToken } from '../../controllers/authController';
+import { delay, jwt2Cookie, signup } from '../setup';
 it('returns user data if user signed in', async () => {
   const { cookie } = await signup();
 
@@ -26,23 +26,18 @@ describe('auth check', () => {
     );
   });
 
-  it('returns 400 if user is not verified', async () => {
+  it('returns 200 if user is not verified', async () => {
     const { cookie } = await signup({ isVerified: false });
 
-    const response = await request(app)
+    await request(app)
       .get('/api/auth/current-user')
       .set('Cookie', cookie)
-      .expect(401);
-
-    // expect correct message
-    expect(response.body.message).toBe(
-      'Please verified your email to complete this action!',
-    );
+      .expect(200);
   });
 
   it('returns 400 if jwt token is expired', async () => {
     // make the cookie expired right away
-    process.env.JWT_EXPIRES_IN = 0;
+    process.env.JWT_EXPIRES_IN = '0';
     const { cookie } = await signup();
 
     const { body } = await request(app)

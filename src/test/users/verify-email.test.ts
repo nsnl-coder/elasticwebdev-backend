@@ -1,6 +1,6 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-
+import request from 'supertest';
+import { app } from '../../config/app';
+import { signup } from '../setup';
 it('successfully verify the email if token is correct', async () => {
   const { verifyToken, cookie } = await signup();
 
@@ -32,7 +32,7 @@ it('returns 400 if the token is not correct', async () => {
 
 it('returns 400 if the token is expired', async () => {
   // this makes the token expired
-  process.env.VERIFY_EMAIL_TOKEN_EXPIRES = -1;
+  process.env.VERIFY_EMAIL_TOKEN_EXPIRES = '-1';
   const { verifyToken } = await signup();
 
   const { body } = await request(app)

@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createToken } from "../../controllers/authController";;
-import { User } from "../../models/userModel";;
-
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createToken } from '../../controllers/authController';
+import { User } from '../../models/userModel';
+import { signup } from '../setup';
 it('should change password with correct token', async () => {
   await signup();
 
@@ -15,6 +15,11 @@ it('should change password with correct token', async () => {
   // because token is not saved to db, need to fake it
   const { token, hashedToken } = createToken();
   const user = await User.findOne({ email: 'test@test.com' });
+
+  if (!user) {
+    throw Error('user should be defined');
+  }
+
   // hashed token should be defined
   expect(user.resetPasswordToken).toBeDefined();
   user.resetPasswordToken = hashedToken;
@@ -29,6 +34,10 @@ it('should change password with correct token', async () => {
   expect(body.message).toEqual('You successfully change your password!');
   // resetPasswordToken should be removed
   const updatedUser = await User.findOne({ email: 'test@test.com' });
+  if (!updatedUser) {
+    throw Error('user should be defined');
+  }
+
   expect(updatedUser.resetPasswordToken).not.toBeDefined();
   expect(updatedUser.email).toEqual('test@test.com');
 
@@ -70,8 +79,13 @@ describe('invalid token', () => {
     // because token is not saved to db, need to fake it
     const { token, hashedToken } = createToken();
     const user = await User.findOne({ email: 'test@test.com' });
+
+    if (!user) {
+      throw Error('User should be defined');
+    }
+
     user.resetPasswordToken = hashedToken;
-    user.resetPasswordTokenExpires = Date.now() - 15 * 60 * 60;
+    user.resetPasswordTokenExpires = new Date(Date.now() - 15 * 60 * 60);
     await user.save();
 
     // can not change password when time is expired

@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { User } from "../../models/userModel";;
-import { sendForgotPasswordEmail } from "../../utils/email";;
-
+import request from 'supertest';
+import { app } from '../../config/app';
+import { User } from '../../models/userModel';
+import { sendForgotPasswordEmail } from '../../utils/email';
+import { signup } from '../setup';
 const requestEmail = async () => {
   await request(app)
     .post('/api/auth/forgot-password')

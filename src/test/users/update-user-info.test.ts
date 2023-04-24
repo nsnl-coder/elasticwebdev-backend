@@ -1,7 +1,7 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { validUserData } from "./utils";;
-
+import request from 'supertest';
+import { app } from '../../config/app';
+import { validUserData } from './utils';
+import { signup } from '../setup';
 describe('success case', () => {
   it('should update user', async () => {
     const { cookie } = await signup();

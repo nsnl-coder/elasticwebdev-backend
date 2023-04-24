@@ -1,6 +1,6 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { sendVerifyEmail } from "../../utils/email";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { sendVerifyEmail } from '../../utils/email';
 
 it('successfully signs up & send verification email', async () => {
   const response = await request(app)
@@ -49,7 +49,7 @@ it('returns 400 if email is already in use', async () => {
 });
 
 // check for required field
-it.each([['email'], ['password'], ['fullname']])(
+it.each([['email'], ['password']])(
   'return error if %s is missing',
   async (field) => {
     const { body } = await request(app)

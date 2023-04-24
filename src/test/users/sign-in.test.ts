@@ -1,6 +1,6 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-
+import request from 'supertest';
+import { app } from '../../config/app';
+import { signup } from '../setup';
 it('successfully signs in if email and password are correct', async () => {
   await signup();
 

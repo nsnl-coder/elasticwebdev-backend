@@ -1,6 +1,6 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-
+import request from 'supertest';
+import { app } from '../../config/app';
+import { signup } from '../setup';
 it('return 200 if successfully update email', async () => {
   const { cookie } = await signup();
 
