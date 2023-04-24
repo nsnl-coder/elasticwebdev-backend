@@ -1,8 +1,9 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { validVariantData } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { validVariantData } from './utils';
+import { signup } from '../setup';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -36,7 +37,7 @@ it.each([['options']])('return error if %s is missing', async (field) => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .post('/api/variants')
       .set('Cookie', cookie)

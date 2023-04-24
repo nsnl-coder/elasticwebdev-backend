@@ -1,8 +1,9 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createVariant, validVariantData } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createVariant, validVariantData } from './utils';
+import { signup } from '../setup';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -23,7 +24,7 @@ it('shoud update the variant', async () => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .put('/api/variants/some-id')
       .set('Cookie', cookie)
