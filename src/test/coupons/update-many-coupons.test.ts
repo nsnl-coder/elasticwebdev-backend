@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createCoupon, validCouponData } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createCoupon, validCouponData } from './utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -42,13 +42,18 @@ it('returns 200 & successfully update the coupons', async () => {
     .set('Cookie', cookie)
     .expect(200);
 
+  coupon1.body.data.startDate = new Date(coupon1.body.data.startDate);
+  coupon1.body.data.endDate = new Date(coupon1.body.data.endDate);
+  coupon2.body.data.startDate = new Date(coupon2.body.data.startDate);
+  coupon2.body.data.endDate = new Date(coupon2.body.data.endDate);
+
   expect(coupon1.body.data).toMatchObject(validCouponData);
   expect(coupon2.body.data).toMatchObject(validCouponData);
 });
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .put('/api/coupons')
       .set('Cookie', cookie)
@@ -115,5 +120,7 @@ it('should return error if updateList contains non-existent objectid', async () 
     .set('Cookie', cookie)
     .expect(404);
 
-  expect(response.body.message).toEqual('Can not find coupon with provided ids');
+  expect(response.body.message).toEqual(
+    'Can not find coupon with provided ids',
+  );
 });

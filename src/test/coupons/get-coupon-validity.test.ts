@@ -1,6 +1,6 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createCoupon, validCouponData } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createCoupon, validCouponData } from './utils';
 
 let cookie = '';
 
@@ -88,8 +88,8 @@ describe('coupon invalid', () => {
   it('should be invalid if coupon end date is over', async () => {
     const coupon = await createCoupon({
       ...validCouponData,
-      startDate: Date.now() - 10 * 60 * 1000,
-      endDate: Date.now() - 8 * 60 * 1000,
+      startDate: new Date(Date.now() - 10 * 60 * 1000),
+      endDate: new Date(Date.now() - 8 * 60 * 1000),
     });
 
     const response = await request(app)

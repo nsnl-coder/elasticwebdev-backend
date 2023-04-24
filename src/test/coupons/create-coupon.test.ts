@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { validCouponData } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { validCouponData } from './utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -18,6 +18,9 @@ it('returns 200 & successfully creates coupon', async () => {
       couponCode: 'test-code',
     })
     .expect(201);
+
+  body.data.startDate = new Date(body.data.startDate);
+  body.data.endDate = new Date(body.data.endDate);
 
   expect(body.data).toMatchObject(validCouponData);
   expect(body.data.couponCode).toEqual('test-code');
@@ -80,7 +83,7 @@ it.each(['couponCode', 'discountUnit', 'discountAmount', 'couponQuantity'])(
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .post('/api/coupons')
       .set('Cookie', cookie)

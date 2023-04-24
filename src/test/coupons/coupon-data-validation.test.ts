@@ -1,8 +1,9 @@
-import request from "supertest";;
+import request from 'supertest';
 let { createCoupon, validCouponData } = require('./utils');
-import { app } from "../../config/app";;
+import { app } from '../../config/app';
+import { signup } from '../setup';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -73,7 +74,7 @@ let invalidData = [
 // ==============================================================
 describe.each(invalidData)(
   'invalid $field',
-  ({ field, message, _note, ...invalidData }) => {
+  ({ field, message, ...invalidData }) => {
     it(`shoud fail to create coupon because ${message}`, async () => {
       const response = await request(app)
         .post(`/api/coupons`)

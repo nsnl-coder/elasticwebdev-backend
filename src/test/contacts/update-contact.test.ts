@@ -1,8 +1,9 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createContact, validContactData } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createContact, validContactData } from './utils';
+import { signup } from '../setup';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -29,7 +30,7 @@ it('shoud update the contact', async () => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .put('/api/contacts/some-id')
       .set('Cookie', cookie)

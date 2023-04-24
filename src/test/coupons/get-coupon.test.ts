@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createCoupon } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createCoupon } from './utils';
 
-let cookie = '';
+let cookie: string[] = [];
 
 it('returns 200 & successfully receives requested coupon', async () => {
   const coupon = await createCoupon();

@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { validContactData } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { validContactData } from './utils';
 
-let cookie = '';
+let cookie: string[] = [];
 
 it('returns 200 & successfully creates contact', async () => {
   const { body } = await request(app)

@@ -1,6 +1,7 @@
-import { Coupon } from "../../models/couponModel";;
+import { Coupon } from '../../models/couponModel';
+import { ICoupon } from '../../yup/couponSchema';
 
-const validCouponData = {
+const validCouponData: Partial<ICoupon> = {
   status: 'active',
   discountUnit: '%',
   discountAmount: 25,
@@ -8,11 +9,11 @@ const validCouponData = {
   isFreeshipping: false,
   minimumOrder: 100,
   maximumOrder: 1000,
-  startDate: new Date('2030-06-06').toISOString(),
-  endDate: new Date('2040-06-06').toISOString(),
+  startDate: new Date('2030-06-06'),
+  endDate: new Date('2040-06-06'),
 };
 
-const createCoupon = async (data) => {
+const createCoupon = async (data?: Partial<ICoupon>) => {
   const couponCode = Math.random().toString(20).substring(2, 10);
 
   const coupon = await Coupon.create({

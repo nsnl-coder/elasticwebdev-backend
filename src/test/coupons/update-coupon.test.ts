@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createCoupon, validCouponData } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createCoupon, validCouponData } from './utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -19,12 +19,15 @@ it('shoud update the coupon', async () => {
     .set('Cookie', cookie)
     .expect(200);
 
+  body.data.startDate = new Date(body.data.startDate);
+  body.data.endDate = new Date(body.data.endDate);
+
   expect(body.data).toMatchObject(validCouponData);
 });
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .put('/api/coupons/some-id')
       .set('Cookie', cookie)
