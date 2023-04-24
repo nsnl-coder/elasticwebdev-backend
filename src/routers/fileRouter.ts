@@ -1,11 +1,11 @@
-import express from "express";;
-import { requireLogin, requireRole } from "express-common-middlewares";;
-import { validateRequest, requiredFields } from "yup-schemas";;
-import filesController from "../controllers/fileController";;
-const router = express.Router();
-import { User } from "../models/userModel";;
-import fileSchema from "../yup/fileSchema";;
+import express from 'express';
+import { requireLogin, requireRole } from 'express-common-middlewares';
+import { validateRequest, requiredFields } from 'yup-schemas';
+import filesController from '../controllers/fileController';
+import { User } from '../models/userModel';
+import fileSchema from '../yup/fileSchema';
 
+const router = express.Router();
 router.use(requireLogin(User));
 router.use(requireRole('admin'));
 

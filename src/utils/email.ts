@@ -21,7 +21,8 @@ const createMailTransport = (): Transporter | null => {
         pass: process.env.EMAIL_PASS,
       },
     });
-  } else if (process.env.NODE_ENV === 'development') {
+    return transporter;
+  } else if (process.env.NODE_ENV !== 'production') {
     if (!process.env.MAILTRAP_HOST) return null;
     if (!process.env.MAILTRAP_PORT) return null;
     if (!process.env.MAILTRAP_USER) return null;
@@ -36,6 +37,7 @@ const createMailTransport = (): Transporter | null => {
         pass: process.env.MAILTRAP_PASS,
       },
     });
+    return transporter;
   }
   return null;
 };

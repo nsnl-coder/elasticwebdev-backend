@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
-// @ts-ignore
-import handler from 'express-async-errors'; // error handler for async middleware
+import 'express-async-errors'; // error handler for async middleware
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
@@ -8,7 +7,9 @@ import logger from 'morgan';
 import cors from 'cors';
 import { globalErrorHandler, routeNotFound } from 'express-common-middlewares';
 
-import indexRouter from '../routes/index';
+import indexRouter from '../routers/index';
+import { StripeRequest } from '../middlewares/validateStripeSignature';
+
 const app = express();
 
 const whitelist = [process.env.FRONTEND_HOST, process.env.ADMIN_HOST];
@@ -32,7 +33,7 @@ if (process.env.NODE_ENV === 'dev') {
 
 app.use(
   bodyParser.json({
-    verify: function (req: Request, res: Response, buf) {
+    verify: function (req: StripeRequest, res: Response, buf) {
       var url = req.originalUrl;
       if (url.startsWith('/api/stripe/webhooks')) {
         req.rawBody = buf.toString();

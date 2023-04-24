@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 interface ReqQuery {
   fields: string;
   sort: string;
@@ -16,7 +18,6 @@ interface ReqQuery {
 
 declare module 'express' {
   interface Request {
-    rawBody?: any;
     query: ReqQuery;
   }
 }

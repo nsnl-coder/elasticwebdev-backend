@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 
 export interface StripeRequest extends Request {
   event?: Stripe.Event;
+  rawBody?: string;
 }
 
 const validateStripeSignature = (
@@ -13,7 +14,7 @@ const validateStripeSignature = (
 ) => {
   const stripe = createStripeClient();
 
-  if (!stripe) {
+  if (!stripe || !req.rawBody) {
     throw new Error('Unexpected error happen');
   }
 

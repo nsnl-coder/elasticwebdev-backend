@@ -5,7 +5,6 @@ import { requireLogin, requireRole } from 'express-common-middlewares';
 import menuSchema from '../yup/menuSchema';
 import * as menuController from '../controllers/menuController';
 import { User } from '../models/userModel';
-import { Menu } from '../models/menuModel';
 
 const router = express.Router();
 

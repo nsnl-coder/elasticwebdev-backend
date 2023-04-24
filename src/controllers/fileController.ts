@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 import getS3Client from '../config/s3';
 import { NextFunction, Request, Response } from 'express';
 import { ObjectId } from 'mongoose';
+import { ReqQuery } from '../types/express';
 
 const createPresignedUrl = async (
   req: Request,
@@ -54,7 +55,7 @@ const getManyFiles = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { limit = 20, startAfter, prefix } = req.query;
+  const { limit = 20, startAfter, prefix } = req.query as ReqQuery;
   const s3 = getS3Client();
 
   if (!s3) {

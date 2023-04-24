@@ -51,7 +51,7 @@
     "uuid": "^9.0.0",
     "validator": "^13.9.0",
     "yup": "^1.0.2",
-    "yup-schemas": "^1.0.24"
+    "yup-schemas": "^2.0.1"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",

@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post(
   '/webhooks',
-  validateStripeSignature,
+  // validateStripeSignature,
   (req: StripeRequest, res: Response, next: NextFunction) => {
     res.status(200).json({
       status: 'success',
