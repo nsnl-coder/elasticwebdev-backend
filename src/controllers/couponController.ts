@@ -2,11 +2,11 @@ import { Coupon } from '../models/couponModel';
 import { NextFunction, Request, Response } from 'express';
 
 interface InvalidStatus {
-  couponStatus: 'invalid' | 'valid';
+  couponStatus: 'invalid';
   statusCode: 200 | 400 | 404;
   discountInDollar: number;
   discountInPercent: number;
-  message?: string;
+  message: string;
 }
 
 interface CouponStatus {
@@ -27,6 +27,7 @@ const getCouponStatus = async (
     statusCode: 400,
     discountInDollar: 0,
     discountInPercent: 0,
+    message: 'Coupon is not valid!',
   };
 
   if (!couponCode || !orderTotal) {
@@ -159,11 +160,19 @@ const getManyCoupons = async (
   const matchingResults = await Coupon.countDocuments(filter);
   const totalPages = Math.ceil(matchingResults / itemsPerPage);
 
+  let pagination = {
+    currentPage: page,
+    totalPages,
+    itemsPerPage,
+    totalResults: matchingResults,
+    results: 0,
+  };
+
   if (page > totalPages) {
     return res.status(200).json({
       status: 'success',
-      results: 0,
       data: [],
+      pagination,
     });
   }
 
@@ -190,11 +199,8 @@ const getManyCoupons = async (
   res.status(200).json({
     status: 'success',
     pagination: {
-      currentPage: page,
+      ...pagination,
       results: coupons.length,
-      totalPages,
-      itemsPerPage,
-      totalResults: matchingResults,
     },
     data: coupons,
   });
@@ -259,17 +265,11 @@ const updateManyCoupons = async (
       runValidators: true,
     },
   );
-
-  if (modifiedCount !== updateList.length) {
-    return res.status(400).json({
-      status: 'unknown',
-      message: 'your coupons may be updated or not!',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
-    modifiedCount,
+    data: {
+      modifiedCount,
+    },
   });
 };
 
@@ -290,7 +290,7 @@ const deleteCoupon = async (
 
   res.status(200).json({
     status: 'success',
-    messaage: 'you successfully delete your coupon',
+    message: 'you successfully delete your coupon',
   });
 };
 
@@ -317,7 +317,9 @@ const deleteManyCoupons = async (
   res.status(200).json({
     status: 'success',
     message: 'Successfully deleted coupons',
-    deletedCount,
+    data: {
+      deletedCount,
+    },
   });
 };
 

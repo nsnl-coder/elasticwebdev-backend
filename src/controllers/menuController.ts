@@ -40,11 +40,19 @@ const getManyMenus = async (
   const matchingResults = await Menu.countDocuments(filter);
   const totalPages = Math.ceil(matchingResults / itemsPerPage);
 
+  let pagination = {
+    currentPage: page,
+    totalPages,
+    itemsPerPage,
+    totalResults: matchingResults,
+    results: 0,
+  };
+
   if (page > totalPages) {
     return res.status(200).json({
       status: 'success',
-      results: 0,
       data: [],
+      pagination,
     });
   }
 
@@ -71,11 +79,8 @@ const getManyMenus = async (
   res.status(200).json({
     status: 'success',
     pagination: {
-      currentPage: page,
+      ...pagination,
       results: menus.length,
-      totalPages,
-      itemsPerPage,
-      totalResults: matchingResults,
     },
     data: menus,
   });
@@ -135,16 +140,12 @@ const updateManyMenus = async (
     },
   );
 
-  if (modifiedCount !== updateList.length) {
-    return res.status(400).json({
-      status: 'unknown',
-      message: 'your menus may be updated or not!',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
-    modifiedCount,
+    message: 'You successfully modified!',
+    data: {
+      modifiedCount,
+    },
   });
 };
 
@@ -162,7 +163,7 @@ const deleteMenu = async (req: Request, res: Response, next: NextFunction) => {
 
   res.status(200).json({
     status: 'success',
-    messaage: 'you successfully delete your menu',
+    message: 'you successfully delete your menu',
   });
 };
 
@@ -189,7 +190,9 @@ const deleteManyMenus = async (
   res.status(200).json({
     status: 'success',
     message: 'Successfully deleted menus',
-    deletedCount,
+    data: {
+      deletedCount,
+    },
   });
 };
 

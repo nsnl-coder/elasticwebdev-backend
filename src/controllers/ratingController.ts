@@ -65,10 +65,17 @@ const getManyRatings = async (
   const matchingResults = await Rating.countDocuments(filter);
   const totalPages = Math.ceil(matchingResults / itemsPerPage);
 
+  let pagination = {
+    currentPage: page,
+    totalPages,
+    itemsPerPage,
+    totalResults: matchingResults,
+    results: 0,
+  };
+
   if (page > totalPages) {
     return res.status(200).json({
       status: 'success',
-      results: 0,
       data: [],
     });
   }
@@ -97,12 +104,9 @@ const getManyRatings = async (
     status: 'success',
     data: ratings,
     pagination: {
-      currentPage: page,
+      ...pagination,
       results: ratings.length,
-      totalPages,
-      itemsPerPage,
     },
-    totalResults: matchingResults,
   });
 };
 
@@ -169,16 +173,11 @@ const updateManyRatings = async (
     },
   );
 
-  if (modifiedCount !== updateList.length) {
-    return res.status(400).json({
-      status: 'unknown',
-      message: 'your ratings may be updated or not!',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
-    modifiedCount,
+    data: {
+      modifiedCount,
+    },
   });
 };
 
@@ -200,7 +199,7 @@ const deleteRating = async (
 
   res.status(200).json({
     status: 'success',
-    messaage: 'you successfully delete your rating',
+    message: 'you successfully delete your rating',
   });
 };
 
@@ -227,7 +226,9 @@ const deleteManyRatings = async (
   res.status(200).json({
     status: 'success',
     message: 'Successfully deleted ratings',
-    deletedCount,
+    data: {
+      deletedCount,
+    },
   });
 };
 

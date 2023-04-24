@@ -43,11 +43,19 @@ const getManyProducts = async (
   const matchingResults = await Product.countDocuments(filter);
   const totalPages = Math.ceil(matchingResults / itemsPerPage);
 
+  let pagination = {
+    currentPage: page,
+    totalPages,
+    itemsPerPage,
+    totalResults: matchingResults,
+    results: 0,
+  };
+
   if (page > totalPages) {
     return res.status(200).json({
       status: 'success',
-      results: 0,
       data: [],
+      pagination,
     });
   }
 
@@ -74,11 +82,8 @@ const getManyProducts = async (
   res.status(200).json({
     status: 'success',
     pagination: {
-      currentPage: page,
+      ...pagination,
       results: products.length,
-      totalPages,
-      itemsPerPage,
-      totalResults: matchingResults,
     },
     data: products,
   });
@@ -146,7 +151,9 @@ const updateManyProducts = async (
 
   res.status(200).json({
     status: 'success',
-    modifiedCount,
+    data: {
+      modifiedCount,
+    },
   });
 };
 
@@ -168,7 +175,7 @@ const deleteProduct = async (
 
   res.status(200).json({
     status: 'success',
-    messaage: 'you successfully delete your product',
+    message: 'you successfully delete your product',
   });
 };
 
@@ -195,7 +202,9 @@ const deleteManyProducts = async (
   res.status(200).json({
     status: 'success',
     message: 'Successfully deleted products',
-    deletedCount,
+    data: {
+      deletedCount,
+    },
   });
 };
 

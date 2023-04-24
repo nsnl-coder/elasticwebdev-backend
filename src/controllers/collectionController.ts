@@ -47,11 +47,19 @@ const getManyCollections = async (
   const matchingResults = await Collection.countDocuments(filter);
   const totalPages = Math.ceil(matchingResults / itemsPerPage);
 
+  let pagination = {
+    currentPage: page,
+    totalPages,
+    itemsPerPage,
+    totalResults: matchingResults,
+    results: 0,
+  };
+
   if (page > totalPages) {
     return res.status(200).json({
       status: 'success',
-      results: 0,
       data: [],
+      pagination,
     });
   }
 
@@ -78,11 +86,8 @@ const getManyCollections = async (
   res.status(200).json({
     status: 'success',
     pagination: {
-      currentPage: page,
-      totalPages,
-      itemsPerPage,
+      ...pagination,
       results: collections.length,
-      totalResults: matchingResults,
     },
     data: collections,
   });
@@ -147,7 +152,9 @@ const updateManyCollections = async (
 
   res.status(200).json({
     status: 'success',
-    modifiedCount,
+    data: {
+      modifiedCount,
+    },
   });
 };
 
@@ -169,7 +176,7 @@ const deleteCollection = async (
 
   res.status(200).json({
     status: 'success',
-    messaage: 'you successfully delete your collection',
+    message: 'you successfully delete your collection',
   });
 };
 
@@ -196,7 +203,9 @@ const deleteManyCollections = async (
   res.status(200).json({
     status: 'success',
     message: 'Successfully deleted collections',
-    deletedCount,
+    data: {
+      deletedCount,
+    },
   });
 };
 

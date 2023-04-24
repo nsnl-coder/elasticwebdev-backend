@@ -50,11 +50,19 @@ const getManyVariants = async (
   const matchingResults = await Variant.countDocuments(filter);
   const totalPages = Math.ceil(matchingResults / itemsPerPage);
 
+  let pagination = {
+    currentPage: page,
+    totalPages,
+    itemsPerPage,
+    totalResults: matchingResults,
+    results: 0,
+  };
+
   if (page > totalPages) {
     return res.status(200).json({
       status: 'success',
-      results: 0,
       data: [],
+      pagination,
     });
   }
 
@@ -81,11 +89,8 @@ const getManyVariants = async (
   res.status(200).json({
     status: 'success',
     pagination: {
-      currentPage: page,
+      ...pagination,
       results: variants.length,
-      totalPages,
-      itemsPerPage,
-      totalResults: matchingResults,
     },
     data: variants,
   });
@@ -175,7 +180,9 @@ const updateManyVariants = async (
 
   res.status(200).json({
     status: 'success',
-    modifiedCount,
+    data: {
+      modifiedCount,
+    },
   });
 };
 
@@ -197,7 +204,7 @@ const deleteVariant = async (
 
   res.status(200).json({
     status: 'success',
-    messaage: 'you successfully delete your variant',
+    message: 'you successfully deleted your variant',
   });
 };
 
@@ -224,7 +231,9 @@ const deleteManyVariants = async (
   res.status(200).json({
     status: 'success',
     message: 'Successfully deleted variants',
-    deletedCount,
+    data: {
+      deletedCount,
+    },
   });
 };
 

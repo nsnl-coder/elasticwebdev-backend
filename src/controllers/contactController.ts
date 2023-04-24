@@ -51,11 +51,19 @@ const getManyContacts = async (
   const matchingResults = await Contact.countDocuments(filter);
   const totalPages = Math.ceil(matchingResults / itemsPerPage);
 
+  let pagination = {
+    currentPage: page,
+    totalPages,
+    itemsPerPage,
+    totalResults: matchingResults,
+    results: 0,
+  };
+
   if (page > totalPages) {
     return res.status(200).json({
       status: 'success',
-      results: 0,
       data: [],
+      pagination,
     });
   }
 
@@ -82,11 +90,8 @@ const getManyContacts = async (
   res.status(200).json({
     status: 'success',
     pagination: {
-      currentPage: page,
+      ...pagination,
       results: contacts.length,
-      totalPages,
-      itemsPerPage,
-      totalResults: matchingResults,
     },
     data: contacts,
   });
@@ -158,16 +163,11 @@ const updateManyContacts = async (
     },
   );
 
-  if (modifiedCount !== updateList.length) {
-    return res.status(400).json({
-      status: 'unknown',
-      message: 'your contacts may be updated or not!',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
-    modifiedCount,
+    data: {
+      modifiedCount,
+    },
   });
 };
 
@@ -189,7 +189,7 @@ const deleteContact = async (
 
   res.status(200).json({
     status: 'success',
-    messaage: 'you successfully delete your contact',
+    message: 'you successfully delete your contact',
   });
 };
 
@@ -216,7 +216,9 @@ const deleteManyContacts = async (
   res.status(200).json({
     status: 'success',
     message: 'Successfully deleted contacts',
-    deletedCount,
+    data: {
+      deletedCount,
+    },
   });
 };
 

@@ -80,10 +80,12 @@ const getManyFiles = async (
 
   res.status(200).json({
     status: 'success',
-    isTruncated: IsTruncated,
-    results: Contents.length,
-    lastKey,
-    data: Contents,
+    data: {
+      IsTruncated,
+      results: Contents.length,
+      lastKey,
+      keys: Contents,
+    },
   });
 };
 

@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { HttpError, HttpResponse } from './http';
 
 interface ReqQuery {
   fields: string;
@@ -19,6 +19,9 @@ interface ReqQuery {
 declare module 'express' {
   interface Request {
     query: ReqQuery;
+  }
+  interface Response {
+    json: (payload: HttpResponse | HttpError) => void;
   }
 }
 

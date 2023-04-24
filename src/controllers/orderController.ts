@@ -51,6 +51,7 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   const client_secret = await createPaymentIntent(res, order);
 
   res.status(201).json({
+    status: 'success',
     message: 'You successfully created an order',
     data: {
       client_secret,
@@ -268,11 +269,19 @@ const getManyOrders = async (
   const matchingResults = await Order.countDocuments(filter);
   const totalPages = Math.ceil(matchingResults / itemsPerPage);
 
+  let pagination = {
+    currentPage: page,
+    totalPages,
+    itemsPerPage,
+    totalResults: matchingResults,
+    results: 0,
+  };
+
   if (page > totalPages) {
     return res.status(200).json({
       status: 'success',
-      results: 0,
       data: [],
+      pagination,
     });
   }
 
@@ -299,11 +308,8 @@ const getManyOrders = async (
   res.status(200).json({
     status: 'success',
     pagination: {
-      currentPage: page,
+      ...pagination,
       results: orders.length,
-      totalPages,
-      itemsPerPage,
-      totalResults: matchingResults,
     },
     data: orders,
   });
@@ -401,16 +407,11 @@ const updateManyOrders = async (
     },
   );
 
-  if (modifiedCount !== updateList.length) {
-    return res.status(400).json({
-      status: 'unknown',
-      message: 'your orders may be updated or not!',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
-    modifiedCount,
+    data: {
+      modifiedCount,
+    },
   });
 };
 
@@ -428,7 +429,7 @@ const deleteOrder = async (req: Request, res: Response, next: NextFunction) => {
 
   res.status(200).json({
     status: 'success',
-    messaage: 'you successfully delete your order',
+    message: 'you successfully delete your order',
   });
 };
 
@@ -455,7 +456,9 @@ const deleteManyOrders = async (
   res.status(200).json({
     status: 'success',
     message: 'Successfully deleted orders',
-    deletedCount,
+    data: {
+      deletedCount,
+    },
   });
 };
 

@@ -126,7 +126,7 @@ const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
   await user.save();
 
   res.status(200).json({
-    status: 'success',
+    status: 'fail',
     message: 'Your email has been verified!',
   });
 };
@@ -244,7 +244,7 @@ const signOut = (req: Request, res: Response, next: NextFunction) => {
 
 const getCurrentUser = (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
-    message: 'success',
+    status: 'success',
     data: req.user,
   });
 };
@@ -272,7 +272,7 @@ const updateEmail = async (req: Request, res: Response, next: NextFunction) => {
     { new: true },
   );
   res.status(200).json({
-    status: 'succcess',
+    status: 'success',
     data: updatedUser,
   });
 };

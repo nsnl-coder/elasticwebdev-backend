@@ -9,17 +9,16 @@ export interface Pagination {
 }
 
 interface HttpResponse<T = any> {
-  status: string;
+  status: 'success';
   data?: T;
-  message?: string;
   pagination?: Pagination;
-  errors?: string[];
+  message?: string;
 }
 
-type HttpError = AxiosError<{
-  status: string;
+type HttpError = {
+  status: 'fail';
   message: string;
   errors?: string[];
-}>;
+};
 
 export type { HttpError, HttpResponse };
