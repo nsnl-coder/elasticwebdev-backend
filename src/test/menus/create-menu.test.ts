@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { validMenuData, createMenu } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { validMenuData, createMenu } from './utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -24,37 +24,9 @@ it('returns 200 & successfully creates menu', async () => {
   expect(body.data).toMatchObject(validMenuData);
 });
 
-it('should not create menu if parent menu not exist', async () => {
-  const { body } = await request(app)
-    .post('/api/menus')
-    .set('Cookie', cookie)
-    .send({
-      ...validMenuData,
-      parentMenu: '642b8200fc13ae1d48f4cf1f',
-    })
-    .expect(404);
-});
-
-it.skip.each(['email', 'password'])(
-  'return error if %s is missing',
-  async (field) => {
-    const { body } = await request(app)
-      .post('/api/menus')
-      .send({
-        // add payload here
-        [field]: undefined,
-      })
-      .set('Cookie', cookie)
-      .expect(400);
-
-    // also check if it return correct message
-    expect(body.errors).toContain(`${field} is required`);
-  },
-);
-
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .post('/api/menus')
       .set('Cookie', cookie)

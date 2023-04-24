@@ -9,7 +9,7 @@ const reqBody = object({
   photo: string().max(255).label('photo'),
   menuType: string().oneOf(['root', 'nested']),
   position: string().oneOf(['header', 'footer', '']),
-  ordering: number().min(0).max(9999),
+  ordering: number().min(0).max(9999).label('ordering'),
   childMenus: array().of(objectId).label('Child menus'),
   //
   deleteList: objectIdArray,

@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createMenu } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createMenu } from './utils';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   // create 6 menus

@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createMenu, validMenuData } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createMenu, validMenuData } from './utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -25,24 +25,9 @@ it('shoud update the menu', async () => {
   expect(body.data).toMatchObject(validMenuData);
 });
 
-it('shoud not update the menu if parent menu does not exist', async () => {
-  const menu = await createMenu();
-
-  const { body } = await request(app)
-    .put(`/api/menus/${menu._id}`)
-    .send({
-      ...validMenuData,
-      parentMenu: '642b8200fc13ae1d48f4cf1d',
-    })
-    .set('Cookie', cookie)
-    .expect(404);
-
-  expect(body.message).toEqual('Can not find parentMenu with provided id');
-});
-
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .put('/api/menus/some-id')
       .set('Cookie', cookie)

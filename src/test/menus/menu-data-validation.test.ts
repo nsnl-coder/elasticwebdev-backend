@@ -1,8 +1,9 @@
-import request from "supertest";;
-import { createMenu, validMenuData } from "./utils";;
-import { app } from "../../config/app";;
+import request from 'supertest';
+import { createMenu, validMenuData } from './utils';
+import { app } from '../../config/app';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
-let cookie = '';
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
   cookie = newCookie;
@@ -17,8 +18,8 @@ let invalidData = [
   },
   {
     field: 'ordering',
-    message: 'ordering must be less than or equal to 999',
-    ordering: 1000,
+    message: 'ordering must be less than or equal to 9999',
+    ordering: 10000,
   },
   {
     field: 'name',
@@ -26,9 +27,9 @@ let invalidData = [
     name: 's'.repeat(256),
   },
   {
-    field: 'parentMenu',
+    field: 'childMenus',
     message: 'Invalid ObjectId',
-    parentMenu: 'das-sda-as-dssscxz',
+    childMenus: ['das-sda-as-dssscxz'],
   },
 ];
 

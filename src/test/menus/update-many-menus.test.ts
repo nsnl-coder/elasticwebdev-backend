@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createMenu, validMenuData } from "./utils";;
-
-let cookie = '';
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createMenu, validMenuData } from './utils';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -48,7 +48,7 @@ it('returns 200 & successfully update the menus', async () => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .put('/api/menus')
       .set('Cookie', cookie)
@@ -89,22 +89,6 @@ describe('auth check', () => {
       'You do not have permission to perform this action',
     );
   });
-});
-
-it('shoud not update the menu if parent menu does not exist', async () => {
-  const menu = await createMenu();
-
-  const { body } = await request(app)
-    .put(`/api/menus`)
-    .send({
-      updateList: [menu._id],
-      ...validMenuData,
-      parentMenu: '642b8200fc13ae1d48f4cf1d',
-    })
-    .set('Cookie', cookie)
-    .expect(404);
-
-  expect(body.message).toEqual('Can not find parentMenu with provided id');
 });
 
 it('should return error if updateList contains invalid objectid', async () => {
