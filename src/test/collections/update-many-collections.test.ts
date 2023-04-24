@@ -1,8 +1,9 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createCollection, validCollectionData } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createCollection, validCollectionData } from './utils';
+import { signup } from '../setup';
 
-let cookie;
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
@@ -36,7 +37,7 @@ it('returns 200 & successfully update the collections', async () => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .put('/api/collections')
       .set('Cookie', cookie)

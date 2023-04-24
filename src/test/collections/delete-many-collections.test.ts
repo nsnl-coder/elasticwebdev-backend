@@ -1,18 +1,18 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createCollection } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createCollection } from './utils';
+import { signup } from '../setup';
 
-let cookie;
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
   cookie = newCookie;
 });
 
-// TODO:
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .delete('/api/collections')
       .set('Cookie', cookie)

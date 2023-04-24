@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createCollection } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createCollection } from './utils';
 
-let cookie;
+let cookie: string[] = [];
 
 beforeEach(async () => {
   // create 6 collections
@@ -13,7 +13,7 @@ beforeEach(async () => {
   await createCollection({ test_number: 15, test_string: 'f' });
   await createCollection({ test_number: 16, test_string: 'b' });
 
-  cookie = '';
+  cookie = [];
 });
 
 // ======================================================

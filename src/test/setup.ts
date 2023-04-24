@@ -1,14 +1,14 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-
-let mongo;
-
+//
 import { User } from '../models/userModel';
 import { signJwtToken, createToken } from '../controllers/authController';
+import { IUser } from '../yup/userSchema';
 
 // mock the email module
-jest.mock('../utils/email.js');
+jest.mock('../utils/email.ts');
 
+let mongo: any;
 // function that run before all of tests
 beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
@@ -39,19 +39,16 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-global.jwt2Cookie = (jwt) => {
-  return [`jwt=${jwt}; Path=/; HttpOnly`];
-};
+const jwt2Cookie = (jwt: string) => [`jwt=${jwt}; Path=/; HttpOnly`];
 
-global.delay = async (ms) => {
+const delay = async (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-global.signup = async (payload) => {
+const signup = async (payload?: Partial<IUser>) => {
   // create verify token
   const { token, hashedToken } = createToken();
 
-  // create an account
   const user = await User.create({
     email: 'test@test.com',
     password: 'password',
@@ -59,21 +56,23 @@ global.signup = async (payload) => {
     isVerified: true,
     verifyToken: hashedToken,
     verifyTokenExpires:
-      Date.now() + process.env.VERIFY_EMAIL_TOKEN_EXPIRES * 60 * 60 * 1000,
+      Date.now() +
+      Number(process.env.VERIFY_EMAIL_TOKEN_EXPIRES) * 60 * 60 * 1000,
     verifyEmailsSent: 0,
     ...payload,
   });
 
-  // verify the account
   const jwt = signJwtToken(user._id);
 
   return {
     user,
     verifyToken: token,
-    cookie: jwt2Cookie(jwt),
+    cookie: [`jwt=${jwt}; Path=/; HttpOnly`],
   };
 };
 
-global.deleteUser = async () => {
+const deleteUser = async () => {
   await User.findOneAndDelete({ email: 'test@test.com' });
 };
+
+export { jwt2Cookie, delay, signup, deleteUser };

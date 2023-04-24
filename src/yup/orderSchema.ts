@@ -1,5 +1,4 @@
 import { object, number, string, array, InferType } from 'yup';
-
 import { reqQuery, reqParams, objectIdArray, objectId } from 'yup-schemas';
 import { IProduct } from './productSchema';
 
@@ -63,5 +62,4 @@ interface IOrder extends InferType<typeof reqBody> {
 }
 
 export default orderSchema;
-
 export type { IOrder, IOrderItem };

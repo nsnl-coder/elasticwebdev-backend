@@ -13,7 +13,7 @@
   "scripts": {
     "prod": "node src/index.js",
     "start": "ts-node src/index.ts",
-    "test": "jest --watchAll",
+    "test": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watch ",
     "testv": "jest --watchAll --verbose"
   },
   "repository": {
@@ -61,6 +61,7 @@
     "@types/jest": "^29.5.1",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/morgan": "^1.9.4",
+    "@types/node": "^18.16.0",
     "@types/nodemailer": "^6.4.7",
     "@types/pug": "^2.0.6",
     "@types/supertest": "^2.0.12",

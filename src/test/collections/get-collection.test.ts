@@ -1,11 +1,11 @@
-import request from "supertest";;
-import { app } from "../../config/app";;
-import { createCollection } from "./utils";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { createCollection } from './utils';
 
-let cookie;
+let cookie: string[] = [];
 
 beforeEach(() => {
-  cookie = '';
+  cookie = [];
 });
 
 // ===================================================

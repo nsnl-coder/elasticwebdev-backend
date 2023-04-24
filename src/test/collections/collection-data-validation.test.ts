@@ -1,8 +1,8 @@
-import request from "supertest";;
-import { createCollection, validCollectionData } from "./utils";;
-import { app } from "../../config/app";;
-
-let cookie = '';
+import request from 'supertest';
+import { createCollection, validCollectionData } from './utils';
+import { app } from '../../config/app';
+import { signup } from '../setup';
+let cookie: string[] = [];
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
   cookie = newCookie;
