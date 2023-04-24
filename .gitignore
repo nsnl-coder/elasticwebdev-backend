@@ -1,7 +1,7 @@
 node_modules
 .env
-types
 ignore
 .env.prod
 .env.dev
 scripts
+build
