@@ -1,12 +1,12 @@
-import { app } from "../../config/app";;
-import request from "supertest";;
-import { v4 } from "uuid";;
-import { default: axios } from "axios";;
-import fs from "fs";;
-import path from "path";;
-
-let cookie = '';
-jest.mock('uuid');
+import request from 'supertest';
+import { v4 } from 'uuid';
+import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
+//
+import { app } from '../../config/app';
+import { signup } from '../setup';
+let cookie: string[] = [];
 
 const filepath = path.join(__dirname, '172bytes.png');
 const _172bytesFile = fs.readFileSync(filepath);
@@ -18,16 +18,9 @@ beforeEach(async () => {
     _id: userId,
   });
   cookie = newCookie;
-  v4.mockReturnValue('test_name');
 });
 
-async function uploadFile(filename) {
-  if (!filename) {
-    console.log('Please include file name');
-    return;
-  }
-
-  v4.mockReturnValue(filename);
+async function uploadFile() {
   const { body } = await request(app)
     .post('/api/files/presigned-url')
     .send({
@@ -37,22 +30,24 @@ async function uploadFile(filename) {
     .set('Cookie', cookie)
     .expect(201);
 
+  console.log(body.data);
+
   // try to upload file
-  let res;
+  let res: any;
   try {
     res = await axios({
       method: 'PUT',
-      url: body.data,
+      url: body.data.url,
       data: _172bytesFile,
-      header: {
-        'Content-Type': 'image/png',
-      },
     });
   } catch (error) {
     res = error;
+    console.log(error);
   }
 
   expect(res.request.path).toContain(userId);
+
+  return body.data.key;
 }
 
 async function getManyFiles(limit = 2, startAfter = '') {
@@ -68,7 +63,7 @@ async function getManyFiles(limit = 2, startAfter = '') {
   return body;
 }
 
-async function deleteFile(filename) {
+async function deleteFile(filename: string) {
   const { body } = await request(app)
     .delete(`/api/files/delete-one-file?key=${userId}/${filename}`)
     .set('Cookie', cookie)
@@ -77,7 +72,7 @@ async function deleteFile(filename) {
   return body;
 }
 
-async function deleteManyFiles(filenames) {
+async function deleteManyFiles(filenames: string[]) {
   const { body } = await request(app)
     .delete('/api/files')
     .send({ deleteList: filenames })
@@ -87,9 +82,10 @@ async function deleteManyFiles(filenames) {
   return body;
 }
 
+// failed because of cors
 it.skip('CRUD with file', async () => {
-  await uploadFile('file1');
-  await uploadFile('file2');
+  const file1 = await uploadFile();
+  const file2 = await uploadFile();
 
   // get many
   let files;
@@ -98,7 +94,7 @@ it.skip('CRUD with file', async () => {
   expect(files.results).toEqual(2);
 
   // get many with truncate
-  await uploadFile('file3');
+  const file3 = await uploadFile();
   files = await getManyFiles();
   expect(files.isTruncated).toEqual(true);
 
@@ -111,16 +107,13 @@ it.skip('CRUD with file', async () => {
   expect(files.results).toEqual(0);
 
   // delete file
-  await deleteFile('file3.png');
+  await deleteFile(file1);
   files = await getManyFiles();
   expect(files.results).toEqual(2);
   expect(files.isTruncated).toEqual(false);
 
   // deletemanyfile
-  const body = await deleteManyFiles([
-    `${userId}/file1.png`,
-    `${userId}/file2.png`,
-  ]);
+  const body = await deleteManyFiles([file2, file3]);
 
   files = await getManyFiles();
   expect(files.results).toEqual(0);

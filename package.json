@@ -12,9 +12,9 @@
   },
   "scripts": {
     "prod": "node src/index.js",
-    "start": "ts-node src/index.ts",
+    "start": "ts-node src/index.ts --watch",
     "test": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watch ",
-    "testv": "jest --watchAll --verbose"
+    "testv": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watchAll --verbose"
   },
   "repository": {
     "type": "git",

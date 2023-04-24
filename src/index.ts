@@ -1,17 +1,9 @@
 import dotenv from 'dotenv';
+dotenv.config({ path: '.env.dev' });
+// dotenv.config({ path: '.env.prod' });
 //
 import db from './config/db';
 import { app } from './config/app';
-
-process.env.NODE_ENV = 'development';
-
-if (process.env.NODE_ENV === 'development') {
-  dotenv.config({ path: '.env.dev' });
-}
-
-if (process.env.NODE_ENV === 'production') {
-  dotenv.config({ path: '.env.prod' });
-}
 
 db();
 

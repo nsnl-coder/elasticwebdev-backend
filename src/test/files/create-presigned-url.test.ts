@@ -1,32 +1,33 @@
-import request from "supertest";;
-import fs from "fs";;
-import path from "path";;
-import axios from "axios";;
+import request from 'supertest';
+import fs from 'fs';
+import path from 'path';
+import axios from 'axios';
 //
-import { validFilesData } from "./utils";;
-import { app } from "../../config/app";;
-import { generateUrl } from "../../controllers/fileController";;
+import { validFilesData } from './utils';
+import { app } from '../../config/app';
+import { generateUrl } from '../../controllers/fileController';
+import { signup } from '../setup';
 
 const filepath = path.join(__dirname, '172bytes.png');
 const _172bytesFile = fs.readFileSync(filepath);
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
   cookie = newCookie;
 });
 
-describe.skip('failed to upload file', () => {
+describe('failed to upload file', () => {
   it('should not upload file if file size is larger than expected', async () => {
     const { url } = await generateUrl('test', 'image/png', 160, 3600);
 
-    let res;
+    let res: any;
     try {
       res = await axios({
         method: 'PUT',
         url,
         data: _172bytesFile,
-        header: {
+        headers: {
           'Content-Type': 'image/png',
         },
       });
@@ -40,13 +41,13 @@ describe.skip('failed to upload file', () => {
   it('should not upload file if file size is smaller than expected', async () => {
     const { url } = await generateUrl('test', 'image/png', 180, 3600);
 
-    let res;
+    let res: any;
     try {
       res = await axios({
         method: 'PUT',
         url,
         data: _172bytesFile,
-        header: {
+        headers: {
           'Content-Type': 'image/png',
         },
       });
@@ -60,13 +61,13 @@ describe.skip('failed to upload file', () => {
   it('should not upload file if file type is not correct', async () => {
     const { url } = await generateUrl('test', 'image/png', 170, 3600);
 
-    let res;
+    let res: any;
     try {
       res = await axios({
         method: 'PUT',
         url,
         data: _172bytesFile,
-        header: {
+        headers: {
           'Content-Type': 'video/mp4',
         },
       });
@@ -80,13 +81,13 @@ describe.skip('failed to upload file', () => {
   it('should not upload file if presigned url expired', async () => {
     const { url } = await generateUrl('test', 'image/png', 172, 0);
 
-    let res;
+    let res: any;
     try {
       res = await axios({
         method: 'PUT',
         url,
         data: _172bytesFile,
-        header: {
+        headers: {
           'Content-Type': 'image/png',
         },
       });
@@ -113,7 +114,7 @@ it.each(['type', 'size'])('return error if %s is missing', async (field) => {
 
 describe('auth check', () => {
   it('should return error if user is not logged in', async () => {
-    cookie = '';
+    cookie = [];
     const response = await request(app)
       .post('/api/files/presigned-url')
       .send(validFilesData)

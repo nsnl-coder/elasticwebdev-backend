@@ -8,7 +8,6 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 } from 'uuid';
 import getS3Client from '../config/s3';
 import { NextFunction, Request, Response } from 'express';
-import { ObjectId } from 'mongoose';
 import { ReqQuery } from '../types/express';
 
 const createPresignedUrl = async (
@@ -22,7 +21,7 @@ const createPresignedUrl = async (
 };
 
 const generateUrl = async (
-  userid: ObjectId,
+  userid: string,
   contentType: string,
   contentLength: number,
   expiresIn = 10,
@@ -140,7 +139,7 @@ const deleteManyFiles = async (
     .json({ status: 'success', message: `Deleted ${Deleted.length} files!` });
 };
 
-const filesController = {
+export {
   createPresignedUrl,
   deleteFile,
   deleteManyFiles,
@@ -148,5 +147,3 @@ const filesController = {
   //
   generateUrl,
 };
-
-export default filesController;

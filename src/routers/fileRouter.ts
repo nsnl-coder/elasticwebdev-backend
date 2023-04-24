@@ -1,7 +1,7 @@
 import express from 'express';
 import { requireLogin, requireRole } from 'express-common-middlewares';
 import { validateRequest, requiredFields } from 'yup-schemas';
-import filesController from '../controllers/fileController';
+import * as filesController from '../controllers/fileController';
 import { User } from '../models/userModel';
 import fileSchema from '../yup/fileSchema';
 

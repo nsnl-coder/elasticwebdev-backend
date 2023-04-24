@@ -25,7 +25,7 @@ const checkOrigin = (
   }
 };
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'test') {
   app.use(cors({ origin: checkOrigin, credentials: true }));
 } else {
   app.use(cors());

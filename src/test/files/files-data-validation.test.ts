@@ -1,8 +1,9 @@
-import request from "supertest";;
-let { validFilesData } = require('./utils');
-import { app } from "../../config/app";;
+import request from 'supertest';
+import { app } from '../../config/app';
+import { signup } from '../setup';
+import { validFilesData } from './utils';
 
-let cookie = '';
+let cookie: string[] = [];
 
 beforeEach(async () => {
   const { cookie: newCookie } = await signup({ role: 'admin' });
