@@ -14,7 +14,9 @@
     "prod": "node src/index.js",
     "start": "ts-node src/index.ts --watch",
     "test": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watchAll ",
-    "testv": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watchAll --verbose"
+    "testv": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watchAll --verbose",
+    "build": "tsc && cpy 'src/**/!(*.ts)' build",
+    "afterBuild": "del src && npm prune --omit=dev"
   },
   "repository": {
     "type": "git",
@@ -66,11 +68,12 @@
     "@types/pug": "^2.0.6",
     "@types/supertest": "^2.0.12",
     "@types/uuid": "^9.0.1",
-    "axios": "^1.3.5",
+    "axios": "^1.3.6",
+    "cpy-cli": "^4.2.0",
     "express-gg": "^1.0.25",
     "jest": "^29.5.0",
-    "mongodb-memory-server": "^8.12.1",
-    "nodemon": "^2.0.21",
+    "mongodb-memory-server": "^8.12.2",
+    "nodemon": "^2.0.22",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
