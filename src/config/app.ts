@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import 'express-async-errors'; // error handler for async middleware
 import path from 'path';
 import cookieParser from 'cookie-parser';
