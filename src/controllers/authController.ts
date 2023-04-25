@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import hoursToMilliseconds from 'date-fns/hoursToMilliseconds';
 import minutesToMilliseconds from 'date-fns/minutesToMilliseconds';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 //
 import { User } from '../models/userModel';

@@ -12,7 +12,7 @@
   },
   "scripts": {
     "prod": "node src/index.js",
-    "start": "ts-node src/index.ts --watch",
+    "dev": "ts-node-dev src/index.ts --watch",
     "test": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watchAll ",
     "testv": "DOTENV_CONFIG_PATH=.env.dev jest --setupFiles=dotenv/config --watchAll --verbose",
     "build": "tsc && cpy 'src/**/!(*.ts)' build",
@@ -32,7 +32,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.309.0",
     "@aws-sdk/s3-request-presigner": "^3.309.0",
-    "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -49,12 +49,13 @@
     "pug": "^3.0.2",
     "slugify": "^1.6.6",
     "stripe": "^11.17.0",
+    "ts-node-dev": "^2.0.0",
     "uuid": "^9.0.0",
     "yup": "^1.0.2",
     "yup-schemas": "^2.0.1"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
+    "@types/bcryptjs": "^2.4.2",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
@@ -76,7 +77,6 @@
     "nodemon": "^2.0.22",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
-    "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }
 }
