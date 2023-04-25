@@ -34,4 +34,6 @@ jobs:
             npm install --ignore mongodb-memory-server nodemon supertest
             npm run build
             npm run afterBuild
-            pm2 restart express-app
+            pm2 stop all
+            pm2 delete all
+            pm2 start build/index.js
