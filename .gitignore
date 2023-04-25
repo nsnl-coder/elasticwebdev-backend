@@ -1,6 +1,6 @@
 node_modules
-.env
 ignore
+.env
 .env.prod
 .env.dev
 scripts

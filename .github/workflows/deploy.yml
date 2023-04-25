@@ -34,5 +34,4 @@ jobs:
             npm install --ignore mongodb-memory-server nodemon supertest
             npm run build
             npm run afterBuild
-            del src
             pm2 restart express-app
